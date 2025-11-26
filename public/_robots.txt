@@ -1,0 +1,126 @@
+# Robots.txt for Portfolio Website
+# Generated: 2025-11-17
+# Purpose: SEO Optimization & Admin Protection
+
+# =============================================================================
+# GLOBAL RULES FOR ALL BOTS
+# =============================================================================
+
+User-agent: *
+# Allow all major search engines to crawl public content
+Allow: /
+
+# Block admin/CMS area completely - SECURITY PROTECTION
+Disallow: /xms/
+Disallow: /xms
+Disallow: /admin/
+Disallow: /admin
+
+# Block API endpoints from search engines
+Disallow: /api/
+
+# Block development and build files
+Disallow: /.nuxt/
+Disallow: /node_modules/
+Disallow: /.git/
+Disallow: /.vscode/
+Disallow: /dist/
+Disallow: /build/
+
+# Block temporary and cache files
+Disallow: /*.tmp
+Disallow: /*.temp
+Disallow: /*.bak
+Disallow: /*.backup
+
+# Block query parameters that might expose sensitive data
+Disallow: /*?*
+Disallow: /*&*
+
+# =============================================================================
+# SPECIFIC BOT RULES
+# =============================================================================
+
+# Googlebot - Allow with some restrictions
+User-agent: Googlebot
+Allow: /
+Disallow: /xms/
+Disallow: /api/
+
+# Bingbot - Allow with restrictions
+User-agent: Bingbot
+Allow: /
+Disallow: /xms/
+Disallow: /api/
+
+# Baidu Spider - Allow with restrictions
+User-agent: Baiduspider
+Allow: /
+Disallow: /xms/
+Disallow: /api/
+
+# Yandex Bot - Allow with restrictions
+User-agent: YandexBot
+Allow: /
+Disallow: /xms/
+Disallow: /api/
+
+# DuckDuckBot - Allow with restrictions
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /xms/
+Disallow: /api/
+
+# =============================================================================
+# MALICIOUS BOT BLOCKING
+# =============================================================================
+
+# Block known malicious bots and scrapers
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+# Block AI training data scrapers
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+# =============================================================================
+# SITEMAP
+# =============================================================================
+
+# Sitemap location (uncomment when sitemap is created)
+Sitemap: https://aepsaefulloh.my.id/sitemap.xml
+
+# =============================================================================
+# HOST DIRECTIVE (for multiple domains/subdomains)
+# =============================================================================
+
+# Host: https://aepsaefulloh.my.id
+
+# =============================================================================
+# NOTES
+# =============================================================================
+# - Update sitemap URL when sitemap.xml is created
+# - Update Host directive for production domain
+# - Monitor bot access via server logs
+# - This file is compatible with @nuxtjs/robots module

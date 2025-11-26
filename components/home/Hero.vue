@@ -1,0 +1,446 @@
+<template>
+  <!-- Mobile -->
+  <section
+    class="container-xl h-dvh px-desktop pb-[40px] flex flex-col md:hidden"
+  >
+    <div class="my-auto">
+      <h1
+        class="md:text-[8.598vw] text-[12.308vw] leading-[100%] text-idealive home-head"
+      >
+      <span class="reveal-mask animate-invisible">
+        <span class="reveal-word py-2">Dream it</span>
+      </span>
+      <br>
+      <span class="reveal-mask animate-invisible">
+        <span class="reveal-word heading">Live it.</span>
+      </span>
+      </h1>
+    </div>
+    <div
+      class="aspect-square bg-idealive flex flex-col items-center justify-center text-white p-3"
+    >
+      <div class="">&nbsp;</div>
+      <img
+        src="/images/logo-idealive.svg"
+        class="w-[38.718vw] my-auto"
+        alt="Idealive logo"
+      />
+      <a @click.prevent="showVideo" href="#" class="text-[12px]">See Showreel</a>
+    </div>
+    
+    <!-- Video Overlay -->
+    <div 
+      ref="videoOverlay" 
+      class="fixed inset-x-0 bottom-0 h-0 w-full bg-black z-50 overflow-hidden"
+    >
+      <div class="relative w-full h-full flex items-center justify-center">
+        <button 
+          @click="hideVideo" 
+          class="absolute top-4 right-4 text-white z-10 p-2"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18M6 6L18 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        
+        <video 
+          ref="videoPlayer" 
+          class="w-full h-full object-cover" 
+          playsinline
+          preload="metadata"
+        >
+          <source src="/images/test.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+  </section>
+  <!-- End Mobile -->
+
+  <section
+    id="section1"
+    class="md:pt-[9.921vw] pb-[5.622vw] px-desktop md:flex hidden items-center"
+  >
+    <h1 class="md:text-[8.598vw] text-[12.308vw] leading-[100%] text-idealive">
+      <span class="reveal-mask animate-invisible">
+        <span class="reveal-word py-4">Dream it</span>
+      </span>
+      <br>
+      <span class="reveal-mask animate-invisible">
+        <span class="reveal-word heading">Live it.</span>
+      </span>
+    </h1>
+  </section>
+
+  <section
+    id="section2"
+    class="section2 md:flex hidden justify-center items-center w-full h-dvh relative overflow-hidden"
+  >
+    <div
+      class="containerElement animate-invisible relative flex justify-center items-center bg-[#2054FA] w-[94%] h-[94%] text-white overflow-hidden revert"
+    >
+      <!-- Solid background overlay that will fade out -->
+      <div class="solid-bg absolute inset-0 bg-[#2054FA] z-[1]"></div>
+      
+      <img
+        class="absolute image md:w-[65.675vw] z-[2]"
+        src="/images/logo-idealive.svg"
+        alt="Animated Image"
+      />
+      <div class="items relative justify-evenly items-center w-full flex z-[2]">
+        <h1 class="md:text-[3.307vw] heading absolute">Agency</h1>
+        <h1 class="md:text-[3.307vw] heading absolute">Laboratory</h1>
+        <h1 class="md:text-[3.307vw] heading absolute">Engine</h1>
+      </div>
+      <div
+        class="absolute z-[0] flex w-full h-full overflow-hidden background-images"
+      >
+        <img v-for="(img, index) in backgroundImages" :key="index" class="w-full absolute opacity-0" :src="img" alt="" />
+      </div>
+    </div>
+  </section>
+
+  <section
+    id="section3"
+    class="section3 flex justify-center items-center w-full md:min-h-dvh relative bg-idealive revert"
+  >
+    <HomeAbout />
+  </section>
+</template>
+
+<script setup>
+import { onMounted, ref, onBeforeUnmount } from "vue";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Register ScrollTrigger
+gsap.registerPlugin(ScrollTrigger);
+
+// Refs for video overlay
+const videoOverlay = ref(null);
+const videoPlayer = ref(null);
+
+// Store background images in a reactive array
+const backgroundImages = ref([
+  '/images/hero.gif'
+]);
+
+// Store ScrollTrigger instances for cleanup
+const scrollTriggers = [];
+let imgTimeline = null;
+
+// Function to show video overlay with smooth animation
+const showVideo = () => {
+  // Pause any ongoing animations
+  gsap.killTweensOf(videoOverlay.value);
+  
+  // Disable scrolling on body
+  document.body.style.overflow = 'hidden';
+  
+  // Animate the overlay from bottom to top
+  gsap.to(videoOverlay.value, {
+    height: '100%',
+    duration: 0.6,
+    ease: 'power3.out',
+    onComplete: () => {
+      // Start playing the video when animation completes
+      if (videoPlayer.value) {
+        videoPlayer.value.play();
+      }
+    }
+  });
+};
+
+// Function to hide video overlay with smooth animation
+const hideVideo = () => {
+  // Pause the video
+  if (videoPlayer.value) {
+    videoPlayer.value.pause();
+    videoPlayer.value.currentTime = 0; // Reset video position
+  }
+  
+  // Re-enable scrolling on body
+  document.body.style.overflow = '';
+  
+  // Animate the overlay back down
+  gsap.to(videoOverlay.value, {
+    height: '0%',
+    duration: 0.5,
+    ease: 'power3.in'
+  });
+};
+
+// Text reveal animation
+const header = () => {
+  const words = document.querySelectorAll(".reveal-word");
+  const masks = document.querySelectorAll(".reveal-mask.animate-invisible");
+  
+  // Create a timeline with better performance settings
+  const tl = gsap.timeline({ 
+    defaults: { ease: "power4.out" },
+    onStart: () => {
+      // Remove invisible class at the start of animation
+      masks.forEach((el) => el.classList.remove("animate-invisible"));
+    }
+  });
+  
+  // Set initial state
+  gsap.set(words, { yPercent: 100, skewX: -2 });
+  
+  // Animate words with force3D for better performance
+  tl.to(words, {
+    yPercent: 0,
+    skewX: 0,
+    duration: 1,
+    stagger: 0.4,
+    force3D: true,
+    clearProps: "transform" // Clean up transforms after animation
+  });
+};
+
+// Box animation
+const box = () => {
+  const containerElement = document.querySelector(".containerElement");
+  if (!containerElement) return;
+  
+  // Remove invisible class
+  containerElement.classList.remove("animate-invisible");
+  
+  // Animate with better performance settings
+  gsap.fromTo(
+    containerElement,
+    { width: "0%", height: "94%", borderRadius: 5 },
+    {
+      width: "94%",
+      height: "94%",
+      borderRadius: 5,
+      duration: 1,
+      force3D: true,
+      ease: "power2.out"
+    }
+  );
+};
+
+// Setup background images animation
+const setupBackgroundImagesAnimation = () => {
+  // Get the background image
+  const image = document.querySelector(".background-images img");
+  if (!image) return;
+  
+  // Create a simpler timeline for a single image
+  imgTimeline = gsap.timeline({ 
+    defaults: { ease: "power2.inOut" }
+  });
+  
+  // Simply fade in the single image
+  imgTimeline
+    .to(image, { 
+      opacity: 1, 
+      duration: 0.8,
+      force3D: true 
+    });
+  
+  // Initially pause the timeline - it will be played when the solid background fades out
+  imgTimeline.pause();
+};
+
+// Setup desktop animations
+const setupDesktopAnimations = () => {
+  // Container expansion animation
+  scrollTriggers.push(
+    ScrollTrigger.create({
+      trigger: ".section2",
+      start: "top 70%",
+      end: "bottom 70%",
+      scrub: 1,
+      id: "expand",
+      animation: gsap.fromTo(
+        ".containerElement",
+        { width: "94%", height: "94%", borderRadius: 5 },
+        {
+          width: "100%",
+          height: "100%",
+          borderRadius: 0,
+          force3D: true
+        }
+      )
+    })
+  );
+
+  // Main section2 animation timeline
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: ".section2",
+      start: "top top",
+      end: "bottom",
+      pin: true,
+      scrub: 1,
+      id: "pin-section2",
+      onUpdate: (self) => {
+        // Start playing the background images animation when we're 30% through the scroll
+        if (self.progress > 0.3 && imgTimeline && imgTimeline.paused()) {
+          imgTimeline.play();
+        }
+      }
+    }
+  });
+  
+  scrollTriggers.push(tl.scrollTrigger);
+  
+  // Add animations to timeline with performance optimizations
+  tl.fromTo(".image", { scale: 1 }, { scale: 0.25, force3D: true }, "<")
+    // Create a simultaneous animation for both the logo and background
+    .to(
+      [".solid-bg", ".image"], 
+      { 
+        opacity: 0, 
+        duration: 0.5,
+        ease: "power2.inOut",
+        onComplete: () => {
+          // Ensure the background images animation is playing
+          if (imgTimeline && imgTimeline.paused()) {
+            imgTimeline.play();
+          }
+        }
+      }, 
+      "+=0.2" // Same position in the timeline
+    )
+    .fromTo(
+      ".items h1",
+      { opacity: 0, x: 0 },
+      { 
+        opacity: 1, 
+        x: (index) => `${(index - 1) * 35}vw`,
+        force3D: true 
+      }
+    )
+    .to("#section2", { backgroundColor: "#2054FA" });
+
+  // Container shrink animation
+  scrollTriggers.push(
+    ScrollTrigger.create({
+      trigger: ".section3",
+      start: "top 90%",
+      end: "bottom 90%",
+      scrub: 1,
+      id: "shrink",
+      animation: gsap.fromTo(
+        ".containerElement",
+        { width: "100%", height: "100%", borderRadius: 0 },
+        {
+          width: "94%",
+          height: "94%",
+          borderRadius: 5,
+          force3D: true
+        }
+      )
+    })
+  );
+};
+
+// Debounce function to limit resize event handling
+const debounce = (fn, delay) => {
+  let timer = null;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+};
+
+// Handle window resize
+const handleResize = debounce(() => {
+  // Kill all ScrollTrigger instances
+  scrollTriggers.forEach(trigger => trigger.kill());
+  scrollTriggers.length = 0;
+  
+  // Kill image timeline
+  if (imgTimeline) {
+    imgTimeline.kill();
+    imgTimeline = null;
+  }
+  
+  // Reinitialize animations if on desktop
+  if (window.innerWidth >= 1024) {
+    setupBackgroundImagesAnimation();
+    setupDesktopAnimations();
+  }
+}, 250);
+
+onMounted(() => {
+  // Run header animation immediately
+  header();
+  
+  // Setup desktop animations if on desktop
+  if (window.innerWidth >= 1024) {
+    // Run box animation after a delay
+    setTimeout(box, 940);
+    
+    // Setup background images animation
+    setupBackgroundImagesAnimation();
+    
+    // Setup desktop scroll animations
+    setupDesktopAnimations();
+    
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+  }
+});
+
+// Clean up all animations and event listeners
+onBeforeUnmount(() => {
+  // Kill all ScrollTrigger instances
+  scrollTriggers.forEach(trigger => trigger.kill());
+  
+  // Kill any running GSAP animations
+  gsap.killTweensOf(".containerElement");
+  gsap.killTweensOf(".image");
+  gsap.killTweensOf(".items h1");
+  gsap.killTweensOf(".background-images img");
+  gsap.killTweensOf(".solid-bg");
+  
+  // Kill image timeline
+  if (imgTimeline) {
+    imgTimeline.kill();
+  }
+  
+  // Remove event listener
+  window.removeEventListener('resize', handleResize);
+});
+</script>
+
+<style scoped>
+.animate-invisible {
+  visibility: hidden;
+}
+
+.reveal-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.reveal-word {
+  display: inline-block;
+  will-change: transform;
+}
+
+.containerElement {
+  will-change: width, height, border-radius;
+}
+
+.image {
+  will-change: transform, opacity;
+}
+
+.heading {
+  will-change: transform, opacity;
+}
+
+.solid-bg {
+  will-change: opacity;
+}
+
+.background-images img {
+  will-change: opacity;
+}
+</style>

@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@font-face {
+    font-family: 'Primary';
+    src: url('../fonts/ScotchDeckCond-Rm.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Secondary';
+    src: url('../fonts/NeueMontreal-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+    font-family: 'Secondary', sans-serif; /* Fallback to sans-serif */
+    overflow: auto;
+}
+
+.heading{
+    font-family: 'Primary', serif; /* Fallback to serif */
+}
+
+.bg-idealive{
+    @apply bg-[#2054FA]
+}
+
+.text-idealive{
+    @apply text-[#2054FA]
+}
+
+.px-desktop{
+    @apply md:px-[2.646vw] px-[20px]
+}
+
+.btn-main{
+    @apply bg-[#2054FA] text-white px-[20px] py-[10px] inline-flex items-center gap-[10px] transition-colors duration-300 relative overflow-hidden;
+}

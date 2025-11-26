@@ -1,0 +1,1 @@
+password db supabase = Qp7qc7qGAW5JiJs9
