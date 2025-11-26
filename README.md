@@ -1,151 +1,114 @@
-# Portfolio CMS - Nuxt 3
+# New Idealive Website
 
-A modern portfolio website with dynamic CMS capabilities built with Nuxt 3, Vue 3, and Supabase.
+A modern web application built with Nuxt 3, featuring a responsive design powered by Tailwind CSS, smooth animations with GSAP, and backend services through Supabase.
 
-## Features
+## 🚀 Technologies Used
 
-- **Dynamic CMS** - Manage hero section, about me, skills, and projects
-- **Project Management** - CRUD operations with file upload support
-- **Contact Form** - Secure contact form with reCAPTCHA integration
-- **Authentication** - Supabase authentication for CMS access
-- **Responsive Design** - Mobile-first design with Tailwind CSS
-- **Real-time Updates** - Live data synchronization
+- **Nuxt 3** - The Vue.js framework for production-ready applications
+- **Tailwind CSS** - A utility-first CSS framework for rapid UI development
+- **GSAP** - High-performance JavaScript animation library
+- **Supabase** - Open source Firebase alternative for backend services
+- **Pinia** - Intuitive state management for Vue.js
+- **Vue 3** - Progressive JavaScript framework
+- **TypeScript** - Typed JavaScript for better development experience
 
-## Tech Stack
+## 📋 Prerequisites
 
-- **Framework**: Nuxt 3.20.0 with Vue 3.5.22
-- **State Management**: Pinia 3.0.4
-- **Database**: Supabase PostgreSQL
-- **Authentication**: Supabase Auth
-- **File Storage**: Supabase Storage
-- **Styling**: Tailwind CSS 3.4.18
-- **Icons**: Heroicons
-- **Security**: reCAPTCHA v3
+Before you begin, ensure you have the following installed:
 
-## Database Setup
+- Node.js (version 18 or higher)
+- npm or yarn package manager
+- Git
 
-All database migrations are located in `supabase/migrations/`. Run them in order:
+## 🛠️ Installation
 
-1. `20251117053532_core_tables.sql` - Core tables (users, contact_messages)
-2. `20251117053222_cms_content_tables.sql` - CMS content tables (projects, hero, about, skills)
-3. `20251117054501_storage_setup.sql` - Storage bucket setup
-
-### Running Migrations
-
-**Via Supabase Dashboard:**
-1. Open your Supabase project
-2. Go to SQL Editor
-3. Copy and paste each migration file content
-4. Execute in the order above
-
-## Setup
-
-### Prerequisites
-- Node.js 18+
-- Supabase account and project
-
-### Installation
-
+1. Clone the repository:
 ```bash
-# Install dependencies
-npm install
-
-# Copy environment file
-cp .env.example .env
-
-# Configure your Supabase credentials in .env
+git clone https://github.com/aepsaefulloh/new-idealive-website.git
+cd new-idealive-website
 ```
 
-### Environment Variables
+2. Install dependencies:
+```bash
+npm install
+```
 
+3. Set up environment variables:
+Create a `.env` file in the root directory and add your Supabase configuration:
 ```env
-# Supabase
 SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-
-# reCAPTCHA
-RECAPTCHA_SITE_KEY=your_recaptcha_site_key
-RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
 ```
 
-## Development
+## 🚀 Running the Application
 
+### Development Mode
 ```bash
-# Start development server
 npm run dev
+```
+The application will be available at `http://localhost:3000`
 
-# Build for production
+### Production Build
+```bash
 npm run build
+npm run start
+```
 
-# Preview production build
+### Static Site Generation
+```bash
+npm run generate
 npm run preview
 ```
 
-## Project Structure
+## 📁 Project Structure
 
 ```
-├── assets/           # Static assets
-├── components/       # Vue components
-│   ├── dashboard/   # CMS dashboard components
-│   └── ui/          # Reusable UI components
-├── composables/     # Vue composables
-├── layouts/         # Page layouts
-├── middleware/      # Route middleware
-├── pages/           # Application pages
-│   ├── cms/        # CMS management pages
-│   └── projects/   # Public project pages
-├── plugins/         # Nuxt plugins
-├── server/          # Server-side API routes
-├── stores/          # Pinia stores
-├── supabase/        # Database migrations
-└── types/           # TypeScript types
+├── assets/           # Static assets (CSS, images, fonts)
+├── components/       # Reusable Vue components
+├── composables/      # Vue composables for reusable logic
+├── layouts/          # Page layouts
+├── middleware/       # Nuxt middleware
+├── pages/            # Application pages (file-based routing)
+├── plugins/          # Nuxt plugins
+├── public/           # Public static files
+├── server/           # Server-side API routes
+├── stores/           # Pinia state management
+├── supabase/         # Supabase configuration and migrations
+└── utils/            # Utility functions
 ```
 
-## CMS Features
+## 🔧 Configuration
 
-### Available at `/xms` (requires authentication)
+### Tailwind CSS
+The project uses Tailwind CSS with custom configuration in `tailwind.config.js`. Additional plugins and utilities can be added as needed.
 
-- **Dashboard** - Overview of all content sections
-- **Projects** - Manage portfolio projects with file uploads
-- **Contact** - View and manage contact form submissions
-- **Hero Section** - Edit homepage hero content
-- **About Me** - Edit about section content
-- **Skills** - Manage technical skills and proficiency levels
+### GSAP Animations
+GSAP is integrated through the `useGsap` composable. Animations are optimized for performance and accessibility.
 
-### File Upload Support
+### Supabase Integration
+Database operations are handled through Supabase client configured in `plugins/supabase.ts`. Authentication and data fetching are managed via composables and stores.
 
-- Project thumbnails and banners
-- Automatic image optimization
-- Secure storage with Supabase Storage
-- Public access for website display
+## 📝 Scripts
 
-## Security
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run generate` - Generate static site
+- `npm run preview` - Preview generated site
+- `npm run postinstall` - Prepare Nuxt after installation
 
-- Row Level Security (RLS) enabled on all database tables
-- Authentication required for CMS access
-- reCAPTCHA integration for contact forms
-- Secure file upload policies
-
-## Deployment
-
-Deploy to any platform supporting Nuxt 3:
-
-- Vercel
-- Netlify
-- Railway
-- DigitalOcean App Platform
-
-Make sure to set all environment variables in your deployment platform.
-
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests if available
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## License
+## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Contact
+
+For questions or support, please contact the development team.
