@@ -17,7 +17,7 @@ watch(() => router.currentRoute.value, () => {
   isVisible.value = true
   setTimeout(() => {
     isVisible.value = false
-  }, 1000) // Increased duration for better visibility
+  }, 1000) 
 }, { immediate: true })
 </script>
 

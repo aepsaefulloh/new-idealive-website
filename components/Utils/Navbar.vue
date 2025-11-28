@@ -213,7 +213,6 @@ const handleScroll = () => {
   if (currentScrollY < 50) {
     navbarClass.value = 'bg-transparent';
   } else {
-    // When scrolling down or up past 50px
     navbarClass.value = isSpecialPage.value ? 'bg-idealive' : 'bg-white';
   }
   
@@ -222,7 +221,6 @@ const handleScroll = () => {
 
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
-  // Initial check
   handleScroll();
 });
 
@@ -232,7 +230,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-/* Slide fade transition */
 .slide-fade-enter-active,
 .slide-fade-leave-active {
   transition: all 0.3s ease;

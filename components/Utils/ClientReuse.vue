@@ -1,63 +1,39 @@
 <template>
-  <div>
-    <div>
-      <div
-        ref="logosWrapper"
-        class="flex flex-wrap justify-center overflow-hidden md:gap-12 gap-0"
-        :class="spacing"
-      >
-        <div
-          v-for="(logo, index) in visibleLogos"
-          :key="index"
-          class="flex-shrink-0 logo-change"
-          :class="[
-            {'flex justify-center items-center': visibleLogos.length < imagesCount}, 
-            width,
-            'w-1/2 md:w-auto' // Force 2 per row on mobile, auto on desktop
-          ]"
-        >
-          <img
-            :src="logo.client_logo"
-            class="w-full object-contain"
-            :class="[imageClass, 'h-[12vw] md:h-[7vw]']"
-            alt="Client logo"
-          />
+  <div class="w-full py-10">
+    <swiper :modules="[Autoplay]" :autoplay="{
+      delay: intervalDelay,
+      disableOnInteraction: false
+    }" :loop="true" :slides-per-view="1" :space-between="20" :navigation="false" :pagination="false" :breakpoints="{
+        // Tablet (md): >= 768px -> 3 item
+        768: {
+          slidesPerView: 3,
+          spaceBetween: 30
+        },
+        // Desktop (lg): >= 1024px -> 5 item
+        1024: {
+          slidesPerView: 5,
+          spaceBetween: 40
+        }
+      }" class="w-full" @swiper="onSwiper" @slideChange="onSlideChange">
+      <swiper-slide v-for="(logo, index) in logos" :key="index">
+        <div class="flex items-center justify-center h-24">
+          <img :src="logo.client_logo" alt="Client logo" />
         </div>
-      </div>
-    </div>
+      </swiper-slide>
+    </swiper>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, onBeforeUnmount } from "vue";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ref } from 'vue';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import { Autoplay } from 'swiper/modules';
+import 'swiper/css';
 
-gsap.registerPlugin(ScrollTrigger);
+// Delay autoplay
+const intervalDelay = 2500;
 
-const props = defineProps({
-  imagesCount: {
-    type: Number,
-    default: 5,
-  },
-  imageClass: {
-    type: String,
-    default: "",
-  },
-  spacing: {
-    type: String,
-    default: "",
-  },
-  width: {
-    type: String,
-    default: "",
-  },
-  intervalDelay: {
-    type: Number,
-    default: 5000,
-  },
-});
-
+// Data dummy (pastikan path gambar benar)
 const logos = ref([
   { client_logo: '/images/logo1.png' },
   { client_logo: '/images/logo2.png' },
@@ -66,80 +42,14 @@ const logos = ref([
   { client_logo: '/images/logo1.png' },
   { client_logo: '/images/logo2.png' },
 ]);
-const visibleLogos = ref([]);
-let currentIndex = 0;
-const intervalId = ref(null);
-const logosWrapper = ref(null);
-let gsapCtx = null;
 
-// Cleanup on component unmount
-onBeforeUnmount(() => {
-  if (intervalId.value) {
-    clearInterval(intervalId.value);
-  }
-  gsap.killTweensOf(logoElements());
-  if (gsapCtx) {
-    gsapCtx.revert();
-  }
-  ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-});
-
-// Helper to get the logo elements within our scoped container
-const logoElements = () => {
-  return logosWrapper.value ? logosWrapper.value.querySelectorAll(".logo-change") : [];
+const onSwiper = (swiper) => {
+  // console.log(swiper);
 };
 
-const updateLogos = () => {
-  gsap.to(logoElements(), {
-    y: -50,
-    opacity: 0,
-    duration: 0.8,
-    stagger: 0.1,
-    ease: "power2.out",
-    onComplete: () => {
-      if (logos.value.length - currentIndex < props.imagesCount) {
-        const firstPart = logos.value.slice(currentIndex);
-        const remainingCount = props.imagesCount - firstPart.length;
-        const secondPart = logos.value.slice(0, remainingCount);
-        visibleLogos.value = firstPart.concat(secondPart);
-      } else {
-        visibleLogos.value = logos.value.slice(currentIndex, currentIndex + props.imagesCount);
-      }
-      currentIndex = (currentIndex + props.imagesCount) % logos.value.length;
-
-      gsap.fromTo(
-        logoElements(),
-        { opacity: 0, y: 50 },
-        { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: "power2.out" }
-      );
-    },
-  });
+const onSlideChange = () => {
+  // console.log('slide change');
 };
-
-onMounted(async () => {
-  if (logos.value.length > 0) {
-    visibleLogos.value = logos.value.slice(0, props.imagesCount);
-    currentIndex = props.imagesCount;
-    await nextTick();
-    // Ensure logosWrapper is available, then create a GSAP context with its DOM element
-    if (logosWrapper.value) {
-      gsapCtx = gsap.context(() => {
-        updateLogos();
-        intervalId.value = setInterval(() => {
-          updateLogos();
-        }, props.intervalDelay);
-      }, logosWrapper.value);
-    }
-  }
-});
 </script>
 
-<style scoped>
-/* Mobile-specific adjustments */
-@media (max-width: 768px) {
-  .logo-change {
-    padding: 0 10px;
-    margin-bottom: 15px;
-  }
-}
-</style>
+<style scoped></style>
