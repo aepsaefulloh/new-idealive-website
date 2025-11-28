@@ -4,14 +4,14 @@
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 mb-6">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Projects Management</h1>
-          <p class="text-gray-600 dark:text-gray-400 mt-2">Create, edit, and manage your portfolio projects</p>
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Articles Management</h1>
+          <p class="text-gray-600 dark:text-gray-400 mt-2">Create, edit, and manage your blog articles</p>
         </div>
         <div class="text-right">
-          <div class="text-4xl font-bold text-gray-900 dark:text-white">{{ projectsStore.totalProjects }}</div>
-          <p class="text-gray-600 dark:text-gray-400">Total Projects</p>
+          <div class="text-4xl font-bold text-gray-900 dark:text-white">{{ articlesStore.totalArticles }}</div>
+          <p class="text-gray-600 dark:text-gray-400">Total Articles</p>
           <div class="mt-2 text-2xl font-bold text-gray-500 dark:text-gray-400">
-            {{ projectsStore.featuredProjects.length }} Featured
+            {{ articlesStore.publishedArticles.length }} Published
           </div>
         </div>
       </div>
@@ -37,9 +37,9 @@
       <button @click="showCreateModal = true"
         class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2">
         <UIcon name="i-heroicons-plus" class="w-5 h-5" />
-        Add New Project
+        Add New Article
       </button>
-      <button @click="refreshProjects" :disabled="projectsStore.isLoading"
+      <button @click="refreshArticles" :disabled="articlesStore.isLoading"
         class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2">
         <UIcon name="i-heroicons-arrow-path" class="w-5 h-5" />
         Refresh
@@ -47,90 +47,95 @@
     </div>
 
     <!-- Loading State -->
-    <div v-if="projectsStore.isLoading && !projectsStore.projects.length" class="text-center py-12">
+    <div v-if="articlesStore.isLoading && !articlesStore.articles.length" class="text-center py-12">
       <div class="inline-block">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <p class="mt-4 text-gray-600 dark:text-gray-400">Loading projects...</p>
+        <p class="mt-4 text-gray-600 dark:text-gray-400">Loading articles...</p>
       </div>
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="!projectsStore.projects.length"
+    <div v-else-if="!articlesStore.articles.length"
       class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-12 text-center">
-      <div class="text-5xl mb-4">🚀</div>
-      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Projects Yet</h3>
-      <p class="text-gray-600 dark:text-gray-400 mb-6">Start building your portfolio by adding your first project</p>
+      <div class="text-5xl mb-4">📝</div>
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Articles Yet</h3>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">Start writing your first article to share your knowledge</p>
       <button @click="showCreateModal = true"
         class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
-        Add Your First Project
+        Write Your First Article
       </button>
     </div>
 
-    <!-- Projects Grid -->
+    <!-- Articles Grid -->
     <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="project in projectsStore.projects" :key="project.id"
+      <div v-for="article in articlesStore.articles" :key="article.id"
         class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
-        <!-- Project Image -->
+        <!-- Article Image -->
         <div
-          class="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 flex items-center justify-center relative overflow-hidden">
-          <div v-if="project.thumbnail_url" class="w-full h-full">
-            <img :src="project.thumbnail_url" :alt="project.title" class="w-full h-full object-cover" />
+          class="aspect-video bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 flex items-center justify-center relative overflow-hidden">
+          <div v-if="article.thumbnail_url" class="w-full h-full">
+            <img :src="article.thumbnail_url" :alt="article.title" class="w-full h-full object-cover" />
           </div>
           <div v-else class="text-6xl">
             <img src="https://placehold.co/600x400?text=No+Image+Available" alt="No Image Available" />
           </div>
           <!-- Status Badges -->
           <div class="absolute top-3 left-3 flex gap-2">
-            <span v-if="project.featured" class="px-2 py-1 bg-yellow-500 text-white text-xs font-semibold rounded">
+            <span v-if="article.featured" class="px-2 py-1 bg-yellow-500 text-white text-xs font-semibold rounded">
               Featured
             </span>
-            <span v-if="!project.published" class="px-2 py-1 bg-gray-500 text-white text-xs font-semibold rounded">
+            <span v-if="article.published" class="px-2 py-1 bg-green-500 text-white text-xs font-semibold rounded">
+              Published
+            </span>
+            <span v-else class="px-2 py-1 bg-gray-500 text-white text-xs font-semibold rounded">
               Draft
             </span>
           </div>
         </div>
 
-        <!-- Project Info -->
+        <!-- Article Info -->
         <div class="p-6">
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">{{ project.title }}</h3>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">{{ article.title }}</h3>
           <div class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2"
-            v-html="stripHtml(project.description)"></div>
+            v-html="stripHtml(article.excerpt || article.content)"></div>
 
-          <!-- Tags -->
-          <div class="flex flex-wrap gap-1 mb-4">
-            <span v-for="tag in project.tags?.slice(0, 3)" :key="tag"
-              class="text-xs px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
-              {{ tag }}
+          <!-- Category -->
+          <div v-if="article.categories" class="mb-4">
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
+              {{ article.categories.name }}
             </span>
-            <span v-if="project.tags?.length > 3" class="text-xs px-2 py-1 text-gray-500">
-              +{{ project.tags.length - 3 }} more
-            </span>
+          </div>
+
+          <!-- Meta Info -->
+          <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
+            <span>{{ article.read_time }} min read</span>
+            <span>{{ formatDate(article.created_at) }}</span>
           </div>
 
           <!-- Actions -->
           <div class="flex items-center justify-between">
             <div class="flex gap-2">
-              <button @click="editProject(project)"
+              <button @click="editArticle(article)"
                 class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                title="Edit Project">
+                title="Edit Article">
                 <UIcon name="i-heroicons-pencil" class="w-4 h-4" />
               </button>
-              <button @click="toggleFeatured(project.id)"
-                :class="project.featured ? 'text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'"
+              <button @click="toggleFeatured(article.id)"
+                :class="article.featured ? 'text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'"
                 class="p-2 hover:bg-opacity-20 rounded-lg transition-colors"
-                :title="project.featured ? 'Remove from featured' : 'Add to featured'">
+                :title="article.featured ? 'Remove from featured' : 'Add to featured'">
                 <UIcon name="i-heroicons-star" class="w-4 h-4" />
               </button>
-              <button @click="togglePublished(project.id)"
-                :class="project.published ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'"
+              <button @click="togglePublished(article.id)"
+                :class="article.published ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'"
                 class="p-2 hover:bg-opacity-20 rounded-lg transition-colors"
-                :title="project.published ? 'Unpublish' : 'Publish'">
+                :title="article.published ? 'Unpublish' : 'Publish'">
                 <UIcon name="i-heroicons-eye" class="w-4 h-4" />
               </button>
             </div>
-            <button @click="deleteProject(project.id)"
+            <button @click="deleteArticle(article.id)"
               class="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-              title="Delete Project">
+              title="Delete Article">
               <UIcon name="i-heroicons-trash" class="w-4 h-4" />
             </button>
           </div>
@@ -145,7 +150,7 @@
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
           <div class="flex items-center justify-between">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-              {{ showEditModal ? 'Edit Project' : 'Create New Project' }}
+              {{ showEditModal ? 'Edit Article' : 'Create New Article' }}
             </h2>
             <button @click="closeModals"
               class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
@@ -159,11 +164,11 @@
           <div class="grid md:grid-cols-1 gap-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Project Title *
+                Article Title *
               </label>
               <input v-model="form.title" type="text" required
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter project title" />
+                placeholder="Enter article title" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -172,78 +177,51 @@
               <select v-model="form.category_id"
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
                 <option value="">Select a category (optional)</option>
-                <option v-for="category in categoriesStore.projectCategories" :key="category.id" :value="category.id">
+                <option v-for="category in categoriesStore.articleCategories" :key="category.id" :value="category.id">
                   {{ category.name }}
                 </option>
               </select>
             </div>
           </div>
 
-          <!-- Description & Overview -->
+          <!-- Excerpt & Content -->
           <div class="grid md:grid-cols-1 gap-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Short Description *
+                Excerpt *
               </label>
-              <TipTapEditor v-model="form.description" placeholder="Brief project description" :limit="500"
+              <TipTapEditor v-model="form.excerpt" placeholder="Brief summary of the article" :limit="300"
                 class="w-full" />
-              <p class="text-xs text-gray-500 mt-1">Maximum 500 characters</p>
+              <p class="text-xs text-gray-500 mt-1">Maximum 300 characters</p>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Detailed Overview
+                Full Content *
               </label>
-              <TipTapEditor v-model="form.overview" placeholder="Detailed project overview" :limit="2000"
+              <TipTapEditor v-model="form.content" placeholder="Write your article content here..." :limit="10000"
                 class="w-full" />
-              <p class="text-xs text-gray-500 mt-1">Maximum 2000 characters</p>
+              <p class="text-xs text-gray-500 mt-1">Maximum 10000 characters</p>
             </div>
           </div>
 
-          <!-- Project Details -->
-          <div class="grid md:grid-cols-3 gap-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Year
-              </label>
-              <input v-model="form.year" type="text"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                placeholder="2024" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Your Role
-              </label>
-              <input v-model="form.role" type="text"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                placeholder="Full Stack Developer" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Duration
-              </label>
-              <input v-model="form.duration" type="text"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                placeholder="3 months" />
-            </div>
-          </div>
-
-          <!-- Links -->
+          <!-- Article Details -->
           <div class="grid md:grid-cols-2 gap-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Demo URL
+                Read Time (minutes)
               </label>
-              <input v-model="form.demo_url" type="url"
+              <input v-model.number="form.read_time" type="number" min="1" max="60"
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                placeholder="https://demo.example.com" />
+                placeholder="5" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                GitHub URL
+                Slug
               </label>
-              <input v-model="form.github_url" type="url"
+              <input v-model="form.slug" type="text"
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                placeholder="https://github.com/username/repo" />
+                placeholder="auto-generated-from-title" />
+              <p class="text-xs text-gray-500 mt-1">URL-friendly identifier</p>
             </div>
           </div>
 
@@ -286,11 +264,11 @@
           <!-- Tags -->
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Technologies/Tags
+              Tags
             </label>
             <div class="flex flex-wrap gap-2 mb-2">
               <span v-for="(tag, index) in form.tags" :key="index"
-                class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-sm">
+                class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full text-sm">
                 {{ tag }}
                 <button @click="removeTag(index)" class="hover:text-red-500">
                   <UIcon name="i-heroicons-x-mark" class="w-3 h-3" />
@@ -299,26 +277,7 @@
             </div>
             <input v-model="newTag" @keyup.enter="addTag" type="text"
               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-              placeholder="Add technology (press Enter)" />
-          </div>
-
-          <!-- Features -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Key Features
-            </label>
-            <div class="space-y-2 mb-2">
-              <div v-for="(feature, index) in form.features" :key="index"
-                class="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <span class="flex-1 text-gray-900 dark:text-white">{{ feature }}</span>
-                <button @click="removeFeature(index)" class="text-red-500 hover:text-red-700">
-                  <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-            <input v-model="newFeature" @keyup.enter="addFeature" type="text"
-              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-              placeholder="Add feature (press Enter)" />
+              placeholder="Add tag (press Enter)" />
           </div>
 
           <!-- Settings -->
@@ -326,7 +285,7 @@
             <label class="flex items-center gap-2">
               <input v-model="form.featured" type="checkbox"
                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" />
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Featured Project</span>
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Featured Article</span>
             </label>
             <label class="flex items-center gap-2">
               <input v-model="form.published" type="checkbox"
@@ -341,9 +300,9 @@
               class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
               Cancel
             </button>
-            <button type="submit" :disabled="projectsStore.isLoading"
+            <button type="submit" :disabled="articlesStore.isLoading"
               class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-              {{ projectsStore.isLoading ? 'Saving...' : (showEditModal ? 'Update Project' : 'Create Project') }}
+              {{ articlesStore.isLoading ? 'Saving...' : (showEditModal ? 'Update Article' : 'Create Article') }}
             </button>
           </div>
         </form>
@@ -355,7 +314,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { toast } from 'vue3-toastify'
-import { useProjectsStore } from '@/stores/modules/projects'
+import { useArticlesStore } from '@/stores/modules/articles'
 import { useCategoriesStore } from '@/stores/modules/categories'
 import TipTapEditor from '@/components/TipTapEditor.vue'
 
@@ -364,7 +323,7 @@ definePageMeta({
   middleware: 'cms-auth'
 })
 
-const projectsStore = useProjectsStore()
+const articlesStore = useArticlesStore()
 const categoriesStore = useCategoriesStore()
 let subscription = null
 
@@ -379,20 +338,16 @@ const showEditModal = ref(false)
 // Form data
 const form = ref({
   title: '',
-  description: '',
-  overview: '',
+  slug: '',
+  excerpt: '',
+  content: '',
   thumbnail_url: '',
   banner_url: '',
   tags: [],
-  features: [],
-  year: '',
-  role: '',
-  duration: '',
-  demo_url: '',
-  github_url: '',
+  read_time: 5,
   category_id: null,
   featured: false,
-  published: true,
+  published: false,
 })
 
 // File handling
@@ -401,7 +356,6 @@ const bannerInput = ref(null)
 const thumbnailPreview = ref('')
 const bannerPreview = ref('')
 const newTag = ref('')
-const newFeature = ref('')
 
 // Helper function to strip HTML tags for preview
 const stripHtml = (html) => {
@@ -411,58 +365,59 @@ const stripHtml = (html) => {
   return tmp.textContent || tmp.innerText || ''
 }
 
-// Load projects on mount
-const loadProjects = async () => {
-  await projectsStore.fetchProjects()
+// Format date
+const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleDateString()
 }
 
-// Refresh projects
-const refreshProjects = async () => {
-  await loadProjects()
+// Load articles on mount
+const loadArticles = async () => {
+  await articlesStore.fetchArticles()
 }
 
-// Edit project
-const editProject = (project) => {
-  projectsStore.selectProject(project)
+// Refresh articles
+const refreshArticles = async () => {
+  await loadArticles()
+}
+
+// Edit article
+const editArticle = (article) => {
+  articlesStore.selectArticle(article)
   form.value = {
-    title: project.title || '',
-    description: project.description || '',
-    overview: project.overview || '',
-    thumbnail_url: project.thumbnail_url || '',
-    banner_url: project.banner_url || '',
-    tags: project.tags || [],
-    features: project.features || [],
-    year: project.year || '',
-    role: project.role || '',
-    duration: project.duration || '',
-    demo_url: project.demo_url || '',
-    github_url: project.github_url || '',
-    category_id: project.category_id || null,
-    featured: project.featured || false,
-    published: project.published !== undefined ? project.published : true,
+    title: article.title || '',
+    slug: article.slug || '',
+    excerpt: article.excerpt || '',
+    content: article.content || '',
+    thumbnail_url: article.thumbnail_url || '',
+    banner_url: article.banner_url || '',
+    tags: article.tags || [],
+    read_time: article.read_time || 5,
+    category_id: article.category_id || null,
+    featured: article.featured || false,
+    published: article.published !== undefined ? article.published : false,
   }
-  thumbnailPreview.value = project.thumbnail_url || ''
-  bannerPreview.value = project.banner_url || ''
+  thumbnailPreview.value = article.thumbnail_url || ''
+  bannerPreview.value = article.banner_url || ''
   showEditModal.value = true
 }
 
-// Delete project
-const deleteProject = async (id) => {
-  if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-    const result = await projectsStore.deleteProject(id)
+// Delete article
+const deleteArticle = async (id) => {
+  if (confirm('Are you sure you want to delete this article? This action cannot be undone.')) {
+    const result = await articlesStore.deleteArticle(id)
     if (result.success) {
-      toast.success('Project deleted successfully!')
+      toast.success('Article deleted successfully!')
     } else {
-      toast.error(result.error || 'Failed to delete project')
+      toast.error(result.error || 'Failed to delete article')
     }
   }
 }
 
 // Toggle featured
 const toggleFeatured = async (id) => {
-  const result = await projectsStore.toggleFeatured(id)
+  const result = await articlesStore.toggleFeatured(id)
   if (result.success) {
-    toast.success('Project featured status updated!')
+    toast.success('Article featured status updated!')
   } else {
     toast.error(result.error || 'Failed to update featured status')
   }
@@ -470,9 +425,9 @@ const toggleFeatured = async (id) => {
 
 // Toggle published
 const togglePublished = async (id) => {
-  const result = await projectsStore.togglePublished(id)
+  const result = await articlesStore.togglePublished(id)
   if (result.success) {
-    toast.success('Project published status updated!')
+    toast.success('Article published status updated!')
   } else {
     toast.error(result.error || 'Failed to update published status')
   }
@@ -480,8 +435,8 @@ const togglePublished = async (id) => {
 
 // Handle form submission
 const handleSubmit = async () => {
-  if (showEditModal.value && !projectsStore.selectedProject?.id) {
-    toast.error('No project selected for editing')
+  if (showEditModal.value && !articlesStore.selectedArticle?.id) {
+    toast.error('No article selected for editing')
     return
   }
 
@@ -493,17 +448,17 @@ const handleSubmit = async () => {
 
   let result
   if (showEditModal.value) {
-    result = await projectsStore.updateProject(projectsStore.selectedProject.id, payload)
+    result = await articlesStore.updateArticle(articlesStore.selectedArticle.id, payload)
   } else {
-    result = await projectsStore.createProject(payload)
+    result = await articlesStore.createArticle(payload)
   }
 
   if (result.success) {
-    toast.success(result.message || (showEditModal.value ? 'Project updated successfully!' : 'Project created successfully!'))
+    toast.success(result.message || (showEditModal.value ? 'Article updated successfully!' : 'Article created successfully!'))
     closeModals()
     resetForm()
   } else {
-    toast.error(result.error || 'Failed to save project')
+    toast.error(result.error || 'Failed to save article')
   }
 }
 
@@ -541,7 +496,7 @@ const uploadFile = async (file) => {
   const supabase = useNuxtApp().$supabase
   const fileExt = file.name.split('.').pop()
   const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
-  const filePath = `projects/${fileName}`
+  const filePath = `articles/${fileName}`
 
   const { data, error } = await supabase.storage
     .from('images')
@@ -588,23 +543,11 @@ const removeTag = (index) => {
   form.value.tags.splice(index, 1)
 }
 
-// Feature management
-const addFeature = () => {
-  if (newFeature.value.trim() && !form.value.features.includes(newFeature.value.trim())) {
-    form.value.features.push(newFeature.value.trim())
-    newFeature.value = ''
-  }
-}
-
-const removeFeature = (index) => {
-  form.value.features.splice(index, 1)
-}
-
 // Close modals
 const closeModals = () => {
   showCreateModal.value = false
   showEditModal.value = false
-  projectsStore.clearSelection()
+  articlesStore.clearSelection()
   resetForm()
 }
 
@@ -612,37 +555,32 @@ const closeModals = () => {
 const resetForm = () => {
   form.value = {
     title: '',
-    description: '',
-    overview: '',
+    slug: '',
+    excerpt: '',
+    content: '',
     thumbnail_url: '',
     banner_url: '',
     tags: [],
-    features: [],
-    year: '',
-    role: '',
-    duration: '',
-    demo_url: '',
-    github_url: '',
+    read_time: 5,
     category_id: null,
     featured: false,
-    published: true,
+    published: false,
   }
   thumbnailPreview.value = ''
   bannerPreview.value = ''
   newTag.value = ''
-  newFeature.value = ''
   if (thumbnailInput.value) thumbnailInput.value.value = ''
   if (bannerInput.value) bannerInput.value.value = ''
 }
 
 onMounted(async () => {
-  await loadProjects()
+  await loadArticles()
   await categoriesStore.fetchCategories()
 
   // Subscribe to real-time updates
-  subscription = projectsStore.subscribeToUpdates((payload) => {
-    console.log('Real-time project update received:', payload)
-    loadProjects()
+  subscription = articlesStore.subscribeToUpdates((payload) => {
+    console.log('Real-time article update received:', payload)
+    loadArticles()
   })
 })
 

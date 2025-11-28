@@ -114,6 +114,16 @@ const regularMenuItems = [
         icon: 'i-heroicons-folder'
     },
     {
+        name: 'Categories',
+        path: '/xms/categories',
+        icon: 'i-heroicons-tag'
+    },
+    {
+        name: 'Articles',
+        path: '/xms/articles',
+        icon: 'i-heroicons-document-text'
+    },
+    {
         name: 'Contact Messages',
         path: '/xms/contact',
         icon: 'i-heroicons-envelope'

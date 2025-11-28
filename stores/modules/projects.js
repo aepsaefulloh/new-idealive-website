@@ -35,7 +35,15 @@ export const useProjectsStore = defineStore('projects', {
 
         const { data, error: fetchError } = await supabase
           .from('projects')
-          .select('*')
+          .select(`
+            *,
+            categories (
+              id,
+              name,
+              slug,
+              type
+            )
+          `)
           .order('created_at', { ascending: false })
 
         if (fetchError) {
@@ -87,6 +95,7 @@ export const useProjectsStore = defineStore('projects', {
             duration: payload.duration,
             demo_url: payload.demo_url,
             github_url: payload.github_url,
+            category_id: payload.category_id,
             featured: payload.featured || false,
             published: payload.published !== undefined ? payload.published : true,
           }])

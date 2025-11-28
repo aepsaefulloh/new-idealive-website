@@ -18,7 +18,6 @@ export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event)
 
-    // Validate required fields
     const { name, email, subject, message, recaptcha_token } = body
 
     if (!name || !email || !subject || !message || !recaptcha_token) {
@@ -28,7 +27,6 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Verify reCAPTCHA token
     const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY
 
     if (!recaptchaSecret) {
@@ -58,10 +56,8 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Check reCAPTCHA score (v3)
     const score = verificationResult.score || 0
-    const isHuman = score >= 0.5 // Adjust threshold as needed
-
+    const isHuman = score >= 0.5 
     if (!isHuman) {
       throw createError({
         statusCode: 400,
@@ -69,7 +65,6 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Insert message to database
     const { data, error } = await supabase
       .from('contact_messages')
       .insert([{
@@ -102,7 +97,7 @@ export default defineEventHandler(async (event) => {
     console.error('Contact API error:', error)
 
     if (error && typeof error === 'object' && 'statusCode' in error) {
-      throw error // Re-throw createError instances
+      throw error
     }
 
     throw createError({

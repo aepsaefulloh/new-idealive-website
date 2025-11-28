@@ -19,25 +19,26 @@ export default defineEventHandler(async (event: H3Event) => {
   })
 
   try {
-    const { data, error } = await supabase
-      .from('projects')
-      .select(`
-        *,
-        categories (
-          id,
-          name,
-          slug,
-          type
-        )
-      `)
-      .eq('published', true)
-      .order('created_at', { ascending: false })
+    const query = getQuery(event)
+    const type = query.type as string
+
+    let queryBuilder = supabase
+      .from('categories')
+      .select('*')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+
+    if (type && ['project', 'article', 'general'].includes(type)) {
+      queryBuilder = queryBuilder.eq('type', type)
+    }
+
+    const { data, error } = await queryBuilder
 
     if (error) {
-      console.error('[Public Projects API] Error:', error)
+      console.error('[Public Categories API] Error:', error)
       return {
         success: false,
-        error: error.message || 'Failed to fetch projects'
+        error: error.message || 'Failed to fetch categories'
       }
     }
 
@@ -46,10 +47,10 @@ export default defineEventHandler(async (event: H3Event) => {
       data: data || []
     }
   } catch (err: any) {
-    console.error('[Public Projects API] Exception:', err)
+    console.error('[Public Categories API] Exception:', err)
     return {
       success: false,
-      error: err?.message || 'Failed to load projects'
+      error: err?.message || 'Failed to load categories'
     }
   }
 })

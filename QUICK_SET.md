@@ -109,6 +109,15 @@ supabase migration new nama_migration
 supabase db push
 ```
 
+#### Jika Ada Migration Baru Setelah Setup
+```bash
+# Cek status migration
+supabase migration list
+
+# Push migration baru
+supabase db push
+```
+
 #### Reset Database
 ```bash
 supabase db reset
@@ -150,6 +159,31 @@ supabase start --ignore-health-check
 ```bash
 # Gunakan port berbeda
 supabase start --port 54322
+```
+
+### Jika Migration Sudah Pernah Dijalankan (Remote Database Up to Date)
+Ketika `npx supabase db push` menampilkan "Remote database is up to date" tapi kamu ingin menjalankan migration ulang:
+
+```bash
+# 1. Repair migration yang ingin dijalankan ulang
+npx supabase migration repair [timestamp] --status reverted
+
+# Contoh: Repair migration categories
+npx supabase migration repair 20251128000000 --status reverted
+
+# 2. Push ulang migration
+npx supabase db push
+```
+
+### Jika Perlu Reset Semua Migration
+```bash
+# Repair semua migration menjadi reverted
+npx supabase migration repair [timestamp1] --status reverted
+npx supabase migration repair [timestamp2] --status reverted
+# ... dan seterusnya
+
+# Kemudian push ulang semua
+npx supabase db push
 ```
 
 ### Reset semua

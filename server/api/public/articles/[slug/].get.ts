@@ -14,13 +14,23 @@ export default defineEventHandler(async (event: H3Event) => {
     }
   }
 
+  // Service role client (server-side only)
   const supabase = createClient(supabaseUrl, serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false }
   })
 
   try {
+    const slug = getRouterParam(event, 'slug')
+
+    if (!slug) {
+      return {
+        success: false,
+        error: 'Article slug is required'
+      }
+    }
+
     const { data, error } = await supabase
-      .from('projects')
+      .from('articles')
       .select(`
         *,
         categories (
@@ -30,26 +40,38 @@ export default defineEventHandler(async (event: H3Event) => {
           type
         )
       `)
+      .eq('slug', slug)
       .eq('published', true)
-      .order('created_at', { ascending: false })
+      .single()
 
     if (error) {
-      console.error('[Public Projects API] Error:', error)
+      console.error('[Public Article Detail API] Error:', error)
+      if (error.code === 'PGRST116') {
+        return {
+          success: false,
+          error: 'Article not found'
+        }
+      }
       return {
         success: false,
-        error: error.message || 'Failed to fetch projects'
+        error: error.message || 'Failed to fetch article'
       }
+    }
+
+    // Increment view count
+    if (data && data.id) {
+      await supabase.rpc('increment_article_views', { article_id: data.id })
     }
 
     return {
       success: true,
-      data: data || []
+      data: data
     }
   } catch (err: any) {
-    console.error('[Public Projects API] Exception:', err)
+    console.error('[Public Article Detail API] Exception:', err)
     return {
       success: false,
-      error: err?.message || 'Failed to load projects'
+      error: err?.message || 'Failed to load article'
     }
   }
 })
