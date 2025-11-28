@@ -63,16 +63,16 @@
           </div>
 
           <!-- Submit Button -->
-          <button
+          <Button
             type="submit"
+            :loading="authStore.isLoading"
             :disabled="authStore.isLoading"
-            class="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+            block
+            variant="primary"
+            class="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 border-none"
           >
-            <span v-if="authStore.isLoading" class="inline-block">
-              <i class="animate-spin mr-2">⏳</i>Logging in...
-            </span>
-            <span v-else>Login</span>
-          </button>
+            Login
+          </Button>
         </form>
       </div>
 
@@ -88,6 +88,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/modules/auth'
+import Button from '@/components/dashboard/ui/Button.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

@@ -27,9 +27,9 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
             <textarea v-model="heroSection.description" rows="3" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 resize-none" placeholder="Enter hero description"></textarea>
           </div>
-          <button @click="saveHeroSection" class="w-full px-4 py-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50" :disabled="isLoading">
-            {{ isLoading ? 'Saving...' : 'Save Hero Section' }}
-          </button>
+          <Button @click="saveHeroSection" :loading="isLoading" variant="primary" block>
+            Save Hero Section
+          </Button>
         </div>
       </div>
 
@@ -44,9 +44,9 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bio</label>
             <textarea v-model="aboutSection.bio" rows="4" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 resize-none" placeholder="Enter your bio"></textarea>
           </div>
-          <button @click="saveAboutSection" class="w-full px-4 py-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50" :disabled="isLoading">
-            {{ isLoading ? 'Saving...' : 'Save About Section' }}
-          </button>
+          <Button @click="saveAboutSection" :loading="isLoading" variant="primary" block>
+            Save About Section
+          </Button>
         </div>
       </div>
     </div>
@@ -81,17 +81,15 @@
             </select>
           </div>
         </div>
-        <button @click="addSkill" class="mt-4 px-4 py-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50" :disabled="isLoading">
-          {{ isLoading ? 'Adding...' : 'Add Skill' }}
-        </button>
+        <Button @click="addSkill" :loading="isLoading" variant="primary" class="mt-4">
+          Add Skill
+        </Button>
       </div>
 
       <!-- Skills List -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div v-for="skill in skills" :key="skill.id" class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 relative group">
-          <button @click="deleteSkill(skill.id)" class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs">
-            <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
-          </button>
+          <Button @click="deleteSkill(skill.id)" variant="danger" size="xs" icon="i-heroicons-x-mark" rounded class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity" />
           <p class="font-semibold text-gray-900 dark:text-white">{{ skill.name }}</p>
           <p class="text-sm text-gray-600 dark:text-gray-400">{{ skill.level }}%</p>
           <div class="mt-2 w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
@@ -263,6 +261,7 @@ import { useAuthStore } from '~/stores/modules/auth'
 import { useContactStore } from '~/stores/modules/contact'
 import { useProjectsStore } from '~/stores/modules/projects'
 import { useCmsStore } from '~/stores/modules/cms'
+import Button from '@/components/dashboard/ui/Button.vue'
 
 definePageMeta({
   layout: 'dashboard',

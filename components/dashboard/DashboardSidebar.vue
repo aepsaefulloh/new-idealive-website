@@ -1,63 +1,74 @@
 <template>
     <div :class="[
-        'fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out',
+        'fixed inset-y-0 left-0 z-50 w-64 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-r border-gray-200 dark:border-gray-800 transform transition-transform duration-300 ease-in-out',
         isCollapsed ? '-translate-x-full' : 'translate-x-0'
     ]">
-        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 class="text-xl font-bold text-gray-800 dark:text-white">Dashboard</h2>
+        <div class="flex items-center justify-center h-20 border-b border-gray-100 dark:border-gray-800">
+            <h2 class="text-2xl font-bold font-syne bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">XMS Admin</h2>
         </div>
 
-        <nav class="mt-4">
-            <div class="px-4 space-y-2">
-                <!-- Regular menu items -->
-                <NuxtLink v-for="item in regularMenuItems" :key="item.name" :to="item.path"
-                    class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
-                    active-class="bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400">
-                    <UIcon :name="item.icon" class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" />
-                    <span>{{ item.name }}</span>
-                </NuxtLink>
+        <nav class="mt-6 px-4 space-y-1.5">
+            <!-- Regular menu items -->
+            <NuxtLink v-for="item in regularMenuItems" :key="item.name" :to="item.path"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group relative overflow-hidden"
+                :class="[
+                    $route.path === item.path 
+                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200'
+                ]"
+                active-class="!bg-blue-50 !dark:bg-blue-900/20 !text-blue-600 !dark:text-blue-400">
+                
+                <UIcon :name="item.icon" class="w-5 h-5 mr-3 transition-transform duration-200 group-hover:scale-110" 
+                    :class="$route.path === item.path ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300'"
+                />
+                <span class="relative z-10">{{ item.name }}</span>
+            </NuxtLink>
 
-                <!-- Dropdown menu items -->
-                <div v-for="dropdown in dropdownMenuItems" :key="dropdown.name" class="relative">
-                    <button @click="toggleDropdown(dropdown.name)"
-                        class="w-full flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
-                        :class="{ 'bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400': isDropdownOpen(dropdown.name) }">
-                        <UIcon :name="dropdown.icon" class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" />
-                        <span class="flex-1 text-left">{{ dropdown.name }}</span>
-                        <UIcon
-                            :name="isDropdownOpen(dropdown.name) ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'"
-                            class="w-4 h-4 transition-transform duration-200" />
-                    </button>
+            <!-- Dropdown menu items -->
+            <div v-for="dropdown in dropdownMenuItems" :key="dropdown.name" class="relative">
+                <button @click="toggleDropdown(dropdown.name)"
+                    class="w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group"
+                    :class="[
+                        isDropdownOpen(dropdown.name) 
+                        ? 'bg-gray-50 dark:bg-gray-800/50 text-gray-900 dark:text-white' 
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200'
+                    ]">
+                    <UIcon :name="dropdown.icon" class="w-5 h-5 mr-3 transition-transform duration-200 group-hover:scale-110" 
+                        :class="isDropdownOpen(dropdown.name) ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'"
+                    />
+                    <span class="flex-1 text-left">{{ dropdown.name }}</span>
+                    <UIcon
+                        :name="isDropdownOpen(dropdown.name) ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'"
+                        class="w-4 h-4 text-gray-400 transition-transform duration-200" />
+                </button>
 
-                    <!-- Submenu -->
-                    <Transition enter-active-class="transition ease-out duration-200"
-                        enter-from-class="transform opacity-0 scale-95 max-h-0"
-                        enter-to-class="transform opacity-100 scale-100 max-h-96"
-                        leave-active-class="transition ease-in duration-150"
-                        leave-from-class="transform opacity-100 scale-100 max-h-96"
-                        leave-to-class="transform opacity-0 scale-95 max-h-0">
-                        <div v-if="isDropdownOpen(dropdown.name)" class="ml-6 mt-1 space-y-1 overflow-hidden">
-                            <NuxtLink v-for="subItem in dropdown.children" :key="subItem.name" :to="subItem.path"
-                                class="flex items-center px-4 py-2 text-sm text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
-                                active-class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
-                                <UIcon :name="subItem.icon" class="w-4 h-4 mr-3" />
-                                <span>{{ subItem.name }}</span>
-                            </NuxtLink>
-                        </div>
-                    </Transition>
+                <!-- Submenu -->
+                <div v-show="isDropdownOpen(dropdown.name)" class="mt-1 space-y-1 px-2">
+                    <NuxtLink v-for="subItem in dropdown.children" :key="subItem.name" :to="subItem.path"
+                        class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors pl-11"
+                        :class="[
+                            $route.path === subItem.path
+                            ? 'text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/10'
+                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                        ]">
+                        <span>{{ subItem.name }}</span>
+                    </NuxtLink>
                 </div>
             </div>
         </nav>
     </div>
+    
+    <!-- Mobile Overlay -->
+    <div v-if="!isCollapsed" @click="toggleSidebar" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-40 lg:hidden"></div>
 
-    <!-- Floating toggle button when collapsed -->
-    <button v-if="isCollapsed" @click="toggleSidebar"
-        class="fixed top-4 left-4 z-50 p-2 bg-white dark:bg-gray-800 shadow-lg rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors lg:hidden">
-        <UIcon name="i-heroicons-bars-3" class="w-5 h-5 text-gray-600 dark:text-gray-300" />
-    </button>
+    <!-- Floating toggle button when collapsed (Mobile only) -->
+    <Button v-if="isCollapsed" @click="toggleSidebar" variant="secondary" size="sm" icon="i-heroicons-bars-3" class="fixed top-4 left-4 z-50 shadow-lg lg:hidden" />
 </template>
 
 <script setup>
+import Button from '~/components/dashboard/ui/Button.vue'
+import { computed, ref } from 'vue'
+
 const props = defineProps({
     isCollapsed: {
         type: Boolean,

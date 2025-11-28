@@ -34,16 +34,12 @@
 
     <!-- Action Buttons -->
     <div class="mb-6 flex gap-4">
-      <button @click="showCreateModal = true"
-        class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2">
-        <UIcon name="i-heroicons-plus" class="w-5 h-5" />
+      <Button @click="showCreateModal = true" variant="primary" icon="i-heroicons-plus">
         Add New Article
-      </button>
-      <button @click="refreshArticles" :disabled="articlesStore.isLoading"
-        class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2">
-        <UIcon name="i-heroicons-arrow-path" class="w-5 h-5" />
+      </Button>
+      <Button @click="refreshArticles" :loading="articlesStore.isLoading" variant="outline" icon="i-heroicons-arrow-path">
         Refresh
-      </button>
+      </Button>
     </div>
 
     <!-- Loading State -->
@@ -60,10 +56,9 @@
       <div class="text-5xl mb-4">📝</div>
       <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Articles Yet</h3>
       <p class="text-gray-600 dark:text-gray-400 mb-6">Start writing your first article to share your knowledge</p>
-      <button @click="showCreateModal = true"
-        class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
+      <Button @click="showCreateModal = true" variant="primary" size="lg">
         Write Your First Article
-      </button>
+      </Button>
     </div>
 
     <!-- Articles Grid -->
@@ -101,7 +96,8 @@
 
           <!-- Category -->
           <div v-if="article.categories" class="mb-4">
-            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
+            <span
+              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
               {{ article.categories.name }}
             </span>
           </div>
@@ -115,29 +111,15 @@
           <!-- Actions -->
           <div class="flex items-center justify-between">
             <div class="flex gap-2">
-              <button @click="editArticle(article)"
-                class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                title="Edit Article">
-                <UIcon name="i-heroicons-pencil" class="w-4 h-4" />
-              </button>
-              <button @click="toggleFeatured(article.id)"
-                :class="article.featured ? 'text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'"
-                class="p-2 hover:bg-opacity-20 rounded-lg transition-colors"
-                :title="article.featured ? 'Remove from featured' : 'Add to featured'">
-                <UIcon name="i-heroicons-star" class="w-4 h-4" />
-              </button>
-              <button @click="togglePublished(article.id)"
-                :class="article.published ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'"
-                class="p-2 hover:bg-opacity-20 rounded-lg transition-colors"
-                :title="article.published ? 'Unpublish' : 'Publish'">
-                <UIcon name="i-heroicons-eye" class="w-4 h-4" />
-              </button>
+              <Button @click="editArticle(article)" variant="ghost" size="sm" icon="i-heroicons-pencil" class="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20" title="Edit Article" />
+              <Button @click="toggleFeatured(article.id)" variant="ghost" size="sm" icon="i-heroicons-star" 
+                :class="article.featured ? 'text-yellow-600 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'"
+                :title="article.featured ? 'Remove from featured' : 'Add to featured'" />
+              <Button @click="togglePublished(article.id)" variant="ghost" size="sm" icon="i-heroicons-eye"
+                :class="article.published ? 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'"
+                :title="article.published ? 'Unpublish' : 'Publish'" />
             </div>
-            <button @click="deleteArticle(article.id)"
-              class="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-              title="Delete Article">
-              <UIcon name="i-heroicons-trash" class="w-4 h-4" />
-            </button>
+            <Button @click="deleteArticle(article.id)" variant="ghost" size="sm" icon="i-heroicons-trash" class="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" title="Delete Article" />
           </div>
         </div>
       </div>
@@ -296,14 +278,12 @@
 
           <!-- Submit Buttons -->
           <div class="flex justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <button type="button" @click="closeModals"
-              class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
+            <Button type="button" @click="closeModals" variant="outline">
               Cancel
-            </button>
-            <button type="submit" :disabled="articlesStore.isLoading"
-              class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            </Button>
+            <Button type="submit" :loading="articlesStore.isLoading" variant="primary">
               {{ articlesStore.isLoading ? 'Saving...' : (showEditModal ? 'Update Article' : 'Create Article') }}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -317,6 +297,7 @@ import { toast } from 'vue3-toastify'
 import { useArticlesStore } from '@/stores/modules/articles'
 import { useCategoriesStore } from '@/stores/modules/categories'
 import TipTapEditor from '@/components/TipTapEditor.vue'
+import Button from '@/components/dashboard/ui/Button.vue'
 
 definePageMeta({
   layout: 'dashboard',

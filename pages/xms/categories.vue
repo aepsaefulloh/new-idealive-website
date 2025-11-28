@@ -34,16 +34,12 @@
 
     <!-- Action Buttons -->
     <div class="mb-6 flex gap-4">
-      <button @click="showCreateModal = true"
-        class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2">
-        <UIcon name="i-heroicons-plus" class="w-5 h-5" />
+      <Button @click="showCreateModal = true" variant="primary" icon="i-heroicons-plus">
         Add New Category
-      </button>
-      <button @click="refreshCategories" :disabled="categoriesStore.isLoading"
-        class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2">
-        <UIcon name="i-heroicons-arrow-path" class="w-5 h-5" />
+      </Button>
+      <Button @click="refreshCategories" :loading="categoriesStore.isLoading" variant="outline" icon="i-heroicons-arrow-path">
         Refresh
-      </button>
+      </Button>
     </div>
 
     <!-- Filter Tabs -->
@@ -86,10 +82,9 @@
       <div class="text-5xl mb-4">📂</div>
       <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Categories Yet</h3>
       <p class="text-gray-600 dark:text-gray-400 mb-6">Start organizing your content by adding your first category</p>
-      <button @click="showCreateModal = true"
-        class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
+      <Button @click="showCreateModal = true" variant="primary" size="lg">
         Add Your First Category
-      </button>
+      </Button>
     </div>
 
     <!-- Categories Grid -->
@@ -128,23 +123,12 @@
         <!-- Actions -->
         <div class="flex items-center justify-between">
           <div class="flex gap-2">
-            <button @click="editCategory(category)"
-              class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-              title="Edit Category">
-              <UIcon name="i-heroicons-pencil" class="w-4 h-4" />
-            </button>
-            <button @click="toggleActive(category.id)"
-              :class="category.is_active ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'"
-              class="p-2 hover:bg-opacity-20 rounded-lg transition-colors"
-              :title="category.is_active ? 'Deactivate' : 'Activate'">
-              <UIcon name="i-heroicons-eye" class="w-4 h-4" />
-            </button>
+            <Button @click="editCategory(category)" variant="ghost" size="sm" icon="i-heroicons-pencil" class="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20" title="Edit Category" />
+            <Button @click="toggleActive(category.id)" variant="ghost" size="sm" icon="i-heroicons-eye"
+              :class="category.is_active ? 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'"
+              :title="category.is_active ? 'Deactivate' : 'Activate'" />
           </div>
-          <button @click="deleteCategory(category.id)"
-            class="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-            title="Delete Category">
-            <UIcon name="i-heroicons-trash" class="w-4 h-4" />
-          </button>
+          <Button @click="deleteCategory(category.id)" variant="ghost" size="sm" icon="i-heroicons-trash" class="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" title="Delete Category" />
         </div>
       </div>
     </div>
@@ -243,14 +227,12 @@
 
           <!-- Submit Buttons -->
           <div class="flex justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <button type="button" @click="closeModals"
-              class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
+            <Button type="button" @click="closeModals" variant="outline">
               Cancel
-            </button>
-            <button type="submit" :disabled="categoriesStore.isLoading"
-              class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            </Button>
+            <Button type="submit" :loading="categoriesStore.isLoading" variant="primary">
               {{ categoriesStore.isLoading ? 'Saving...' : (showEditModal ? 'Update Category' : 'Create Category') }}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -262,6 +244,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { toast } from 'vue3-toastify'
 import { useCategoriesStore } from '@/stores/modules/categories'
+import Button from '@/components/dashboard/ui/Button.vue'
 
 definePageMeta({
   layout: 'dashboard',

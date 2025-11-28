@@ -1,18 +1,48 @@
 <template>
-  <div class="w-full">
+  <div class="space-y-8">
     <!-- Header -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 mb-6">
-      <div class="flex items-center justify-between">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white font-syne">Projects</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-1">Manage and organize your portfolio projects</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <Button @click="refreshProjects" :loading="projectsStore.isLoading" variant="outline" icon="i-heroicons-arrow-path">
+          <span class="hidden sm:inline">Refresh</span>
+        </Button>
+        <Button @click="showCreateModal = true" variant="primary" icon="i-heroicons-plus">
+          New Project
+        </Button>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Projects Management</h1>
-          <p class="text-gray-600 dark:text-gray-400 mt-2">Create, edit, and manage your portfolio projects</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Total Projects</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ projectsStore.totalProjects }}</p>
         </div>
-        <div class="text-right">
-          <div class="text-4xl font-bold text-gray-900 dark:text-white">{{ projectsStore.totalProjects }}</div>
-          <p class="text-gray-600 dark:text-gray-400">Total Projects</p>
-          <div class="mt-2 text-2xl font-bold text-gray-500 dark:text-gray-400">
-            {{ projectsStore.featuredProjects.length }} Featured
-          </div>
+        <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+          <UIcon name="i-heroicons-folder" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+        </div>
+      </div>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Published</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ projectsStore.projects.filter(p => p.published).length }}</p>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
+          <UIcon name="i-heroicons-check-circle" class="w-5 h-5 text-green-600 dark:text-green-400" />
+        </div>
+      </div>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Featured</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ projectsStore.featuredProjects.length }}</p>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center">
+          <UIcon name="i-heroicons-star" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
         </div>
       </div>
     </div>
@@ -20,119 +50,89 @@
     <!-- Success & Error Messages -->
     <Transition name="fade">
       <div v-if="successMessage"
-        class="mb-4 p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg">
-        <p class="text-green-800 dark:text-green-200">✓ {{ successMessage }}</p>
+        class="p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl flex items-center gap-3">
+        <UIcon name="i-heroicons-check-circle" class="w-5 h-5 text-green-600 dark:text-green-400" />
+        <p class="text-green-800 dark:text-green-200 text-sm font-medium">{{ successMessage }}</p>
       </div>
     </Transition>
 
     <Transition name="fade">
       <div v-if="errorMessage"
-        class="mb-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
-        <p class="text-red-800 dark:text-red-200">✗ {{ errorMessage }}</p>
+        class="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl flex items-center gap-3">
+        <UIcon name="i-heroicons-exclamation-circle" class="w-5 h-5 text-red-600 dark:text-red-400" />
+        <p class="text-red-800 dark:text-red-200 text-sm font-medium">{{ errorMessage }}</p>
       </div>
     </Transition>
 
-    <!-- Action Buttons -->
-    <div class="mb-6 flex gap-4">
-      <button @click="showCreateModal = true"
-        class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2">
-        <UIcon name="i-heroicons-plus" class="w-5 h-5" />
-        Add New Project
-      </button>
-      <button @click="refreshProjects" :disabled="projectsStore.isLoading"
-        class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2">
-        <UIcon name="i-heroicons-arrow-path" class="w-5 h-5" />
-        Refresh
-      </button>
-    </div>
-
     <!-- Loading State -->
-    <div v-if="projectsStore.isLoading && !projectsStore.projects.length" class="text-center py-12">
-      <div class="inline-block">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <p class="mt-4 text-gray-600 dark:text-gray-400">Loading projects...</p>
-      </div>
+    <div v-if="projectsStore.isLoading && !projectsStore.projects.length" class="flex flex-col items-center justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <p class="mt-4 text-gray-500 dark:text-gray-400 font-medium">Loading projects...</p>
     </div>
 
     <!-- Empty State -->
     <div v-else-if="!projectsStore.projects.length"
-      class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-12 text-center">
-      <div class="text-5xl mb-4">🚀</div>
-      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Projects Yet</h3>
-      <p class="text-gray-600 dark:text-gray-400 mb-6">Start building your portfolio by adding your first project</p>
-      <button @click="showCreateModal = true"
-        class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
+      class="bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-12 text-center">
+      <div class="w-20 h-20 bg-gray-50 dark:bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-6">
+        <UIcon name="i-heroicons-folder-plus" class="w-10 h-10 text-gray-400" />
+      </div>
+      <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">No Projects Yet</h3>
+      <p class="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">Start building your portfolio by adding your first project. Showcase your best work to the world.</p>
+      <Button @click="showCreateModal = true" variant="primary" size="lg">
         Add Your First Project
-      </button>
+      </Button>
     </div>
 
     <!-- Projects Grid -->
     <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div v-for="project in projectsStore.projects" :key="project.id"
-        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
+        class="group bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:border-blue-500/30 dark:hover:border-blue-500/30 transition-all duration-300 flex flex-col h-full">
+        
         <!-- Project Image -->
-        <div
-          class="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 flex items-center justify-center relative overflow-hidden">
-          <div v-if="project.thumbnail_url" class="w-full h-full">
-            <img :src="project.thumbnail_url" :alt="project.title" class="w-full h-full object-cover" />
+        <div class="aspect-video bg-gray-100 dark:bg-gray-900 relative overflow-hidden">
+          <img v-if="project.thumbnail_url" :src="project.thumbnail_url" :alt="project.title" 
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          <div v-else class="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50 dark:bg-gray-800">
+            <UIcon name="i-heroicons-photo" class="w-12 h-12 opacity-20" />
           </div>
-          <div v-else class="text-6xl">
-            <img src="https://placehold.co/600x400?text=No+Image+Available" alt="No Image Available" />
+          
+          <!-- Overlay Actions -->
+          <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-sm">
+            <Button @click="editProject(project)" variant="secondary" size="sm" icon="i-heroicons-pencil-square" title="Edit" />
+            <Button @click="confirmDelete(project)" variant="danger" size="sm" icon="i-heroicons-trash" title="Delete" />
+            <Button v-if="project.demo_url" :to="project.demo_url" target="_blank" variant="secondary" size="sm" icon="i-heroicons-eye" title="View Demo" />
           </div>
+
           <!-- Status Badges -->
-          <div class="absolute top-3 left-3 flex gap-2">
-            <span v-if="project.featured" class="px-2 py-1 bg-yellow-500 text-white text-xs font-semibold rounded">
+          <div class="absolute top-3 left-3 flex flex-col gap-2">
+            <span v-if="project.featured" class="px-2.5 py-1 bg-yellow-500/90 backdrop-blur-md text-white text-xs font-bold rounded-lg shadow-sm">
               Featured
             </span>
-            <span v-if="!project.published" class="px-2 py-1 bg-gray-500 text-white text-xs font-semibold rounded">
+            <span v-if="!project.published" class="px-2.5 py-1 bg-gray-500/90 backdrop-blur-md text-white text-xs font-bold rounded-lg shadow-sm">
               Draft
             </span>
           </div>
         </div>
 
         <!-- Project Info -->
-        <div class="p-6">
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">{{ project.title }}</h3>
-          <div class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2"
+        <div class="p-5 flex-1 flex flex-col">
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ project.title }}</h3>
+            <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap mt-1">{{ formatDate(project.created_at) }}</span>
+          </div>
+          
+          <div class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2 flex-1"
             v-html="stripHtml(project.description)"></div>
 
           <!-- Tags -->
-          <div class="flex flex-wrap gap-1 mb-4">
-            <span v-for="tag in project.tags?.slice(0, 3)" :key="tag"
-              class="text-xs px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
-              {{ tag }}
+          <div class="flex flex-wrap gap-1.5 mt-auto">
+            <span v-for="tag in (project.tags || []).slice(0, 3)" :key="tag" 
+                class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs rounded-md font-medium">
+                {{ tag }}
             </span>
-            <span v-if="project.tags?.length > 3" class="text-xs px-2 py-1 text-gray-500">
-              +{{ project.tags.length - 3 }} more
+            <span v-if="(project.tags || []).length > 3" class="px-2 py-1 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs rounded-md font-medium">
+                +{{ (project.tags || []).length - 3 }}
             </span>
-          </div>
-
-          <!-- Actions -->
-          <div class="flex items-center justify-between">
-            <div class="flex gap-2">
-              <button @click="editProject(project)"
-                class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                title="Edit Project">
-                <UIcon name="i-heroicons-pencil" class="w-4 h-4" />
-              </button>
-              <button @click="toggleFeatured(project.id)"
-                :class="project.featured ? 'text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'"
-                class="p-2 hover:bg-opacity-20 rounded-lg transition-colors"
-                :title="project.featured ? 'Remove from featured' : 'Add to featured'">
-                <UIcon name="i-heroicons-star" class="w-4 h-4" />
-              </button>
-              <button @click="togglePublished(project.id)"
-                :class="project.published ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'"
-                class="p-2 hover:bg-opacity-20 rounded-lg transition-colors"
-                :title="project.published ? 'Unpublish' : 'Publish'">
-                <UIcon name="i-heroicons-eye" class="w-4 h-4" />
-              </button>
-            </div>
-            <button @click="deleteProject(project.id)"
-              class="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-              title="Delete Project">
-              <UIcon name="i-heroicons-trash" class="w-4 h-4" />
-            </button>
           </div>
         </div>
       </div>
@@ -140,15 +140,15 @@
 
     <!-- Create/Edit Modal -->
     <div v-if="showCreateModal || showEditModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" @click.self="closeModals">
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+      class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" @click.self="closeModals">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
           <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white font-syne">
               {{ showEditModal ? 'Edit Project' : 'Create New Project' }}
             </h2>
             <button @click="closeModals"
-              class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+              class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors">
               <UIcon name="i-heroicons-x-mark" class="w-6 h-6" />
             </button>
           </div>
@@ -162,7 +162,7 @@
                 Project Title *
               </label>
               <input v-model="form.title" type="text" required
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 placeholder="Enter project title" />
             </div>
             <div>
@@ -170,7 +170,7 @@
                 Category
               </label>
               <select v-model="form.category_id"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
                 <option value="">Select a category (optional)</option>
                 <option v-for="category in categoriesStore.projectCategories" :key="category.id" :value="category.id">
                   {{ category.name }}
@@ -206,7 +206,7 @@
                 Year
               </label>
               <input v-model="form.year" type="text"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 placeholder="2024" />
             </div>
             <div>
@@ -214,7 +214,7 @@
                 Your Role
               </label>
               <input v-model="form.role" type="text"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 placeholder="Full Stack Developer" />
             </div>
             <div>
@@ -222,7 +222,7 @@
                 Duration
               </label>
               <input v-model="form.duration" type="text"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 placeholder="3 months" />
             </div>
           </div>
@@ -234,7 +234,7 @@
                 Demo URL
               </label>
               <input v-model="form.demo_url" type="url"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 placeholder="https://demo.example.com" />
             </div>
             <div>
@@ -242,7 +242,7 @@
                 GitHub URL
               </label>
               <input v-model="form.github_url" type="url"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 placeholder="https://github.com/username/repo" />
             </div>
           </div>
@@ -255,11 +255,11 @@
               </label>
               <div class="space-y-2">
                 <input ref="thumbnailInput" type="file" accept="image/*" @change="handleThumbnailUpload"
-                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
-                <div v-if="thumbnailPreview" class="relative">
-                  <img :src="thumbnailPreview" alt="Thumbnail preview" class="w-full h-32 object-cover rounded-lg" />
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                <div v-if="thumbnailPreview" class="relative group">
+                  <img :src="thumbnailPreview" alt="Thumbnail preview" class="w-full h-32 object-cover rounded-xl border border-gray-200 dark:border-gray-700" />
                   <button @click="removeThumbnail"
-                    class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600">
+                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
                     <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
                   </button>
                 </div>
@@ -271,11 +271,11 @@
               </label>
               <div class="space-y-2">
                 <input ref="bannerInput" type="file" accept="image/*" @change="handleBannerUpload"
-                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
-                <div v-if="bannerPreview" class="relative">
-                  <img :src="bannerPreview" alt="Banner preview" class="w-full h-32 object-cover rounded-lg" />
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                <div v-if="bannerPreview" class="relative group">
+                  <img :src="bannerPreview" alt="Banner preview" class="w-full h-32 object-cover rounded-xl border border-gray-200 dark:border-gray-700" />
                   <button @click="removeBanner"
-                    class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600">
+                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
                     <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
                   </button>
                 </div>
@@ -288,17 +288,17 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Technologies/Tags
             </label>
-            <div class="flex flex-wrap gap-2 mb-2">
+            <div class="flex flex-wrap gap-2 mb-3">
               <span v-for="(tag, index) in form.tags" :key="index"
-                class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-sm">
+                class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium">
                 {{ tag }}
-                <button @click="removeTag(index)" class="hover:text-red-500">
+                <button @click="removeTag(index)" class="hover:text-red-500 transition-colors">
                   <UIcon name="i-heroicons-x-mark" class="w-3 h-3" />
                 </button>
               </span>
             </div>
             <input v-model="newTag" @keyup.enter="addTag" type="text"
-              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+              class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="Add technology (press Enter)" />
           </div>
 
@@ -307,44 +307,42 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Key Features
             </label>
-            <div class="space-y-2 mb-2">
+            <div class="space-y-2 mb-3">
               <div v-for="(feature, index) in form.features" :key="index"
-                class="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <span class="flex-1 text-gray-900 dark:text-white">{{ feature }}</span>
-                <button @click="removeFeature(index)" class="text-red-500 hover:text-red-700">
-                  <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
+                class="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-100 dark:border-gray-700">
+                <span class="flex-1 text-gray-900 dark:text-white text-sm">{{ feature }}</span>
+                <button @click="removeFeature(index)" class="text-gray-400 hover:text-red-500 transition-colors">
+                  <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
                 </button>
               </div>
             </div>
             <input v-model="newFeature" @keyup.enter="addFeature" type="text"
-              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+              class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="Add feature (press Enter)" />
           </div>
 
           <!-- Settings -->
-          <div class="flex items-center gap-6">
-            <label class="flex items-center gap-2">
+          <div class="flex items-center gap-6 p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-100 dark:border-gray-700">
+            <label class="flex items-center gap-3 cursor-pointer">
               <input v-model="form.featured" type="checkbox"
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" />
+                class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" />
               <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Featured Project</span>
             </label>
-            <label class="flex items-center gap-2">
+            <label class="flex items-center gap-3 cursor-pointer">
               <input v-model="form.published" type="checkbox"
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" />
+                class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" />
               <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Published</span>
             </label>
           </div>
 
           <!-- Submit Buttons -->
           <div class="flex justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <button type="button" @click="closeModals"
-              class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
+            <Button type="button" @click="closeModals" variant="outline">
               Cancel
-            </button>
-            <button type="submit" :disabled="projectsStore.isLoading"
-              class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            </Button>
+            <Button type="submit" :loading="projectsStore.isLoading" variant="primary">
               {{ projectsStore.isLoading ? 'Saving...' : (showEditModal ? 'Update Project' : 'Create Project') }}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -358,6 +356,7 @@ import { toast } from 'vue3-toastify'
 import { useProjectsStore } from '@/stores/modules/projects'
 import { useCategoriesStore } from '@/stores/modules/categories'
 import TipTapEditor from '@/components/TipTapEditor.vue'
+import Button from '@/components/dashboard/ui/Button.vue'
 
 definePageMeta({
   layout: 'dashboard',
@@ -411,6 +410,16 @@ const stripHtml = (html) => {
   return tmp.textContent || tmp.innerText || ''
 }
 
+// Format date helper
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
+}
+
 // Load projects on mount
 const loadProjects = async () => {
   await projectsStore.fetchProjects()
@@ -446,16 +455,16 @@ const editProject = (project) => {
   showEditModal.value = true
 }
 
-// Delete project
-const deleteProject = async (id) => {
-  if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-    const result = await projectsStore.deleteProject(id)
-    if (result.success) {
-      toast.success('Project deleted successfully!')
-    } else {
-      toast.error(result.error || 'Failed to delete project')
+// Confirm Delete
+const confirmDelete = async (project) => {
+    if (confirm(`Are you sure you want to delete "${project.title}"? This action cannot be undone.`)) {
+        const result = await projectsStore.deleteProject(project.id)
+        if (result.success) {
+            toast.success('Project deleted successfully!')
+        } else {
+            toast.error(result.error || 'Failed to delete project')
+        }
     }
-  }
 }
 
 // Toggle featured

@@ -96,37 +96,42 @@
 
           <!-- Actions -->
           <div class="flex items-center gap-3">
-            <button
+            <Button
               v-if="!message.read"
               @click="handleMarkAsRead(message.id)"
-              :disabled="contactStore.isLoading"
-              class="px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              :loading="contactStore.isLoading"
+              variant="success"
+              size="sm"
             >
               ✓ Mark as Read
-            </button>
-            <button
+            </Button>
+            <Button
               v-else
               @click="handleMarkAsUnread(message.id)"
-              :disabled="contactStore.isLoading"
-              class="px-4 py-2 bg-gray-600 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              :loading="contactStore.isLoading"
+              variant="secondary"
+              size="sm"
             >
               ↻ Mark as Unread
-            </button>
+            </Button>
 
-            <a
-              :href="`mailto:${message.email}`"
-              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors text-sm"
+            <Button
+              :to="`mailto:${message.email}`"
+              variant="primary"
+              size="sm"
             >
               📧 Reply
-            </a>
+            </Button>
 
-            <button
+            <Button
               @click="handleDelete(message.id)"
-              :disabled="contactStore.isLoading"
-              class="ml-auto px-4 py-2 bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              :loading="contactStore.isLoading"
+              variant="danger"
+              size="sm"
+              class="ml-auto"
             >
               🗑️ Delete
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -138,6 +143,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { toast } from 'vue3-toastify'
 import { useContactStore } from '@/stores/modules/contact'
+import Button from '@/components/dashboard/ui/Button.vue'
 
 definePageMeta({
   layout: 'dashboard',

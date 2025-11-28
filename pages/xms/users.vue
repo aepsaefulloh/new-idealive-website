@@ -8,11 +8,9 @@
       </div>
 
       <div>
-        <button @click="showAddUserModal = true"
-          class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
-          <UIcon name="i-heroicons-plus" class="w-5 h-5 mr-2" />
+        <Button @click="showAddUserModal = true" variant="primary" icon="i-heroicons-plus">
           Add New User
-        </button>
+        </Button>
       </div>
     </div>
 
@@ -31,10 +29,9 @@
       <UIcon name="i-heroicons-exclamation-triangle" class="w-12 h-12 text-red-500 mx-auto mb-4" />
       <p class="text-red-600 font-medium">Error loading users</p>
       <p class="text-gray-600 text-sm mt-1">{{ error }}</p>
-      <button @click="loadUsers"
-        class="mt-4 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
+      <Button @click="loadUsers" variant="secondary" class="mt-4">
         Try Again
-      </button>
+      </Button>
     </div>
 
     <!-- Users List -->
@@ -105,14 +102,8 @@
             <!-- Actions -->
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <div class="flex justify-end space-x-2">
-                <button @click="handleEditUser(user)"
-                  class="text-gray-600 hover:text-gray-900 transition-colors duration-200" title="Edit User">
-                  <UIcon name="i-heroicons-pencil" class="w-5 h-5" />
-                </button>
-                <button v-if="currentUser?.id !== user.id" @click="confirmDeleteUser(user)"
-                  class="text-red-600 hover:text-red-900 transition-colors duration-200" title="Delete User">
-                  <UIcon name="i-heroicons-trash" class="w-5 h-5" />
-                </button>
+                <Button @click="handleEditUser(user)" variant="ghost" size="sm" icon="i-heroicons-pencil" class="text-gray-600 hover:text-gray-900" title="Edit User" />
+                <Button v-if="currentUser?.id !== user.id" @click="confirmDeleteUser(user)" variant="ghost" size="sm" icon="i-heroicons-trash" class="text-red-600 hover:text-red-900" title="Delete User" />
               </div>
             </td>
           </tr>
@@ -125,11 +116,9 @@
       <UIcon name="i-heroicons-users" class="w-12 h-12 text-gray-400 mx-auto mb-4" />
       <h3 class="text-lg font-medium text-gray-900 mb-2">No users found</h3>
       <p class="text-gray-600 mb-4">Get started by adding your first CMS administrator.</p>
-      <button @click="showAddUserModal = true"
-        class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
-        <UIcon name="i-heroicons-plus" class="w-5 h-5 mr-2" />
+      <Button @click="showAddUserModal = true" variant="primary" icon="i-heroicons-plus">
         Add First User
-      </button>
+      </Button>
     </div>
   </div>
 
@@ -179,15 +168,12 @@
 
         <!-- Modal Footer -->
         <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-          <button @click="showAddUserModal = false"
-            class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 font-medium rounded-lg transition-colors duration-200">
+          <Button @click="showAddUserModal = false" variant="outline">
             Cancel
-          </button>
-          <button @click="handleAddUser" :disabled="addUserLoading"
-            class="px-4 py-2 bg-gray-600 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200">
-            <span v-if="addUserLoading">Creating...</span>
-            <span v-else>Add User</span>
-          </button>
+          </Button>
+          <Button @click="handleAddUser" :loading="addUserLoading" variant="primary">
+            Add User
+          </Button>
         </div>
       </div>
     </div>
@@ -241,15 +227,12 @@
 
         <!-- Modal Footer -->
         <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-          <button @click="showEditUserModal = false"
-            class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 font-medium rounded-lg transition-colors duration-200">
+          <Button @click="showEditUserModal = false" variant="outline">
             Cancel
-          </button>
-          <button @click="handleUpdateUser" :disabled="updateUserLoading"
-            class="px-4 py-2 bg-gray-600 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200">
-            <span v-if="updateUserLoading">Updating...</span>
-            <span v-else>Update User</span>
-          </button>
+          </Button>
+          <Button @click="handleUpdateUser" :loading="updateUserLoading" variant="primary">
+            Update User
+          </Button>
         </div>
       </div>
     </div>
@@ -283,15 +266,12 @@
 
         <!-- Modal Footer -->
         <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-          <button @click="showDeleteModal = false"
-            class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 font-medium rounded-lg transition-colors duration-200">
+          <Button @click="showDeleteModal = false" variant="outline">
             Cancel
-          </button>
-          <button @click="handleDeleteUser" :disabled="deleteUserLoading"
-            class="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200">
-            <span v-if="deleteUserLoading">Deleting...</span>
-            <span v-else>Delete User</span>
-          </button>
+          </Button>
+          <Button @click="handleDeleteUser" :loading="deleteUserLoading" variant="danger">
+            Delete User
+          </Button>
         </div>
       </div>
     </div>
@@ -300,14 +280,16 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useNuxtApp } from '#app'
 import { toast } from 'vue3-toastify'
 import { useAuthStore } from '@/stores/modules/auth'
-import DashboardSidebar from '@/components/dashboard/DashboardSidebar.vue'
-import DashboardNavbar from '@/components/dashboard/DashboardNavbar.vue'
+import Button from '@/components/dashboard/ui/Button.vue'
+
 definePageMeta({
   layout: 'dashboard',
   middleware: 'cms-auth'
 })
+
 const authStore = useAuthStore()
 
 // State
