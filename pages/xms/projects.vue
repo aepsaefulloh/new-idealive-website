@@ -197,6 +197,15 @@
                 </option>
               </select>
             </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Slug
+              </label>
+              <input v-model="form.slug" type="text" :readonly="!showEditModal"
+                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="auto-generated-from-title" />
+              <p class="text-xs text-gray-500 mt-1">URL-friendly identifier {{ showEditModal ? '(editable)' : '(auto-generated)' }}</p>
+            </div>
           </div>
 
           <!-- Description & Overview -->
@@ -348,10 +357,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 import { useAdminProjectsStore, useAdminCategoriesStore } from '@/stores'
-import { formatDate } from '@/utils'
+import { formatDate, slugify } from '@/utils'
 import TipTapEditor from '@/components/TipTapEditor.vue'
 import Button from '@/components/dashboard/ui/Button.vue'
 import TaggingSelector from '@/components/dashboard/ui/TaggingSelector.vue'
@@ -376,6 +385,7 @@ const showEditModal = ref(false)
 // Form data
 const form = ref({
   title: '',
+  slug: '',
   description: '',
   overview: '',
   thumbnail_url: '',
@@ -390,6 +400,13 @@ const form = ref({
   category_id: null,
   featured: false,
   published: true,
+})
+
+// Watch title to auto-generate slug for new projects
+watch(() => form.value.title, (newTitle) => {
+  if (newTitle && !showEditModal.value) {
+    form.value.slug = slugify(newTitle)
+  }
 })
 
 // File handling
@@ -423,6 +440,7 @@ const editProject = (project) => {
   projectsStore.selectProject(project)
   form.value = {
     title: project.title || '',
+    slug: project.slug || '',
     description: project.description || '',
     overview: project.overview || '',
     thumbnail_url: project.thumbnail_url || '',

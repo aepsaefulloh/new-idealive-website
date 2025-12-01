@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { slugify } from '@/utils'
 
 export const useAdminProjectsStore = defineStore('admin-projects', {
   state: () => ({
@@ -73,7 +74,7 @@ export const useAdminProjectsStore = defineStore('admin-projects', {
         }
 
         // Generate slug from title if not provided
-        const slug = payload.slug || payload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+        const slug = payload.slug || slugify(payload.title)
 
         const { data, error: insertError } = await supabase
           .from('projects')
