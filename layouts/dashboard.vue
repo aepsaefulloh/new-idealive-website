@@ -23,9 +23,17 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
+
 const isSidebarCollapsed = ref(false)
 
 const toggleSidebar = () => {
   isSidebarCollapsed.value = !isSidebarCollapsed.value
 }
+
+onMounted(() => {
+  if (process.client && window.innerWidth < 1024) {
+    isSidebarCollapsed.value = true
+  }
+})
 </script>

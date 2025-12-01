@@ -4,7 +4,9 @@
         isCollapsed ? '-translate-x-full' : 'translate-x-0'
     ]">
         <div class="flex items-center justify-center h-20 border-b border-gray-100 dark:border-gray-800">
-            <h2 class="text-2xl font-bold font-syne bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">XMS Admin</h2>
+            <h2 class="text-2xl font-bold font-syne bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <img src="/images/logo-idealive-blue.svg" alt="logo-idealive" />
+            </h2>
         </div>
 
         <nav class="mt-6 px-4 space-y-1.5">
