@@ -198,7 +198,6 @@ export const useArticlesStore = defineStore('articles', {
       }
 
       return await this.updateArticle(id, {
-        ...article,
         featured: !article.featured
       })
     },
@@ -211,7 +210,6 @@ export const useArticlesStore = defineStore('articles', {
 
       const now = new Date().toISOString()
       return await this.updateArticle(id, {
-        ...article,
         published: !article.published,
         published_at: !article.published ? now : null,
       })

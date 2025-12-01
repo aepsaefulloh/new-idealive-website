@@ -14,7 +14,6 @@
         <NuxtLink
           v-for="(item, index) in highlight"
           :key="index"
-          :to="`/work/${item.work.slug}`"
           :class="[
             index === 0 || index === 3 ? 'md:col-span-2' : '',
             getImageClass(index),
@@ -57,7 +56,7 @@ const workHeading = ref(null);
 const highlight = ref([
   {
     work: {
-      slug: 'project-1',
+      slug: 'work-1',
       cover: '/images/dummy1.webp',
       title: 'Project One',
       project_date: '2023'
@@ -65,7 +64,7 @@ const highlight = ref([
   },
   {
     work: {
-      slug: 'project-2',
+      slug: 'work-2',
       cover: '/images/dummy2.webp',
       title: 'Project Two',
       project_date: '2023'
@@ -73,7 +72,7 @@ const highlight = ref([
   },
   {
     work: {
-      slug: 'project-3',
+      slug: 'work-3',
       cover: '/images/dummy3.jpg',
       title: 'Project Three',
       project_date: '2023'
@@ -81,7 +80,7 @@ const highlight = ref([
   },
   {
     work: {
-      slug: 'project-4',
+      slug: 'work-4',
       cover: '/images/dummy4.jpg',
       title: 'Project Four',
       project_date: '2023'

@@ -118,7 +118,7 @@
         <div class="p-5 flex-1 flex flex-col">
           <div class="flex items-start justify-between gap-2 mb-2">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ project.title }}</h3>
-            <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap mt-1">{{ formatDate(project.created_at) }}</span>
+            <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap mt-1">{{ formatDate(project.created_at,'type1') }}</span>
           </div>
           
           <div class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2 flex-1"
@@ -353,8 +353,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { toast } from 'vue3-toastify'
-import { useProjectsStore } from '@/stores/modules/projects'
-import { useCategoriesStore } from '@/stores/modules/categories'
+import { useProjectsStore,useCategoriesStore } from '@/stores'
+import {formatDate} from '@/utils'
 import TipTapEditor from '@/components/TipTapEditor.vue'
 import Button from '@/components/dashboard/ui/Button.vue'
 
@@ -408,16 +408,6 @@ const stripHtml = (html) => {
   const tmp = document.createElement('DIV')
   tmp.innerHTML = html
   return tmp.textContent || tmp.innerText || ''
-}
-
-// Format date helper
-const formatDate = (dateString) => {
-  if (!dateString) return ''
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
 }
 
 // Load projects on mount

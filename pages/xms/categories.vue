@@ -87,49 +87,77 @@
       </Button>
     </div>
 
-    <!-- Categories Grid -->
-    <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="category in filteredCategories" :key="category.id"
-        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
-        <!-- Category Header -->
-        <div class="flex items-start justify-between mb-4">
-          <div class="flex-1">
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-1">{{ category.name }}</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">{{ category.slug }}</p>
-          </div>
-          <div class="flex gap-2">
-            <span :class="getTypeColor(category.type)"
-              class="px-2 py-1 text-xs font-semibold rounded-full">
-              {{ category.type }}
-            </span>
-            <span v-if="!category.is_active"
-              class="px-2 py-1 bg-gray-500 text-white text-xs font-semibold rounded-full">
-              Inactive
-            </span>
-          </div>
-        </div>
-
-        <!-- Category Description -->
-        <p v-if="category.description" class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
-          {{ category.description }}
-        </p>
-
-        <!-- Category Stats -->
-        <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
-          <span>Sort Order: {{ category.sort_order }}</span>
-          <span>{{ formatDate(category.created_at) }}</span>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex items-center justify-between">
-          <div class="flex gap-2">
-            <Button @click="editCategory(category)" variant="ghost" size="sm" icon="i-heroicons-pencil" class="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20" title="Edit Category" />
-            <Button @click="toggleActive(category.id)" variant="ghost" size="sm" icon="i-heroicons-eye"
-              :class="category.is_active ? 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'"
-              :title="category.is_active ? 'Deactivate' : 'Activate'" />
-          </div>
-          <Button @click="deleteCategory(category.id)" variant="ghost" size="sm" icon="i-heroicons-trash" class="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" title="Delete Category" />
-        </div>
+    <!-- Categories Table -->
+    <div v-else class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50 dark:bg-gray-700">
+            <tr>
+              <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Category
+              </th>
+              <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Type
+              </th>
+              <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Status
+              </th>
+              <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Sort Order
+              </th>
+              <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Created
+              </th>
+              <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tr v-for="category in filteredCategories" :key="category.id" class="hover:bg-gray-50 dark:hover:bg-gray-700">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div>
+                  <div class="text-sm font-medium text-gray-900 dark:text-white">{{ category.name }}</div>
+                  <div class="text-sm text-gray-500 dark:text-gray-400">{{ category.slug }}</div>
+                  <div v-if="category.description" class="text-xs text-gray-400 dark:text-gray-500 mt-1 line-clamp-1">
+                    {{ category.description }}
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span :class="getTypeColor(category.type)"
+                  class="px-2 py-1 text-xs font-semibold rounded-full">
+                  {{ category.type }}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span v-if="category.is_active"
+                  class="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 text-xs font-semibold rounded-full">
+                  Active
+                </span>
+                <span v-else
+                  class="px-2 py-1 bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300 text-xs font-semibold rounded-full">
+                  Inactive
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                {{ category.sort_order }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                {{ formatDate(category.created_at) }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <div class="flex justify-end gap-2">
+                  <Button @click="editCategory(category)" variant="ghost" size="sm" icon="i-heroicons-pencil" class="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20" title="Edit Category" />
+                  <Button @click="toggleActive(category.id)" variant="ghost" size="sm" icon="i-heroicons-eye"
+                    :class="category.is_active ? 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'"
+                    :title="category.is_active ? 'Deactivate' : 'Activate'" />
+                  <Button @click="deleteCategory(category.id)" variant="ghost" size="sm" icon="i-heroicons-trash" class="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" title="Delete Category" />
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 

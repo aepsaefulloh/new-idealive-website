@@ -21,10 +21,9 @@ export default defineEventHandler(async (event: H3Event) => {
 
   try {
     // Parallel fetches
-    const [heroRes, aboutRes, skillsRes, contactRes] = await Promise.all([
+    const [heroRes, aboutRes, contactRes] = await Promise.all([
       supabase.from('hero_section').select('*').single(),
       supabase.from('about_section').select('*').single(),
-      supabase.from('skills').select('*').order('category', { ascending: true }).order('name', { ascending: true }),
       supabase.from('contact_info').select('*').single()
     ])
 
@@ -37,8 +36,6 @@ export default defineEventHandler(async (event: H3Event) => {
     const about = !aboutRes.error && aboutRes.data ? {
       bio: aboutRes.data.bio
     } : null
-
-    const skills = !skillsRes.error && skillsRes.data ? skillsRes.data : []
 
     const contact = !contactRes.error && contactRes.data ? {
       email: contactRes.data.email || '',
@@ -57,7 +54,6 @@ export default defineEventHandler(async (event: H3Event) => {
       data: {
         hero,
         about,
-        skills,
         contact
       }
     }

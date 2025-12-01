@@ -163,10 +163,10 @@ const menuOpen = ref(false);
 
 const navItems = [
   { name: "Home", link: "/" },
-  { name: "About", link: "/about" },
-  { name: "Work", link: "/work" },
-  { name: "Career", link: "/career" },
-  { name: "Contact", link: "/contact" },
+  { name: "About", link: "about" },
+  { name: "Work", link: "work" },
+  { name: "Career", link: "career" },
+  { name: "Contact", link: "contact" },
 ];
 
 const specialPages = ['/about', '/career', '/contact', '/login'];

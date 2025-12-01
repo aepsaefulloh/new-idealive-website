@@ -14,9 +14,6 @@ export const useCmsStore = defineStore('cms', {
       bio: 'I am a passionate web developer with expertise in creating modern, responsive web applications.'
     },
 
-    // Skills
-    skills: [],
-
     // Contact Info
     contactInfo: {
       email: 'hello@example.com',
@@ -34,37 +31,22 @@ export const useCmsStore = defineStore('cms', {
     isLoading: false,
     heroLoading: false,
     aboutLoading: false,
-    skillsLoading: false,
     contactInfoLoading: false,
 
     // Error states
     error: '',
     heroError: '',
     aboutError: '',
-    skillsError: '',
     contactInfoError: '',
 
     // Success messages
     successMessage: '',
     heroSuccess: '',
     aboutSuccess: '',
-    skillsSuccess: '',
     contactInfoSuccess: '',
   }),
 
   getters: {
-    skillsByCategory: (state) => {
-      const categories = {}
-      state.skills.forEach(skill => {
-        if (!categories[skill.category]) {
-          categories[skill.category] = []
-        }
-        categories[skill.category].push(skill)
-      })
-      return categories
-    },
-
-    totalSkills: (state) => state.skills.length,
   },
 
   actions: {
@@ -230,146 +212,6 @@ export const useCmsStore = defineStore('cms', {
       }
     },
 
-    // Skills Actions
-    async fetchSkills() {
-      this.skillsLoading = true
-      this.skillsError = ''
-
-      try {
-        const supabase = this.getSupabase()
-
-        if (!supabase) {
-          throw new Error('Supabase not initialized')
-        }
-
-        const { data, error } = await supabase
-          .from('skills')
-          .select('*')
-          .order('category', { ascending: true })
-          .order('name', { ascending: true })
-
-        if (error) {
-          throw error
-        }
-
-        this.skills = data || []
-        return { success: true, data: this.skills }
-      } catch (err) {
-        this.skillsError = err.message || 'Failed to fetch skills'
-        return { success: false, error: this.skillsError }
-      } finally {
-        this.skillsLoading = false
-      }
-    },
-
-    async createSkill(skillData) {
-      this.skillsLoading = true
-      this.skillsError = ''
-      this.skillsSuccess = ''
-
-      try {
-        const supabase = this.getSupabase()
-
-        if (!supabase) {
-          throw new Error('Supabase not initialized')
-        }
-
-        const { data, error } = await supabase
-          .from('skills')
-          .insert([skillData])
-          .select()
-
-        if (error) {
-          throw error
-        }
-
-        if (data && data.length > 0) {
-          this.skills.push(data[0])
-          this.skillsSuccess = 'Skill added successfully!'
-          return { success: true, data: data[0] }
-        }
-
-        return { success: false, error: 'No data returned' }
-      } catch (err) {
-        this.skillsError = err.message || 'Failed to create skill'
-        return { success: false, error: this.skillsError }
-      } finally {
-        this.skillsLoading = false
-      }
-    },
-
-    async updateSkill(id, updates) {
-      this.skillsLoading = true
-      this.skillsError = ''
-      this.skillsSuccess = ''
-
-      try {
-        const supabase = this.getSupabase()
-
-        if (!supabase) {
-          throw new Error('Supabase not initialized')
-        }
-
-        const { data, error } = await supabase
-          .from('skills')
-          .update(updates)
-          .eq('id', id)
-          .select()
-
-        if (error) {
-          throw error
-        }
-
-        if (data && data.length > 0) {
-          const index = this.skills.findIndex(s => s.id === id)
-          if (index !== -1) {
-            this.skills[index] = data[0]
-          }
-          this.skillsSuccess = 'Skill updated successfully!'
-          return { success: true, data: data[0] }
-        }
-
-        return { success: false, error: 'No data returned' }
-      } catch (err) {
-        this.skillsError = err.message || 'Failed to update skill'
-        return { success: false, error: this.skillsError }
-      } finally {
-        this.skillsLoading = false
-      }
-    },
-
-    async deleteSkill(id) {
-      this.skillsLoading = true
-      this.skillsError = ''
-      this.skillsSuccess = ''
-
-      try {
-        const supabase = this.getSupabase()
-
-        if (!supabase) {
-          throw new Error('Supabase not initialized')
-        }
-
-        const { error } = await supabase
-          .from('skills')
-          .delete()
-          .eq('id', id)
-
-        if (error) {
-          throw error
-        }
-
-        this.skills = this.skills.filter(s => s.id !== id)
-        this.skillsSuccess = 'Skill deleted successfully!'
-        return { success: true }
-      } catch (err) {
-        this.skillsError = err.message || 'Failed to delete skill'
-        return { success: false, error: this.skillsError }
-      } finally {
-        this.skillsLoading = false
-      }
-    },
-
     // Contact Info Actions
     async fetchContactInfo() {
       this.contactInfoLoading = true
@@ -468,7 +310,6 @@ export const useCmsStore = defineStore('cms', {
       this.error = ''
       this.heroError = ''
       this.aboutError = ''
-      this.skillsError = ''
       this.contactInfoError = ''
     },
 
@@ -476,7 +317,6 @@ export const useCmsStore = defineStore('cms', {
       this.successMessage = ''
       this.heroSuccess = ''
       this.aboutSuccess = ''
-      this.skillsSuccess = ''
       this.contactInfoSuccess = ''
     },
 
@@ -489,7 +329,6 @@ export const useCmsStore = defineStore('cms', {
         await Promise.all([
           this.fetchHeroSection(),
           this.fetchAboutSection(),
-          this.fetchSkills(),
           this.fetchContactInfo()
         ])
 
@@ -521,9 +360,6 @@ export const useCmsStore = defineStore('cms', {
           }
           if (res.data.about) {
             this.aboutSection = { bio: res.data.about.bio }
-          }
-          if (Array.isArray(res.data.skills)) {
-            this.skills = res.data.skills
           }
           if (res.data.contact) {
             this.contactInfo = {

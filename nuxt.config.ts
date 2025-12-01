@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
+  ssr: false,
   devtools: { enabled: false },
   modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxt/image', '@nuxtjs/robots', '@nuxtjs/sitemap', '@nuxtjs/google-fonts'],
   googleFonts: {
@@ -43,7 +44,7 @@ export default defineNuxtConfig({
         { property: 'og:title', content: '' },
         { property: 'og:description', content: '' },
         { property: 'og:image', content: '/images/logo-idealive-blue.svg' },
-        { property: 'og:url', content: 'https://www.aepsaefulloh.my.id' },
+        { property: 'og:url', content: '' },
         { property: 'og:site_name', content: 'Idealive' },
 
         // Twitter
@@ -74,7 +75,7 @@ export default defineNuxtConfig({
         { rel: 'manifest', href: '/manifest.json' },
 
         // Canonical URL
-        { rel: 'canonical', href: '/' },
+        // { rel: 'canonical', href: 'https://www.aepsaefulloh.my.id/' },
       ],
     },
   },
@@ -102,7 +103,7 @@ export default defineNuxtConfig({
 
   // Image optimization
   image: {
-    domains: ['www.idealive.co.id', process.env.NUXT_PUBLIC_SUPABASE_URL?.replace('https://', '').replace('/','') || ''],
+    domains: ['http://localhost:3000','www.idealive.co.id', process.env.NUXT_PUBLIC_SUPABASE_URL?.replace('https://', '').replace('/','') || ''],
   },
 
   // Build optimization

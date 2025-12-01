@@ -7,11 +7,12 @@
 </template>
 
 <script setup>
+import { homeSeo } from '~/utils/seo/homepage.js'
+
 useHead({
-  title: 'Idealive - Dream It, Live It | Creative Strategist',
+  ...homeSeo,
   meta: [
-    { name: 'description', content: 'Discover Idealive, a creative agency dedicated to delivering innovative brand strategies and impactful marketing solutions.' },
-    { name: 'keywords', content: 'Idealive, creative agency, brand strategy, digital transformation, marketing solutions, innovative campaigns, audience engagement' },
+    ...homeSeo.meta,
     { property: 'og:image', content: '/images/og/og-home.png' }
   ]
 })
