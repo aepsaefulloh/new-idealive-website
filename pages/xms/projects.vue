@@ -34,7 +34,7 @@
         <div>
           <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Published</p>
           <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{projectsStore.projects.filter(p =>
-            p.published).length }}</p>
+            p.published).length}}</p>
         </div>
         <div class="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
           <UIcon name="i-heroicons-check-circle" class="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -135,7 +135,7 @@
               class="text-lg font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
               {{ project.title }}</h3>
             <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap mt-1">{{
-              formatDate(project.created_at,'type1') }}</span>
+              formatDate(project.created_at, 'type1') }}</span>
           </div>
 
           <div class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2 flex-1"
@@ -177,13 +177,24 @@
         <form @submit.prevent="handleSubmit" class="p-6 space-y-6">
           <!-- Basic Info -->
           <div class="grid md:grid-cols-1 gap-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Project Title *
-              </label>
-              <input v-model="form.title" type="text" required
-                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                placeholder="Enter project title" />
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Project Title *
+                </label>
+                <input v-model="form.title" type="text" required
+                  class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="Enter project title" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Slug
+                </label>
+                <input v-model="form.slug" type="text" :readonly="true"
+                  class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="auto-generated-from-title" />
+                <p class="text-xs text-gray-500 mt-1">URL-friendly (auto-generated)</p>
+              </div>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -197,15 +208,7 @@
                 </option>
               </select>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Slug
-              </label>
-              <input v-model="form.slug" type="text" :readonly="true"
-                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                placeholder="auto-generated-from-title" />
-              <p class="text-xs text-gray-500 mt-1">URL-friendly identifier (auto-generated)</p>
-            </div>
+
           </div>
 
           <!-- Description & Overview -->
