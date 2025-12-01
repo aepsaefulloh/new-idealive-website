@@ -201,10 +201,10 @@
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Slug
               </label>
-              <input v-model="form.slug" type="text" :readonly="!showEditModal"
+              <input v-model="form.slug" type="text" :readonly="true"
                 class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 placeholder="auto-generated-from-title" />
-              <p class="text-xs text-gray-500 mt-1">URL-friendly identifier {{ showEditModal ? '(editable)' : '(auto-generated)' }}</p>
+              <p class="text-xs text-gray-500 mt-1">URL-friendly identifier (auto-generated)</p>
             </div>
           </div>
 
