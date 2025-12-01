@@ -469,6 +469,7 @@ const editProject = (project) => {
 const regenerateSlug = () => {
   if (form.value.title) {
     form.value.slug = slugify(form.value.title)
+    toast.success('Slug regenerated from title')
   }
 }
 
