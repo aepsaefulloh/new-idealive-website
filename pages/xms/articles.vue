@@ -37,7 +37,8 @@
       <Button @click="showCreateModal = true" variant="primary" icon="i-heroicons-plus">
         Add New Article
       </Button>
-      <Button @click="refreshArticles" :loading="articlesStore.isLoading" variant="outline" icon="i-heroicons-arrow-path">
+      <Button @click="refreshArticles" :loading="articlesStore.isLoading" variant="outline"
+        icon="i-heroicons-arrow-path">
         Refresh
       </Button>
     </div>
@@ -105,21 +106,24 @@
           <!-- Meta Info -->
           <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
             <span>{{ article.read_time }} min read</span>
-            <span>{{ formatDate(article.created_at) }}</span>
+            <span>{{ formatDate(article.created_at, 'type1') }}</span>
           </div>
 
           <!-- Actions -->
           <div class="flex items-center justify-between">
             <div class="flex gap-2">
-              <Button @click="editArticle(article)" variant="ghost" size="sm" icon="i-heroicons-pencil" class="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20" title="Edit Article" />
-              <Button @click="toggleFeatured(article.id)" variant="ghost" size="sm" icon="i-heroicons-star" 
+              <Button @click="editArticle(article)" variant="ghost" size="sm" icon="i-heroicons-pencil"
+                class="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                title="Edit Article" />
+              <Button @click="toggleFeatured(article.id)" variant="ghost" size="sm" icon="i-heroicons-star"
                 :class="article.featured ? 'text-yellow-600 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'"
                 :title="article.featured ? 'Remove from featured' : 'Add to featured'" />
               <Button @click="togglePublished(article.id)" variant="ghost" size="sm" icon="i-heroicons-eye"
                 :class="article.published ? 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'"
                 :title="article.published ? 'Unpublish' : 'Publish'" />
             </div>
-            <Button @click="deleteArticle(article.id)" variant="ghost" size="sm" icon="i-heroicons-trash" class="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" title="Delete Article" />
+            <Button @click="deleteArticle(article.id)" variant="ghost" size="sm" icon="i-heroicons-trash"
+              class="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" title="Delete Article" />
           </div>
         </div>
       </div>
@@ -200,10 +204,10 @@
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Slug
               </label>
-              <input v-model="form.slug" type="text"
+              <input v-model="form.slug" type="text" :readonly="!showEditModal" disabled
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 placeholder="auto-generated-from-title" />
-              <p class="text-xs text-gray-500 mt-1">URL-friendly identifier</p>
+              <p class="text-xs text-gray-500 mt-1">URL-friendly identifier {{ showEditModal ? '(editable)' : '(auto-generated)' }}</p>
             </div>
           </div>
 
@@ -242,24 +246,9 @@
               </div>
             </div>
           </div>
-
-          <!-- Tags -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Tags
-            </label>
-            <div class="flex flex-wrap gap-2 mb-2">
-              <span v-for="(tag, index) in form.tags" :key="index"
-                class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full text-sm">
-                {{ tag }}
-                <button @click="removeTag(index)" class="hover:text-red-500">
-                  <UIcon name="i-heroicons-x-mark" class="w-3 h-3" />
-                </button>
-              </span>
-            </div>
-            <input v-model="newTag" @keyup.enter="addTag" type="text"
-              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-              placeholder="Add tag (press Enter)" />
+            <TaggingSelector v-model="form.tags" label="Key Tags"
+              placeholder="Describe a key feature, press Tab or Enter" :allow-duplicates="false" />
           </div>
 
           <!-- Settings -->
@@ -292,12 +281,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 import { useAdminArticlesStore } from '@/stores/modules/admin/articles'
 import { useAdminCategoriesStore } from '@/stores/modules/admin/categories'
+import { slugify, formatDate } from '@/utils'
 import TipTapEditor from '@/components/TipTapEditor.vue'
 import Button from '@/components/dashboard/ui/Button.vue'
+import TaggingSelector from '@/components/dashboard/ui/TaggingSelector.vue'
 
 definePageMeta({
   layout: 'dashboard',
@@ -331,6 +322,13 @@ const form = ref({
   published: false,
 })
 
+// Watch title to auto-generate slug for new articles
+watch(() => form.value.title, (newTitle) => {
+  if (newTitle && !showEditModal.value) {
+    form.value.slug = slugify(newTitle)
+  }
+})
+
 // File handling
 const thumbnailInput = ref(null)
 const bannerInput = ref(null)
@@ -344,11 +342,6 @@ const stripHtml = (html) => {
   const tmp = document.createElement('DIV')
   tmp.innerHTML = html
   return tmp.textContent || tmp.innerText || ''
-}
-
-// Format date
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString()
 }
 
 // Load articles on mount
@@ -510,18 +503,6 @@ const removeBanner = () => {
   if (bannerInput.value) {
     bannerInput.value.value = ''
   }
-}
-
-// Tag management
-const addTag = () => {
-  if (newTag.value.trim() && !form.value.tags.includes(newTag.value.trim())) {
-    form.value.tags.push(newTag.value.trim())
-    newTag.value = ''
-  }
-}
-
-const removeTag = (index) => {
-  form.value.tags.splice(index, 1)
 }
 
 // Close modals
