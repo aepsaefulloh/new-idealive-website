@@ -23,8 +23,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const isSidebarCollapsed = ref(false)
 
 const toggleSidebar = () => {
@@ -32,6 +34,12 @@ const toggleSidebar = () => {
 }
 
 onMounted(() => {
+  if (process.client && window.innerWidth < 1024) {
+    isSidebarCollapsed.value = true
+  }
+})
+
+watch(() => route.path, () => {
   if (process.client && window.innerWidth < 1024) {
     isSidebarCollapsed.value = true
   }
