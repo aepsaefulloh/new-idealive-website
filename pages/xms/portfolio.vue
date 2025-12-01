@@ -140,7 +140,6 @@
           class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow">
           <div class="flex items-start justify-between">
             <div class="flex items-center gap-3">
-              <span class="text-2xl">{{ project.icon || '🚀' }}</span>
               <div>
                 <h3 class="font-semibold text-gray-900 dark:text-white">{{ project.title }}</h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ project.description }}</p>
