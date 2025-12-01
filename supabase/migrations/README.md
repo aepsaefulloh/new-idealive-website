@@ -1,103 +1,89 @@
 # Database Migrations
 
-This directory contains Supabase database migration files for the portfolio CMS application.
+Supabase database migrations untuk portfolio CMS application.
 
-## Migration Files
+## 📁 Structure
 
-### 1. `20251117053532_core_tables.sql`
-**Purpose**: Core application tables
-**Tables Created**:
-- `users` - User profiles extending Supabase auth
-- `contact_messages` - Contact form submissions with reCAPTCHA
+```
+migrations/
+├── _reset.sql                        # ⚠️ Reset manual (tidak auto-run)
+├── 20251201000001_foundation.sql     # Core helper functions
+├── 20251201000002_auth_users.sql     # Users table
+├── 20251201000003_cms_hero.sql       # Hero section
+├── 20251201000004_cms_about.sql      # About section
+├── 20251201000005_cms_contact_info.sql # Contact info
+├── 20251201000006_categories.sql     # Master categories
+├── 20251201000007_projects.sql       # Portfolio projects
+├── 20251201000008_articles.sql       # Blog articles
+├── 20251201000009_contact_messages.sql # Contact form
+├── 20251201000010_storage.sql        # Storage bucket
+└── README.md
+```
 
-**Features**:
-- Row Level Security (RLS) enabled
-- Proper security policies for authenticated users
-- Sample contact messages for testing
-- Automatic timestamp updates
+## 🔄 Reset & Re-migrate
 
-### 2. `20251117053222_cms_content_tables.sql`
-**Purpose**: CMS content management tables
-**Tables Created**:
-- `projects` - Portfolio projects with file uploads
-- `hero_section` - Dynamic hero section content
-- `about_section` - Dynamic about me content
-- `skills` - Technical skills with proficiency levels
+Untuk reset database dan migration ulang:
 
-**Features**:
-- Full CRUD support for all CMS content
-- File upload support (thumbnail/banner for projects)
-- Row Level Security (RLS) enabled
-- Sample data for immediate use
-- Automatic timestamp updates
-- Performance indexes
+1. Buka **Supabase Dashboard** → **SQL Editor**
+2. Jalankan isi `_reset.sql` (⚠️ akan hapus semua data!)
+3. Repair migrations: `npx supabase migration repair --status reverted <timestamps>`
+4. Push ulang: `npx supabase db push`
 
-### 3. `20251117054501_storage_setup.sql`
-**Purpose**: Supabase Storage bucket configuration
-**Storage Created**:
-- `images` bucket - Public bucket for project images and assets
+## 🚀 Push Migrations
 
-**Features**:
-- Public bucket for easy image access
-- Authenticated upload permissions
-- Public read access for website display
-- Folder organization policies
-- Secure file management
-
-## How to Run Migrations
-
-### Option 1: Supabase Dashboard (Recommended)
-1. Open your Supabase project dashboard
-2. Go to **SQL Editor**
-3. Copy and paste the contents of each migration file
-4. Run them in order:
-   - First: `20251117053532_core_tables.sql`
-   - Second: `20251117053222_cms_content_tables.sql`
-   - Third: `20251117054501_storage_setup.sql`
-
-### Option 2: Supabase CLI (Local Development)
 ```bash
-# Apply all migrations
-npx supabase db reset --local
+# Cek status
+npx supabase migration list
 
-# Or apply specific migration
+# Push ke remote
+npx supabase db push
+```
+
+## 🔢 Execution Order
+
+| # | File | Description | Dependencies |
+|---|------|-------------|--------------|
+| 1 | `foundation` | Helper functions | - |
+| 2 | `auth_users` | Users table | 1 |
+| 3 | `cms_hero` | Hero section | 1 |
+| 4 | `cms_about` | About section | 1 |
+| 5 | `cms_contact_info` | Contact info | 1 |
+| 6 | `categories` | Categories | 1 |
+| 7 | `projects` | Projects | 1, 6 |
+| 8 | `articles` | Articles | 1, 6 |
+| 9 | `contact_messages` | Contact form | 1 |
+| 10 | `storage` | Storage bucket | - |
+
+## 🚀 How to Run
+
+### Supabase Dashboard
+1. Open SQL Editor
+2. Run migrations in order (001 → 010)
+
+### Supabase CLI
+```bash
+npx supabase db reset --local
 npx supabase migration up
 ```
 
-## Migration Structure
+## 📊 Tables
 
-Each migration follows a consistent structure:
+| Table | Public Read | Public Insert | Auth Required |
+|-------|-------------|---------------|---------------|
+| `users` | Own only | ❌ | ✅ |
+| `hero_section` | ✅ | ❌ | ✅ |
+| `about_section` | ✅ | ❌ | ✅ |
+| `contact_info` | ✅ | ❌ | ✅ |
+| `categories` | Active only | ❌ | ✅ |
+| `projects` | Published | ❌ | ✅ |
+| `articles` | Published | ❌ | ✅ |
+| `contact_messages` | ❌ | ✅ | ✅ |
 
-1. **Header** - Description and metadata
-2. **Tables Creation** - CREATE TABLE statements with comments
-3. **Indexes** - Performance optimization indexes
-4. **Row Level Security** - RLS enablement
-5. **Security Policies** - Access control policies
-6. **Sample Data** - Default/test data insertion
-7. **Triggers** - Automatic timestamp updates
+## 📦 Storage
 
-## Security Features
-
-- **Row Level Security (RLS)** enabled on all tables
-- **Authentication-based policies** for CMS content
-- **Public access** for contact form submissions
-- **Secure file uploads** through Supabase Storage
-
-## Tables Overview
-
-| Table | Purpose | Access Level |
-|-------|---------|--------------|
-| `users` | User profiles | Authenticated users only |
-| `contact_messages` | Contact form data | Public insert, authenticated read/update |
-| `projects` | Portfolio projects | Authenticated users only |
-| `hero_section` | Hero content | Authenticated users only |
-| `about_section` | About me content | Authenticated users only |
-| `skills` | Technical skills | Authenticated users only |
-
-## Storage Overview
-
-| Bucket | Purpose | Access Level | Public Access |
-|--------|---------|--------------|---------------|
+| Bucket | Public Read | Auth Upload |
+|--------|-------------|-------------|
+| `images` | ✅ | ✅ |
 | `images` | Project images, thumbnails, banners | Auth upload, Public read | Yes |
 
 ## Notes
