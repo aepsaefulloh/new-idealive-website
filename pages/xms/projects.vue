@@ -201,13 +201,9 @@
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Slug
               </label>
-              <div class="flex gap-2">
-                <input v-model="form.slug" type="text" :readonly="!showEditModal"
-                  class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="auto-generated-from-title" />
-                <Button @click="regenerateSlug" variant="outline" size="sm" icon="i-heroicons-arrow-path"
-                  title="Regenerate slug from title" :disabled="!form.title" />
-              </div>
+              <input v-model="form.slug" type="text" :readonly="!showEditModal"
+                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="auto-generated-from-title" />
               <p class="text-xs text-gray-500 mt-1">URL-friendly identifier {{ showEditModal ? '(editable)' : '(auto-generated)' }}</p>
             </div>
           </div>
@@ -406,10 +402,12 @@ const form = ref({
   published: true,
 })
 
-// Watch title to auto-generate slug for new projects
-watch(() => form.value.title, (newTitle) => {
-  if (newTitle && !showEditModal.value) {
-    form.value.slug = slugify(newTitle)
+watch(() => form.value.title, (newTitle, oldTitle) => {
+  if (newTitle && newTitle !== oldTitle) {
+    const newSlug = slugify(newTitle)
+    if (form.value.slug !== newSlug) {
+      form.value.slug = newSlug
+    }
   }
 })
 
@@ -463,14 +461,6 @@ const editProject = (project) => {
   thumbnailPreview.value = project.thumbnail_url || ''
   bannerPreview.value = project.banner_url || ''
   showEditModal.value = true
-}
-
-// Regenerate slug from current title
-const regenerateSlug = () => {
-  if (form.value.title) {
-    form.value.slug = slugify(form.value.title)
-    toast.success('Slug regenerated from title')
-  }
 }
 
 // Confirm Delete
