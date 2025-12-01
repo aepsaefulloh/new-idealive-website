@@ -271,7 +271,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { toast } from 'vue3-toastify'
-import { useCategoriesStore } from '@/stores/modules/categories'
+import { useAdminCategoriesStore } from '@/stores/modules/admin/categories'
 import Button from '@/components/dashboard/ui/Button.vue'
 
 definePageMeta({
@@ -279,7 +279,7 @@ definePageMeta({
   middleware: 'cms-auth'
 })
 
-const categoriesStore = useCategoriesStore()
+const categoriesStore = useAdminCategoriesStore()
 let subscription = null
 
 // Reactive variables for toast messages

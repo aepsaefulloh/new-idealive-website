@@ -6,12 +6,12 @@
 import { ref, onMounted, computed } from 'vue'
 import { useGsap } from '@/composables/useGsap'
 import { useContactStore } from '@/stores/modules/contact'
-import { useCmsStore } from '@/stores/modules/cms'
+import { usePublicCmsStore } from '@/stores/modules/public/cms'
 import { useReCaptcha } from 'vue-recaptcha-v3'
 
 const { animateFadeInUp } = useGsap()
 const contactStore = useContactStore()
-const cmsStore = useCmsStore()
+const cmsStore = usePublicCmsStore()
 const { executeRecaptcha, recaptchaLoaded } = useReCaptcha()
 
 useHead({

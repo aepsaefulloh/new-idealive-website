@@ -353,7 +353,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { toast } from 'vue3-toastify'
-import { useProjectsStore,useCategoriesStore } from '@/stores'
+import { useAdminProjectsStore, useAdminCategoriesStore } from '@/stores'
 import {formatDate} from '@/utils'
 import TipTapEditor from '@/components/TipTapEditor.vue'
 import Button from '@/components/dashboard/ui/Button.vue'
@@ -363,8 +363,8 @@ definePageMeta({
   middleware: 'cms-auth'
 })
 
-const projectsStore = useProjectsStore()
-const categoriesStore = useCategoriesStore()
+const projectsStore = useAdminProjectsStore()
+const categoriesStore = useAdminCategoriesStore()
 let subscription = null
 
 // Reactive variables for toast messages

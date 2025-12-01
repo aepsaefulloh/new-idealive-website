@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useArticlesStore = defineStore('articles', {
+export const useAdminArticlesStore = defineStore('admin-articles', {
   state: () => ({
     articles: [],
     isLoading: false,
@@ -72,7 +72,6 @@ export const useArticlesStore = defineStore('articles', {
           throw new Error('Supabase not initialized')
         }
 
-        // Generate slug from title if not provided
         const slug = payload.slug || payload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 
         const { data, error: insertError } = await supabase
@@ -231,7 +230,6 @@ export const useArticlesStore = defineStore('articles', {
       return this.articles.find(article => article.slug === slug)
     },
 
-    // Real-time subscription
     subscribeToUpdates(callback) {
       const supabase = this.getSupabase()
       if (!supabase) return null

@@ -144,7 +144,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useProjectsStore, useContactStore, useArticlesStore } from '@/stores'
+import { useAdminProjectsStore, useContactStore, useAdminArticlesStore } from '@/stores'
 import Button from '@/components/dashboard/ui/Button.vue'
 
 definePageMeta({
@@ -153,9 +153,9 @@ definePageMeta({
 })
 
 // Use stores
-const projectsStore = useProjectsStore()
+const projectsStore = useAdminProjectsStore()
 const contactStore = useContactStore()
-const articlesStore = useArticlesStore()
+const articlesStore = useAdminArticlesStore()
 
 // Computed stats
 const stats = computed(() => ({

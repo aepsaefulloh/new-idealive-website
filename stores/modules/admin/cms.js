@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useCmsStore = defineStore('cms', {
+export const useAdminCmsStore = defineStore('admin-cms', {
   state: () => ({
     // Hero Section
     heroSection: {

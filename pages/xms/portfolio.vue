@@ -223,7 +223,7 @@
 <script setup>
 import { onMounted, computed, ref } from 'vue'
 import { toast } from 'vue3-toastify'
-import { useSupabaseStore, useAuthStore, useContactStore, useProjectsStore, useCmsStore } from '@/stores'
+import { useSupabaseStore, useAuthStore, useContactStore, useAdminProjectsStore, useAdminCmsStore } from '@/stores'
 import Button from '@/components/dashboard/ui/Button.vue'
 
 definePageMeta({
@@ -235,8 +235,8 @@ definePageMeta({
 const supabaseStore = useSupabaseStore()
 const authStore = useAuthStore()
 const contactStore = useContactStore()
-const projectsStore = useProjectsStore()
-const cmsStore = useCmsStore()
+const projectsStore = useAdminProjectsStore()
+const cmsStore = useAdminCmsStore()
 
 // Reactive variables
 const isLoading = ref(false)

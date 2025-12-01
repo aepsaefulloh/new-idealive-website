@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useCategoriesStore = defineStore('categories', {
+export const useAdminCategoriesStore = defineStore('admin-categories', {
   state: () => ({
     categories: [],
     isLoading: false,
@@ -66,7 +66,6 @@ export const useCategoriesStore = defineStore('categories', {
           throw new Error('Supabase not initialized')
         }
 
-        // Generate slug from name if not provided
         const slug = payload.slug || payload.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 
         const { data, error: insertError } = await supabase
@@ -114,7 +113,6 @@ export const useCategoriesStore = defineStore('categories', {
           throw new Error('Supabase not initialized')
         }
 
-        // Generate slug from name if not provided
         const slug = payload.slug || payload.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 
         const { data, error: updateError } = await supabase
@@ -216,7 +214,6 @@ export const useCategoriesStore = defineStore('categories', {
       return this.categories.find(cat => cat.slug === slug)
     },
 
-    // Real-time subscription
     subscribeToUpdates(callback) {
       const supabase = this.getSupabase()
       if (!supabase) return null

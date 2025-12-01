@@ -1,6 +1,6 @@
 <template>
     <div>
- <div v-for="project in projectsStore.publishedProjects" :key="project.id" ref="projectCards">
+ <div v-for="project in projectsStore.projects" :key="project.id" ref="projectCards">
     {{ project.title }}
  </div>
     </div>
@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { useProjectsStore } from '~/stores/modules/projects'
+import { usePublicProjectsStore } from '~/stores/modules/public/projects'
 
 
 const { animateFadeInUp, animateStagger } = useGsap()
@@ -16,7 +16,7 @@ const { animateFadeInUp, animateStagger } = useGsap()
 const header = ref()
 const projectCards = ref([])
 
-const projectsStore = useProjectsStore()
+const projectsStore = usePublicProjectsStore()
 
 onMounted(async () => {
   await projectsStore.fetchProjects()

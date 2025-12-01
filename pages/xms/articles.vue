@@ -294,8 +294,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { toast } from 'vue3-toastify'
-import { useArticlesStore } from '@/stores/modules/articles'
-import { useCategoriesStore } from '@/stores/modules/categories'
+import { useAdminArticlesStore } from '@/stores/modules/admin/articles'
+import { useAdminCategoriesStore } from '@/stores/modules/admin/categories'
 import TipTapEditor from '@/components/TipTapEditor.vue'
 import Button from '@/components/dashboard/ui/Button.vue'
 
@@ -304,8 +304,8 @@ definePageMeta({
   middleware: 'cms-auth'
 })
 
-const articlesStore = useArticlesStore()
-const categoriesStore = useCategoriesStore()
+const articlesStore = useAdminArticlesStore()
+const categoriesStore = useAdminCategoriesStore()
 let subscription = null
 
 // Reactive variables for toast messages

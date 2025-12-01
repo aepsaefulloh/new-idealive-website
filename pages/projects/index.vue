@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { useProjectsStore } from '~/stores/modules/projects'
+import { usePublicProjectsStore } from '~/stores/modules/public/projects'
 
 useHead({
   title: 'Selected Works | Aep Saefulloh - Digital Artisan',
@@ -17,7 +17,7 @@ const { animateFadeInUp, animateStagger } = useGsap()
 const header = ref()
 const projectCards = ref([])
 
-const projectsStore = useProjectsStore()
+const projectsStore = usePublicProjectsStore()
 
 onMounted(async () => {
   await projectsStore.fetchProjects()

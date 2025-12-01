@@ -1,0 +1,92 @@
+import { defineStore } from 'pinia'
+
+export const usePublicProjectsStore = defineStore('public-projects', {
+  state: () => ({
+    projects: [],
+    project: null,
+    isLoading: false,
+    error: '',
+  }),
+
+  getters: {
+    featuredProjects: (state) => state.projects.filter(p => p.is_featured),
+    publishedProjects: (state) => state.projects.filter(p => p.published),
+  },
+
+  actions: {
+    getSupabase() {
+      return useNuxtApp().$supabase
+    },
+
+    async fetchProjects() {
+      this.isLoading = true
+      this.error = ''
+
+      try {
+        const supabase = this.getSupabase()
+
+        if (!supabase) {
+          throw new Error('Supabase not initialized')
+        }
+
+        const { data, error } = await supabase
+          .from('projects')
+          .select(`
+            *,
+            categories(id, name, slug)
+          `)
+          .eq('published', true)
+          .order('sort_order', { ascending: true })
+
+        if (error) {
+          this.error = error.message || 'Failed to fetch projects'
+          return { success: false, error: this.error }
+        }
+
+        this.projects = data || []
+        return { success: true, data: this.projects }
+      } catch (err) {
+        this.error = err.message || 'Failed to fetch projects'
+        return { success: false, error: this.error }
+      } finally {
+        this.isLoading = false
+      }
+    },
+
+    async getProjectBySlug(slug) {
+      this.isLoading = true
+      this.error = ''
+
+      try {
+        const supabase = this.getSupabase()
+
+        if (!supabase) {
+          throw new Error('Supabase not initialized')
+        }
+
+        const { data, error } = await supabase
+          .from('projects')
+          .select(`
+            *,
+            categories(id, name, slug)
+          `)
+          .eq('slug', slug)
+          .eq('published', true)
+          .single()
+
+        if (error) {
+          this.error = error.message || 'Project not found'
+          return { success: false, error: this.error }
+        }
+
+        this.project = data
+        return { success: true, data }
+      } catch (err) {
+        this.error = err.message || 'Failed to fetch project'
+        return { success: false, error: this.error }
+      } finally {
+        this.isLoading = false
+      }
+    }
+  }
+})

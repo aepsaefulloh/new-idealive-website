@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { useProjectsStore } from '~/stores/modules/projects'
+import { usePublicProjectsStore } from '~/stores/modules/public/projects'
 
 const route = useRoute()
 const { animateFadeInUp } = useGsap()
@@ -12,12 +12,12 @@ const header = ref()
 const imageSection = ref()
 const contentSection = ref()
 
-const projectsStore = useProjectsStore()
+const projectsStore = usePublicProjectsStore()
 
 // Find project by slug
 const project = computed(() => {
   const slug = route.params.slug
-  return projectsStore.publishedProjects.find(p => p.slug === slug) || null
+  return projectsStore.projects.find(p => p.slug === slug) || null
 })
 
 useHead({

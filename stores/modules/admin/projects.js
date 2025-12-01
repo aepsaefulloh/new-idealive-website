@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useProjectsStore = defineStore('projects', {
+export const useAdminProjectsStore = defineStore('admin-projects', {
   state: () => ({
     projects: [],
     isLoading: false,
@@ -29,8 +29,7 @@ export const useProjectsStore = defineStore('projects', {
         const supabase = this.getSupabase()
 
         if (!supabase) {
-          // Fallback to public API if Supabase not initialized
-          return await this.fetchPublicProjects()
+          throw new Error('Supabase not initialized')
         }
 
         const { data, error: fetchError } = await supabase
@@ -47,17 +46,15 @@ export const useProjectsStore = defineStore('projects', {
           .order('created_at', { ascending: false })
 
         if (fetchError) {
-          // If RLS blocks access, fallback to public API
-          console.warn('Supabase fetch failed, trying public API:', fetchError.message)
-          return await this.fetchPublicProjects()
+          this.error = fetchError.message || 'Failed to fetch projects'
+          return { success: false, error: this.error }
         }
 
         this.projects = data || []
         return { success: true, data: this.projects }
       } catch (err) {
-        // Final fallback to public API
-        console.warn('Exception during fetch, trying public API:', err.message)
-        return await this.fetchPublicProjects()
+        this.error = err.message || 'An unexpected error occurred'
+        return { success: false, error: this.error }
       } finally {
         this.isLoading = false
       }
@@ -239,7 +236,7 @@ export const useProjectsStore = defineStore('projects', {
       }
 
       const subscription = supabase
-        .channel('projects_channel')
+        .channel('admin_projects_channel')
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'projects' },
@@ -250,27 +247,6 @@ export const useProjectsStore = defineStore('projects', {
         .subscribe()
 
       return subscription
-    },
-
-    async fetchPublicProjects() {
-      this.isLoading = true
-      this.error = ''
-
-      try {
-        const res = await $fetch('/api/public/projects')
-        
-        if (res?.success && Array.isArray(res.data)) {
-          this.projects = res.data
-          return { success: true, data: this.projects }
-        }
-
-        return { success: false, error: 'No projects returned' }
-      } catch (err) {
-        this.error = err.message || 'Failed to fetch public projects'
-        return { success: false, error: this.error }
-      } finally {
-        this.isLoading = false
-      }
-    },
+    }
   }
 })
