@@ -19,7 +19,8 @@
     </div>
 
     <!-- Video Overlay -->
-    <div ref="videoOverlay" class="fixed inset-x-0 bottom-0 h-0 w-full bg-black z-50 overflow-hidden">
+    <div ref="videoOverlay"
+      class="fixed inset-x-0 bottom-0 h-full w-full bg-black z-50 overflow-hidden scale-y-0 origin-bottom">
       <div class="relative w-full h-full flex items-center justify-center">
         <button @click="hideVideo" class="absolute top-4 right-4 text-white z-10 p-2">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -37,7 +38,7 @@
   </section>
   <!-- End Mobile -->
 
-  <section id="section1" class="md:pt-[9.921vw] pb-[5.622vw] px-desktop md:flex hidden items-center">
+  <section id="section1" class="md:pt-[9.921vw] pb-[5.622vw] px-desktop md:flex hidden items-center min-h-[33vw]">
     <h1 class="md:text-[8.598vw] text-[12.308vw] leading-[100%] text-idealive">
       <span class="reveal-mask animate-invisible">
         <span class="reveal-word py-4">Dream it</span>
@@ -50,9 +51,9 @@
   </section>
 
   <section id="section2"
-    class="section2 md:flex hidden justify-center items-center w-full h-dvh relative overflow-hidden">
+    class="section2 md:flex hidden justify-center items-center w-full h-screen relative overflow-hidden">
     <div
-      class="containerElement animate-invisible relative flex justify-center items-center bg-[#2054FA] w-[94%] h-[94%] text-white overflow-hidden revert">
+      class="containerElement animate-invisible relative flex justify-center items-center bg-[#2054FA] w-full h-full text-white overflow-hidden revert">
       <!-- Solid background overlay that will fade out -->
       <div class="solid-bg absolute inset-0 bg-[#2054FA] z-[1]"></div>
 
@@ -91,48 +92,55 @@ const backgroundImages = ref([
   '/images/hero.gif'
 ]);
 
-// Store ScrollTrigger instances for cleanup
-const scrollTriggers = [];
-let imgTimeline = null;
+// GSAP Context
+let ctx;
 
 // Function to show video overlay with smooth animation
 const showVideo = () => {
-  // Pause any ongoing animations
-  gsap.killTweensOf(videoOverlay.value);
+  if (!ctx) return;
 
-  // Disable scrolling on body
-  document.body.style.overflow = 'hidden';
+  ctx.add(() => {
+    // Pause any ongoing animations
+    gsap.killTweensOf(videoOverlay.value);
 
-  // Animate the overlay from bottom to top
-  gsap.to(videoOverlay.value, {
-    height: '100%',
-    duration: 0.6,
-    ease: 'power3.out',
-    onComplete: () => {
-      // Start playing the video when animation completes
-      if (videoPlayer.value) {
-        videoPlayer.value.play();
+    // Disable scrolling on body
+    document.body.style.overflow = 'hidden';
+
+    // Animate the overlay from bottom to top using scaleY
+    gsap.to(videoOverlay.value, {
+      scaleY: 1,
+      duration: 0.6,
+      ease: 'power3.out',
+      onComplete: () => {
+        // Start playing the video when animation completes
+        if (videoPlayer.value) {
+          videoPlayer.value.play();
+        }
       }
-    }
+    });
   });
 };
 
 // Function to hide video overlay with smooth animation
 const hideVideo = () => {
-  // Pause the video
-  if (videoPlayer.value) {
-    videoPlayer.value.pause();
-    videoPlayer.value.currentTime = 0; // Reset video position
-  }
+  if (!ctx) return;
 
-  // Re-enable scrolling on body
-  document.body.style.overflow = '';
+  ctx.add(() => {
+    // Pause the video
+    if (videoPlayer.value) {
+      videoPlayer.value.pause();
+      videoPlayer.value.currentTime = 0; // Reset video position
+    }
 
-  // Animate the overlay back down
-  gsap.to(videoOverlay.value, {
-    height: '0%',
-    duration: 0.5,
-    ease: 'power3.in'
+    // Re-enable scrolling on body
+    document.body.style.overflow = '';
+
+    // Animate the overlay back down
+    gsap.to(videoOverlay.value, {
+      scaleY: 0,
+      duration: 0.5,
+      ease: 'power3.in'
+    });
   });
 };
 
@@ -172,14 +180,14 @@ const box = () => {
   // Remove invisible class
   containerElement.classList.remove("animate-invisible");
 
-  // Animate with better performance settings
+  // Animate using clip-path instead of width/height to avoid layout thrashing
+  // Initial state: hidden (inset 50% from all sides)
+  // Final state: 94% width/height (inset 3% from all sides)
   gsap.fromTo(
     containerElement,
-    { width: "0%", height: "94%", borderRadius: 5 },
+    { clipPath: "inset(0% 50% 0% 50% round 5px)" },
     {
-      width: "94%",
-      height: "94%",
-      borderRadius: 5,
+      clipPath: "inset(3% 3% 3% 3% round 5px)",
       duration: 1,
       force3D: true,
       ease: "power2.out"
@@ -191,47 +199,42 @@ const box = () => {
 const setupBackgroundImagesAnimation = () => {
   // Get the background image
   const image = document.querySelector(".background-images img");
-  if (!image) return;
+  if (!image) return null;
 
   // Create a simpler timeline for a single image
-  imgTimeline = gsap.timeline({
-    defaults: { ease: "power2.inOut" }
+  const tl = gsap.timeline({
+    defaults: { ease: "power2.inOut" },
+    paused: true
   });
 
   // Simply fade in the single image
-  imgTimeline
-    .to(image, {
-      opacity: 1,
-      duration: 0.8,
-      force3D: true
-    });
+  tl.to(image, {
+    opacity: 1,
+    duration: 0.8,
+    force3D: true
+  });
 
-  // Initially pause the timeline - it will be played when the solid background fades out
-  imgTimeline.pause();
+  return tl;
 };
 
 // Setup desktop animations
-const setupDesktopAnimations = () => {
+const setupDesktopAnimations = (imgTimeline) => {
   // Container expansion animation
-  scrollTriggers.push(
-    ScrollTrigger.create({
-      trigger: ".section2",
-      start: "top 70%",
-      end: "bottom 70%",
-      scrub: 1,
-      id: "expand",
-      animation: gsap.fromTo(
-        ".containerElement",
-        { width: "94%", height: "94%", borderRadius: 5 },
-        {
-          width: "100%",
-          height: "100%",
-          borderRadius: 0,
-          force3D: true
-        }
-      )
-    })
-  );
+  ScrollTrigger.create({
+    trigger: ".section2",
+    start: "top 70%",
+    end: "bottom 70%",
+    scrub: 1,
+    id: "expand",
+    animation: gsap.fromTo(
+      ".containerElement",
+      { clipPath: "inset(3% 3% 3% 3% round 5px)" },
+      {
+        clipPath: "inset(0% 0% 0% 0% round 0px)",
+        force3D: true
+      }
+    )
+  });
 
   // Main section2 animation timeline
   const tl = gsap.timeline({
@@ -250,8 +253,6 @@ const setupDesktopAnimations = () => {
       }
     }
   });
-
-  scrollTriggers.push(tl.scrollTrigger);
 
   // Add animations to timeline with performance optimizations
   tl.fromTo(".image", { scale: 1 }, { scale: 0.25, force3D: true }, "<")
@@ -283,25 +284,21 @@ const setupDesktopAnimations = () => {
     .to("#section2", { backgroundColor: "#2054FA" });
 
   // Container shrink animation
-  scrollTriggers.push(
-    ScrollTrigger.create({
-      trigger: ".section3",
-      start: "top 90%",
-      end: "bottom 90%",
-      scrub: 1,
-      id: "shrink",
-      animation: gsap.fromTo(
-        ".containerElement",
-        { width: "100%", height: "100%", borderRadius: 0 },
-        {
-          width: "94%",
-          height: "94%",
-          borderRadius: 5,
-          force3D: true
-        }
-      )
-    })
-  );
+  ScrollTrigger.create({
+    trigger: ".section3",
+    start: "top 90%",
+    end: "bottom 90%",
+    scrub: 1,
+    id: "shrink",
+    animation: gsap.fromTo(
+      ".containerElement",
+      { clipPath: "inset(0% 0% 0% 0% round 0px)" },
+      {
+        clipPath: "inset(3% 3% 3% 3% round 5px)",
+        force3D: true
+      }
+    )
+  });
 };
 
 // Debounce function to limit resize event handling
@@ -315,62 +312,43 @@ const debounce = (fn, delay) => {
 
 // Handle window resize
 const handleResize = debounce(() => {
-  // Kill all ScrollTrigger instances
-  scrollTriggers.forEach(trigger => trigger.kill());
-  scrollTriggers.length = 0;
-
-  // Kill image timeline
-  if (imgTimeline) {
-    imgTimeline.kill();
-    imgTimeline = null;
-  }
-
-  // Reinitialize animations if on desktop
-  if (window.innerWidth >= 1024) {
-    setupBackgroundImagesAnimation();
-    setupDesktopAnimations();
-  }
+  // Refresh ScrollTrigger to recalculate positions
+  ScrollTrigger.refresh();
 }, 250);
 
 onMounted(() => {
-  // Run header animation immediately
-  header();
+  // Use gsap.context for easy cleanup
+  ctx = gsap.context(() => {
+    // Run header animation immediately
+    header();
 
-  // Setup desktop animations if on desktop
-  if (window.innerWidth >= 1024) {
-    // Run box animation after a delay
-    setTimeout(box, 940);
+    // Setup desktop animations if on desktop
+    if (window.innerWidth >= 1024) {
+      // Run box animation after a delay
+      setTimeout(box, 940);
 
-    // Setup background images animation
-    setupBackgroundImagesAnimation();
+      // Setup background images animation
+      const imgTimeline = setupBackgroundImagesAnimation();
 
-    // Setup desktop scroll animations
-    setupDesktopAnimations();
+      // Setup desktop scroll animations
+      setupDesktopAnimations(imgTimeline);
+    }
+  });
 
-    // Add resize listener
-    window.addEventListener('resize', handleResize);
-  }
+  // Add resize listener
+  window.addEventListener('resize', handleResize);
 });
 
 // Clean up all animations and event listeners
 onBeforeUnmount(() => {
-  // Kill all ScrollTrigger instances
-  scrollTriggers.forEach(trigger => trigger.kill());
-
-  // Kill any running GSAP animations
-  gsap.killTweensOf(".containerElement");
-  gsap.killTweensOf(".image");
-  gsap.killTweensOf(".items h1");
-  gsap.killTweensOf(".background-images img");
-  gsap.killTweensOf(".solid-bg");
-
-  // Kill image timeline
-  if (imgTimeline) {
-    imgTimeline.kill();
-  }
+  // Clean up GSAP context (kills all animations and ScrollTriggers created within the context)
+  if (ctx) ctx.revert();
 
   // Remove event listener
   window.removeEventListener('resize', handleResize);
+
+  // Re-enable scrolling if it was disabled
+  document.body.style.overflow = '';
 });
 </script>
 
@@ -391,7 +369,10 @@ onBeforeUnmount(() => {
 }
 
 .containerElement {
-  will-change: width, height, border-radius;
+  /* Changed from width/height to clip-path for performance */
+  will-change: clip-path;
+  /* Initial state to prevent CLS/FOUC */
+  clip-path: inset(0% 50% 0% 50% round 5px);
 }
 
 .image {
@@ -408,5 +389,14 @@ onBeforeUnmount(() => {
 
 .background-images img {
   will-change: opacity;
+}
+
+/* Helper class for scaleY animation */
+.scale-y-0 {
+  transform: scaleY(0);
+}
+
+.origin-bottom {
+  transform-origin: bottom;
 }
 </style>
