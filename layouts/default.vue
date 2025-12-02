@@ -21,9 +21,7 @@ import Navbar from '~/components/Utils/Navbar.vue'
 import Footer from '~/components/Utils/Footer.vue'
 import { useRoute } from 'vue-router'
 import { onMounted, onBeforeUnmount } from 'vue'
-import { gsap } from 'gsap'
 import { ScrollSmoother } from 'gsap/ScrollSmoother'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const route = useRoute()
 
