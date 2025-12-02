@@ -1,17 +1,23 @@
-# Quick Setup Guide
+# 🚀 Quick Setup Guide - New Idealive Website
 
-Panduan cepat untuk mengatur dan menjalankan proyek New Idealive Website menggunakan Supabase CLI.
+Panduan lengkap untuk mengatur dan menjalankan proyek New Idealive Website menggunakan Supabase CLI.
+
+---
 
 ## 📋 Prerequisites
 
-- Node.js (versi 18 atau lebih tinggi)
-- npm atau yarn
-- Git
-- Supabase CLI
+Pastikan sistem Anda memiliki software berikut:
 
-## 🛠️ Instalasi Supabase CLI
+- ✅ **Node.js** (versi 18 atau lebih tinggi)
+- ✅ **npm** atau **yarn** (package manager)
+- ✅ **Git** (untuk cloning repository)
+- ✅ **Supabase CLI** (akan diinstall di step berikutnya)
 
-### Windows (menggunakan PowerShell atau Command Prompt)
+---
+
+## 🛠️ Step 1: Install Supabase CLI
+
+### Windows (PowerShell/Command Prompt)
 ```bash
 npm install -g supabase
 ```
@@ -21,104 +27,148 @@ npm install -g supabase
 supabase --version
 ```
 
-## 🚀 Setup Proyek
+**Expected Output:**
+```
+1.x.x
+```
 
-### 1. Clone Repository
+---
+
+## 🚀 Step 2: Setup Project
+
+### 2.1 Clone Repository
 ```bash
 git clone https://github.com/aepsaefulloh/new-idealive-website.git
 cd new-idealive-website
 ```
 
-### 2. Instalasi Dependencies
+### 2.2 Install Dependencies
 ```bash
 npm install
 ```
 
-### 3. Setup Supabase Local Development
+### 2.3 Initialize Supabase (Local Development)
 ```bash
-# Inisialisasi Supabase (jika belum ada)
+# Initialize Supabase project
 supabase init
 
-# Start Supabase local services
+# Start local Supabase services
 supabase start
 ```
 
-### 4. Jalankan Migrations
+**Expected Output:**
+```
+Started supabase local development setup.
+```
+
+### 2.4 Run Database Migrations
 ```bash
-# Apply migrations ke database lokal
+# Apply all migrations to local database
 supabase db reset
 ```
 
-### 5. Setup Environment Variables
-Buat file `.env` di root directory:
-```env
-SUPABASE_URL=http://localhost:54321
-SUPABASE_ANON_KEY=your_local_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_local_service_role_key
+### 2.5 Setup Environment Variables
 
-# Untuk production, ganti dengan URL dan key dari Supabase dashboard
-# SUPABASE_URL=https://your-project.supabase.co
+Buat file `.env` di root directory project:
+
+```env
+# Local Development
+SUPABASE_URL=http://localhost:54321
+SUPABASE_ANON_KEY=your_local_anon_key_here
+SUPABASE_SERVICE_ROLE_KEY=your_local_service_role_key_here
+
+# Production (uncomment and replace when deploying)
+# SUPABASE_URL=https://your-project-id.supabase.co
 # SUPABASE_ANON_KEY=your_production_anon_key
+# SUPABASE_SERVICE_ROLE_KEY=your_production_service_role_key
 ```
 
-Untuk mendapatkan key lokal:
+**Untuk mendapatkan local keys:**
 ```bash
 supabase status
 ```
 
-### 6. Jalankan Development Server
+### 2.6 Start Development Server
 ```bash
 npm run dev
 ```
 
-Aplikasi akan berjalan di `http://localhost:3000`
+**Aplikasi akan berjalan di:** `http://localhost:3000`
 
-## 🔧 Operasi Proyek
+---
 
-### Development Mode
-```bash
-npm run dev
+## 🔧 Step 3: Production Deployment
+
+### 3.1 Create Supabase Project
+1. Buka [Supabase Dashboard](https://supabase.com/dashboard)
+2. Create new project
+3. Catat **Project URL** dan **API Keys**
+
+### 3.2 Update Environment Variables
+Update file `.env` dengan production values:
+
+```env
+# Production
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_ANON_KEY=your_production_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_production_service_role_key
 ```
 
-### Build untuk Production
+### 3.3 Link & Push Database
 ```bash
+# Login to Supabase
+npx supabase login
+
+# Link to remote project (replace with your project ref)
+npx supabase link --project-ref your-project-ref
+
+# Push migrations to remote
+npx supabase db push
+```
+
+### 3.4 Build & Deploy
+```bash
+# Build for production
 npm run build
+
+# Start production server
 npm run start
 ```
 
-### Static Site Generation
-```bash
-npm run generate
-npm run preview
-```
+---
 
-### Database Operations dengan Supabase CLI
+## 📊 Step 4: Daily Operations
 
-#### Melihat Status Supabase
+### Development Workflow
 ```bash
+# Start development
+npm run dev
+
+# Check Supabase status
 supabase status
+
+# View logs
+supabase logs
 ```
 
-#### Menjalankan Migrations Baru
-```bash
-# Buat migration baru
-supabase migration new nama_migration
+### Database Management
 
-# Edit file migration di supabase/migrations/
-# Kemudian apply
+#### Create New Migration
+```bash
+# Create migration file
+supabase migration new migration_name
+
+# Edit file in supabase/migrations/
+# Then push to database
 supabase db push
 ```
 
-#### Jika Ada Migration Baru Setelah Setup
+#### Check Migration Status
 ```bash
-# Cek status migration
 supabase migration list
-
-# Push migration baru
-supabase db push
 ```
 
-#### Reset Database
+#### Reset Local Database
 ```bash
 supabase db reset
 ```
@@ -144,66 +194,80 @@ SUPABASE_ANON_KEY=your_production_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_production_service_role_key
 ```
 
+---
+
 ## 🐛 Troubleshooting
 
-### Jika Supabase tidak start
+### Issue: Supabase tidak bisa start
 ```bash
 # Kill existing processes
 supabase stop
 
-# Clear cache
+# Clear cache and restart
 supabase start --ignore-health-check
 ```
 
-### Jika port 54321 sudah digunakan
+### Issue: Port 54321 sudah digunakan
 ```bash
-# Gunakan port berbeda
+# Use different port
 supabase start --port 54322
+
+# Update .env accordingly
+SUPABASE_URL=http://localhost:54322
 ```
 
-### Jika Migration Sudah Pernah Dijalankan (Remote Database Up to Date)
-Ketika `npx supabase db push` menampilkan "Remote database is up to date" tapi kamu ingin menjalankan migration ulang:
-
+### Issue: Migration "Remote database is up to date"
 ```bash
-# 1. Repair migration yang ingin dijalankan ulang
-npx supabase migration repair [timestamp] --status reverted
+# Repair specific migration (replace timestamp)
+npx supabase migration repair 20251201000001 --status reverted
 
-# Contoh: Repair migration categories
-npx supabase migration repair 20251128000000 --status reverted
-
-# 2. Push ulang migration
+# Then push again
 npx supabase db push
 ```
 
-### Jika Perlu Reset Semua Migration
+### Issue: Reset semua migrations
 ```bash
-# Repair semua migration menjadi reverted
-npx supabase migration repair [timestamp1] --status reverted
-npx supabase migration repair [timestamp2] --status reverted
-# ... dan seterusnya
-
-# Kemudian push ulang semua
-npx supabase db push
-```
-
-### Reset semua
-```bash
+# Stop services
 supabase stop
+
+# Restart and reset
 supabase start
 supabase db reset
 ```
 
-## 📚 Resources Tambahan
+---
+
+## 📚 Additional Resources
 
 - [Supabase Documentation](https://supabase.com/docs)
 - [Nuxt 3 Documentation](https://nuxt.com/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Tailwind CSS](https://tailwindcss.com/docs)
 - [GSAP Documentation](https://greensock.com/docs/)
+
+---
+
+## ✅ Quick Checklist
+
+- [ ] Node.js installed (v18+)
+- [ ] Supabase CLI installed
+- [ ] Repository cloned
+- [ ] Dependencies installed (`npm install`)
+- [ ] Supabase initialized (`supabase init`)
+- [ ] Local services started (`supabase start`)
+- [ ] Migrations applied (`supabase db reset`)
+- [ ] Environment variables configured (`.env`)
+- [ ] Development server running (`npm run dev`)
+- [ ] App accessible at `http://localhost:3000`
+
+---
 
 ## 📞 Support
 
-Jika ada masalah, periksa:
+Jika mengalami masalah:
 1. Pastikan semua prerequisites terinstall
-2. Supabase services sedang berjalan (`supabase status`)
-3. Environment variables sudah benar
-4. Dependencies sudah terinstall (`npm install`)
+2. Check Supabase services: `supabase status`
+3. Verify environment variables di `.env`
+4. Pastikan dependencies terinstall: `npm install`
+5. Check logs: `supabase logs`
+
+**Happy coding! 🎉**
