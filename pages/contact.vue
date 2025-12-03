@@ -4,12 +4,10 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { useGsap } from '@/composables/useGsap'
 import { useContactStore } from '@/stores/modules/contact'
 import { usePublicCmsStore } from '@/stores/modules/public/cms'
 import { useReCaptcha } from 'vue-recaptcha-v3'
 
-const { animateFadeInUp } = useGsap()
 const contactStore = useContactStore()
 const cmsStore = usePublicCmsStore()
 const { executeRecaptcha, recaptchaLoaded } = useReCaptcha()
@@ -123,10 +121,6 @@ const handleSubmit = async () => {
 }
 
 onMounted(async () => {
-  if (header.value) animateFadeInUp(header.value, 0)
-  if (contactInfo.value) animateFadeInUp(contactInfo.value, 0.2)
-  if (contactForm.value) animateFadeInUp(contactForm.value, 0.3)
-
   // Load contact info from CMS
   await cmsStore.fetchContactInfo()
 })

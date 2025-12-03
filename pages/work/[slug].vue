@@ -6,7 +6,6 @@
 import { usePublicProjectsStore } from '~/stores/modules/public/projects'
 
 const route = useRoute()
-const { animateFadeInUp } = useGsap()
 
 const header = ref()
 const imageSection = ref()
@@ -29,11 +28,5 @@ useHead({
 
 onMounted(async () => {
   await projectsStore.fetchProjects()
-
-  if (project.value) {
-    if (header.value) animateFadeInUp(header.value, 0)
-    if (imageSection.value) animateFadeInUp(imageSection.value, 0.2)
-    if (contentSection.value) animateFadeInUp(contentSection.value, 0.3)
-  }
 })
 </script>

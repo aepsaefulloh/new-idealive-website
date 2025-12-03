@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-const { gsap } = useGsap()
+import { gsap } from 'gsap'
 const cursor = ref(null)
 const cursorDot = ref(null)
 const isHidden = ref(true)

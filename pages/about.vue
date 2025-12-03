@@ -9,8 +9,6 @@ useHead({
     { name: 'description', content: 'Learn more about Aep Saefulloh, a Senior Frontend Developer with expertise in Vue.js, Nuxt, and Creative Development.' }
   ]
 })
-const { animateFadeInUp, animateStagger } = useGsap()
-
 const header = ref()
 const imageSection = ref()
 const textSection = ref()
@@ -56,12 +54,5 @@ const experience = [
 ]
 
 onMounted(() => {
-  if (header.value) animateFadeInUp(header.value, 0)
-  if (imageSection.value) animateFadeInUp(imageSection.value, 0.2)
-  if (textSection.value) animateFadeInUp(textSection.value, 0.3)
-  if (skillsSection.value) animateFadeInUp(skillsSection.value, 0.4)
-  if (skillCards.value.length) animateStagger(skillCards.value, 0.5)
-  if (experienceSection.value) animateFadeInUp(experienceSection.value, 0.6)
-  if (expCards.value.length) animateStagger(expCards.value, 0.7)
 })
 </script>
