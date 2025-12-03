@@ -80,39 +80,29 @@ import { onMounted, ref, onBeforeUnmount } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Register ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
 
-// Refs for video overlay
 const videoOverlay = ref(null);
 const videoPlayer = ref(null);
-
-// Store background images in a reactive array
 const backgroundImages = ref([
   '/images/hero.gif'
 ]);
 
-// GSAP Context
 let ctx;
 
-// Function to show video overlay with smooth animation
 const showVideo = () => {
   if (!ctx) return;
 
   ctx.add(() => {
-    // Pause any ongoing animations
     gsap.killTweensOf(videoOverlay.value);
 
-    // Disable scrolling on body
     document.body.style.overflow = 'hidden';
 
-    // Animate the overlay from bottom to top using scaleY
     gsap.to(videoOverlay.value, {
       scaleY: 1,
       duration: 0.6,
       ease: 'power3.out',
       onComplete: () => {
-        // Start playing the video when animation completes
         if (videoPlayer.value) {
           videoPlayer.value.play();
         }
@@ -121,21 +111,18 @@ const showVideo = () => {
   });
 };
 
-// Function to hide video overlay with smooth animation
 const hideVideo = () => {
   if (!ctx) return;
 
   ctx.add(() => {
-    // Pause the video
+
     if (videoPlayer.value) {
       videoPlayer.value.pause();
-      videoPlayer.value.currentTime = 0; // Reset video position
+      videoPlayer.value.currentTime = 0;
     }
 
-    // Re-enable scrolling on body
     document.body.style.overflow = '';
 
-    // Animate the overlay back down
     gsap.to(videoOverlay.value, {
       scaleY: 0,
       duration: 0.5,
@@ -144,45 +131,31 @@ const hideVideo = () => {
   });
 };
 
-// Text reveal animation
 const header = () => {
   const words = document.querySelectorAll(".reveal-word");
   const masks = document.querySelectorAll(".reveal-mask.animate-invisible");
-
-  // Create a timeline with better performance settings
   const tl = gsap.timeline({
     defaults: { ease: "power4.out" },
     onStart: () => {
-      // Remove invisible class at the start of animation
       masks.forEach((el) => el.classList.remove("animate-invisible"));
     }
   });
-
-  // Set initial state
   gsap.set(words, { yPercent: 100, skewX: -2 });
-
-  // Animate words with force3D for better performance
   tl.to(words, {
     yPercent: 0,
     skewX: 0,
     duration: 1,
     stagger: 0.4,
     force3D: true,
-    clearProps: "transform" // Clean up transforms after animation
+    clearProps: "transform"
   });
 };
 
-// Box animation
 const box = () => {
   const containerElement = document.querySelector(".containerElement");
   if (!containerElement) return;
-
-  // Remove invisible class
   containerElement.classList.remove("animate-invisible");
 
-  // Animate using clip-path instead of width/height to avoid layout thrashing
-  // Initial state: hidden (inset 50% from all sides)
-  // Final state: 94% width/height (inset 3% from all sides)
   gsap.fromTo(
     containerElement,
     { clipPath: "inset(0% 50% 0% 50% round 5px)" },
@@ -195,19 +168,15 @@ const box = () => {
   );
 };
 
-// Setup background images animation
 const setupBackgroundImagesAnimation = () => {
-  // Get the background image
   const image = document.querySelector(".background-images img");
   if (!image) return null;
 
-  // Create a simpler timeline for a single image
   const tl = gsap.timeline({
     defaults: { ease: "power2.inOut" },
     paused: true
   });
 
-  // Simply fade in the single image
   tl.to(image, {
     opacity: 1,
     duration: 0.8,
@@ -217,9 +186,7 @@ const setupBackgroundImagesAnimation = () => {
   return tl;
 };
 
-// Setup desktop animations
 const setupDesktopAnimations = (imgTimeline) => {
-  // Container expansion animation
   ScrollTrigger.create({
     trigger: ".section2",
     start: "top 70%",
@@ -236,7 +203,6 @@ const setupDesktopAnimations = (imgTimeline) => {
     )
   });
 
-  // Main section2 animation timeline
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: ".section2",
@@ -246,7 +212,6 @@ const setupDesktopAnimations = (imgTimeline) => {
       scrub: 1,
       id: "pin-section2",
       onUpdate: (self) => {
-        // Start playing the background images animation when we're 30% through the scroll
         if (self.progress > 0.3 && imgTimeline && imgTimeline.paused()) {
           imgTimeline.play();
         }
@@ -254,9 +219,7 @@ const setupDesktopAnimations = (imgTimeline) => {
     }
   });
 
-  // Add animations to timeline with performance optimizations
   tl.fromTo(".image", { scale: 1 }, { scale: 0.25, force3D: true }, "<")
-    // Create a simultaneous animation for both the logo and background
     .to(
       [".solid-bg", ".image"],
       {
@@ -264,13 +227,12 @@ const setupDesktopAnimations = (imgTimeline) => {
         duration: 0.5,
         ease: "power2.inOut",
         onComplete: () => {
-          // Ensure the background images animation is playing
           if (imgTimeline && imgTimeline.paused()) {
             imgTimeline.play();
           }
         }
       },
-      "+=0.2" // Same position in the timeline
+      "+=0.2"
     )
     .fromTo(
       ".items h1",
@@ -283,7 +245,6 @@ const setupDesktopAnimations = (imgTimeline) => {
     )
     .to("#section2", { backgroundColor: "#2054FA" });
 
-  // Container shrink animation
   ScrollTrigger.create({
     trigger: ".section3",
     start: "top 90%",
@@ -301,7 +262,6 @@ const setupDesktopAnimations = (imgTimeline) => {
   });
 };
 
-// Debounce function to limit resize event handling
 const debounce = (fn, delay) => {
   let timer = null;
   return function (...args) {
@@ -310,44 +270,27 @@ const debounce = (fn, delay) => {
   };
 };
 
-// Handle window resize
 const handleResize = debounce(() => {
-  // Refresh ScrollTrigger to recalculate positions
   ScrollTrigger.refresh();
 }, 250);
 
 onMounted(() => {
-  // Use gsap.context for easy cleanup
   ctx = gsap.context(() => {
-    // Run header animation immediately
     header();
-
-    // Setup desktop animations if on desktop
     if (window.innerWidth >= 1024) {
-      // Run box animation after a delay
       setTimeout(box, 940);
-
-      // Setup background images animation
       const imgTimeline = setupBackgroundImagesAnimation();
-
-      // Setup desktop scroll animations
       setupDesktopAnimations(imgTimeline);
     }
   });
 
-  // Add resize listener
   window.addEventListener('resize', handleResize);
 });
 
-// Clean up all animations and event listeners
 onBeforeUnmount(() => {
-  // Clean up GSAP context (kills all animations and ScrollTriggers created within the context)
   if (ctx) ctx.revert();
-
-  // Remove event listener
   window.removeEventListener('resize', handleResize);
 
-  // Re-enable scrolling if it was disabled
   document.body.style.overflow = '';
 });
 </script>
@@ -369,9 +312,7 @@ onBeforeUnmount(() => {
 }
 
 .containerElement {
-  /* Changed from width/height to clip-path for performance */
   will-change: clip-path;
-  /* Initial state to prevent CLS/FOUC */
   clip-path: inset(0% 50% 0% 50% round 5px);
 }
 

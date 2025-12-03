@@ -8,22 +8,13 @@
           </span>
         </span>
       </h5>
-      <div
-        class="md:mt-[4.63vw] mt-[10.256vw] grid grid-cols-1 md:gap-[40px] gap-[100px] md:grid-cols-2"
-      >
-        <NuxtLink
-          v-for="(item, index) in highlight"
-          :key="index"
-          :class="[
-            index === 0 || index === 3 ? 'md:col-span-2' : '',
-            getImageClass(index),
-          ]"
-          class="w-full relative"
-        >
+      <div class="md:mt-[4.63vw] mt-[10.256vw] grid grid-cols-1 md:gap-[40px] gap-[100px] md:grid-cols-2">
+        <NuxtLink v-for="(item, index) in highlight" :key="index" :class="[
+          index === 0 || index === 3 ? 'md:col-span-2' : '',
+          getImageClass(index),
+        ]" class="w-full relative">
           <UtilsFreeze :gifSrc="item.work.cover" :alt="item.work.title" />
-          <div
-            class="absolute top-0 left-0 inset-0 text-white bg-black/30 md:flex hidden flex-col md:p-8"
-          >
+          <div class="absolute top-0 left-0 inset-0 text-white bg-black/30 md:flex hidden flex-col md:p-8">
             <p>{{ item.work.title }}</p>
             <p class="mt-auto sticky bottom-8 md:pt-10">
               {{ item.work.project_date }}
@@ -45,11 +36,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
 const workHeading = ref(null);
@@ -88,7 +78,6 @@ const highlight = ref([
   }
 ]);
 
-// Function to return the appropriate image class
 function getImageClass(index) {
   const classes = {
     0: "aspect-video",
@@ -99,40 +88,42 @@ function getImageClass(index) {
   return classes[index] || "";
 }
 
-// Fetch data from API or local storage
-onMounted(() => {
-  animateWorkHeading();
-});
+let ctx;
 
 const animateWorkHeading = () => {
-  // Get all character elements
   const chars = workHeading.value.querySelectorAll('.char');
-  
-  // Set initial state - move characters up and hide them
-  gsap.set(chars, { 
+
+  gsap.set(chars, {
     y: "100%",
     opacity: 0
   });
-  
-  // Create the animation
+
   gsap.to(chars, {
     y: "0%",
     opacity: 1,
     duration: 0.8,
-    stagger: 0.1, // Stagger the animation for each character
+    stagger: 0.1,
     ease: "power3.out",
     scrollTrigger: {
       trigger: workHeading.value,
-      start: "top 80%", // Start animation when the top of the heading is 80% from the top of the viewport
-      toggleActions: "play none none none", // Play animation once when scrolled into view
-      // markers: true, // Uncomment for debugging
+      start: "top 80%",
+      toggleActions: "play none none none",
     }
   });
 };
+
+onMounted(() => {
+  ctx = gsap.context(() => {
+    animateWorkHeading();
+  });
+});
+
+onBeforeUnmount(() => {
+  if (ctx) ctx.revert();
+});
 </script>
 
 <style scoped>
-/* Remove background-attachment and fixed background positioning */
 .bg-cover {
   background-position: center center;
   background-size: cover;

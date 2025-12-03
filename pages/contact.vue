@@ -120,8 +120,4 @@ const handleSubmit = async () => {
   }
 }
 
-onMounted(async () => {
-  // Load contact info from CMS
-  await cmsStore.fetchContactInfo()
-})
 </script>

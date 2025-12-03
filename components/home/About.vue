@@ -34,11 +34,10 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { ref, onMounted, nextTick, onBeforeUnmount } from "vue";
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
 
 const copy = {
   heading1: 'Founded in Jakarta in 2017, Idealive',
@@ -47,48 +46,52 @@ const copy = {
   heading4: 'connections that resonate.',
 }
 
+let ctx = null;
+
 const headline = () => {
   const words = document.querySelectorAll(".reveal-words");
   const masks = document.querySelectorAll(".reveal-masks.animate-invisibles");
 
-  // Register the ScrollTrigger plugin
   gsap.registerPlugin(ScrollTrigger);
 
-  // Set a breakpoint for mobile (adjust the value as needed)
   const isMobile = window.innerWidth < 768;
-  const startPosition = isMobile ? "top 80%" : "bottom 2%";
+  const startPosition = isMobile ? "top 85%" : "top 75%";
 
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: ".main-trigger",
-      start: startPosition, // Use the conditional start position
-      end: "bottom top",
+      start: startPosition,
+      end: "bottom 25%",
+      scrub: false,
+      toggleActions: "play none none reverse",
       markers: false,
     },
-    defaults: { ease: "power4.out" },
+    defaults: {
+      ease: "power3.out",
+      force3D: true,
+    },
   });
 
-  tl.set(words, { yPercent: 100, skewX: -2 });
+  tl.set(words, { yPercent: 100, skewX: -1 });
   tl.add(() => {
     masks.forEach((el) => el.classList.remove("animate-invisibles"));
   });
   tl.to(words, {
     yPercent: 0,
     skewX: 0,
-    duration: 1,
-    stagger: 0.19,
-  });
+    duration: 1.4,
+    stagger: 0.1,
+  }, 0);
 };
 
 onMounted(() => {
-  headline()
-
-  // Clear the interval when the component is unmounted
-  onBeforeUnmount(() => {
-    gsap.killTweensOf(".reveal-words"); // Clear ongoing headline animations
-    gsap.killTweensOf(".reveal-masks"); // Clear any animations on reveal masks
-    ScrollTrigger.getAll().forEach(trigger => trigger.kill()); // Kill all ScrollTriggers
+  ctx = gsap.context(() => {
+    headline();
   });
+});
+
+onBeforeUnmount(() => {
+  if (ctx) ctx.revert();
 });
 </script>
 
@@ -106,5 +109,6 @@ onMounted(() => {
 
 .reveal-words {
   display: inline-block;
+  will-change: transform;
 }
 </style>

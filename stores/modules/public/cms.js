@@ -4,9 +4,11 @@ export const usePublicCmsStore = defineStore('public-cms', {
   state: () => ({
     heroSection: null,
     aboutSection: null,
-    contactInfo: null,
+    contactInfo: null,  
     isLoading: false,
     error: '',
+    isContactInfoFetched: false,  
+    fetchContactInfoPromise: null,  
   }),
 
   actions: {
@@ -19,7 +21,6 @@ export const usePublicCmsStore = defineStore('public-cms', {
       this.error = ''
 
       try {
-        // Use the public API endpoint
         const { data, error } = await useFetch('/api/public/content')
 
         if (error.value) {
@@ -105,34 +106,53 @@ export const usePublicCmsStore = defineStore('public-cms', {
     },
 
     async fetchContactInfo() {
+      if (this.isContactInfoFetched) {
+        return { success: true, data: this.contactInfo }
+      }
+
+      if (this.fetchContactInfoPromise) {
+        return await this.fetchContactInfoPromise
+      }
+
       this.isLoading = true
       this.error = ''
 
-      try {
-        const supabase = this.getSupabase()
+      this.fetchContactInfoPromise = (async () => {
+        try {
+          const supabase = this.getSupabase()
 
-        if (!supabase) {
-          throw new Error('Supabase not initialized')
-        }
+          if (!supabase) {
+            throw new Error('Supabase not initialized')
+          }
 
-        const { data, error } = await supabase
-          .from('contact_info')
-          .select('*')
-          .single()
+          const { data, error } = await supabase
+            .from('contact_info')
+            .select('*')
+            .single()
 
-        if (error && error.code !== 'PGRST116') {
-          this.error = error.message || 'Failed to fetch contact info'
+          if (error && error.code !== 'PGRST116') {
+            this.error = error.message || 'Failed to fetch contact info'
+            return { success: false, error: this.error }
+          }
+
+          this.contactInfo = data
+          this.isContactInfoFetched = true  
+          return { success: true, data }
+        } catch (err) {
+          this.error = err.message || 'Failed to fetch contact info'
           return { success: false, error: this.error }
+        } finally {
+          this.isLoading = false
+          this.fetchContactInfoPromise = null 
         }
+      })()
 
-        this.contactInfo = data
-        return { success: true, data }
-      } catch (err) {
-        this.error = err.message || 'Failed to fetch contact info'
-        return { success: false, error: this.error }
-      } finally {
-        this.isLoading = false
-      }
+      return await this.fetchContactInfoPromise
+    }
+  },
+  getters: {
+    getContactInfo(state) {
+      return state.contactInfo
     }
   }
 })
