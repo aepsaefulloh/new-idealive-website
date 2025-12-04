@@ -367,7 +367,7 @@ import { formatDate, slugify } from '@/utils'
 import TipTapEditor from '@/components/TipTapEditor.vue'
 import Button from '@/components/dashboard/ui/Button.vue'
 import TaggingSelector from '@/components/dashboard/ui/TaggingSelector.vue'
-import { useImageCompression } from '~/composables/useImageCompression.tsbak'
+import { useImageCompression } from '~/composables/useImageCompression'
 
 definePageMeta({
   layout: 'dashboard',
