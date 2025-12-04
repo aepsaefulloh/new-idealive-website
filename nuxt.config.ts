@@ -1,8 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
-  ssr: false,
-  devtools: { enabled: false },
+  devtools: { enabled: true },
   modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxt/image', '@nuxtjs/robots', '@nuxtjs/sitemap', '@nuxtjs/google-fonts'],
   googleFonts: {
     families: {
