@@ -280,42 +280,44 @@
           </div>
 
           <!-- File Uploads -->
-          <div class="grid md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Thumbnail Image
-              </label>
-              <div class="space-y-2">
-                <input ref="thumbnailInput" type="file" accept="image/*" @change="handleThumbnailUpload"
-                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
-                <div v-if="thumbnailPreview" class="relative group">
-                  <img :src="thumbnailPreview" alt="Thumbnail preview"
-                    class="w-full h-32 object-cover rounded-xl border border-gray-200 dark:border-gray-700" />
-                  <button @click="removeThumbnail"
-                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
-                  </button>
+          <ClientOnly>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Thumbnail Image
+                </label>
+                <div class="space-y-2">
+                  <input ref="thumbnailInput" type="file" accept="image/*" @change="handleThumbnailUpload"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                  <div v-if="thumbnailPreview" class="relative group">
+                    <img :src="thumbnailPreview" alt="Thumbnail preview"
+                      class="w-full h-32 object-cover rounded-xl border border-gray-200 dark:border-gray-700" />
+                    <button @click="removeThumbnail"
+                      class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Banner Image
+                </label>
+                <div class="space-y-2">
+                  <input ref="bannerInput" type="file" accept="image/*" @change="handleBannerUpload"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                  <div v-if="bannerPreview" class="relative group">
+                    <img :src="bannerPreview" alt="Banner preview"
+                      class="w-full h-32 object-cover rounded-xl border border-gray-200 dark:border-gray-700" />
+                    <button @click="removeBanner"
+                      class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Banner Image
-              </label>
-              <div class="space-y-2">
-                <input ref="bannerInput" type="file" accept="image/*" @change="handleBannerUpload"
-                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
-                <div v-if="bannerPreview" class="relative group">
-                  <img :src="bannerPreview" alt="Banner preview"
-                    class="w-full h-32 object-cover rounded-xl border border-gray-200 dark:border-gray-700" />
-                  <button @click="removeBanner"
-                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          </ClientOnly>
 
           <!-- Tags -->
           <div>
