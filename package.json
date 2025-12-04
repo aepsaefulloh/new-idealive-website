@@ -27,6 +27,7 @@
     "@tiptap/vue-3": "^3.11.0",
     "@yeger/vue-masonry-wall": "^5.0.17",
     "axios": "^1.13.2",
+    "browser-image-compression": "^2.0.2",
     "date-fns": "^4.1.0",
     "gsap": "^3.13.0",
     "nuxt": "^3.17.0",

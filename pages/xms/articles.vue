@@ -207,7 +207,8 @@
               <input v-model="form.slug" type="text" :readonly="!showEditModal" disabled
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 placeholder="auto-generated-from-title" />
-              <p class="text-xs text-gray-500 mt-1">URL-friendly identifier {{ showEditModal ? '(editable)' : '(auto-generated)' }}</p>
+              <p class="text-xs text-gray-500 mt-1">URL-friendly identifier {{ showEditModal ? '(editable)' :
+                '(auto-generated)' }}</p>
             </div>
           </div>
 
@@ -289,6 +290,7 @@ import { slugify, formatDate } from '@/utils'
 import TipTapEditor from '@/components/TipTapEditor.vue'
 import Button from '@/components/dashboard/ui/Button.vue'
 import TaggingSelector from '@/components/dashboard/ui/TaggingSelector.vue'
+import { useImageCompression } from '~/composables/useImageCompression.tsbak'
 
 definePageMeta({
   layout: 'dashboard',
@@ -296,6 +298,7 @@ definePageMeta({
 })
 
 const articlesStore = useAdminArticlesStore()
+const { compressImage, getCompressionMessage } = useImageCompression()
 const categoriesStore = useAdminCategoriesStore()
 let subscription = null
 
@@ -335,6 +338,13 @@ const bannerInput = ref(null)
 const thumbnailPreview = ref('')
 const bannerPreview = ref('')
 const newTag = ref('')
+
+// Compression settings (can be adjusted dynamically)
+const compressionSettings = ref({
+  maxSizeMB: 1,
+  maxWidthOrHeight: 1920,
+  quality: 0.85
+})
 
 // Helper function to strip HTML tags for preview
 const stripHtml = (html) => {
@@ -441,12 +451,26 @@ const handleThumbnailUpload = async (event) => {
   const file = event.target.files[0]
   if (file) {
     try {
-      const url = await uploadFile(file)
+      // Compress image first
+      toast.info('Compressing image...', { autoClose: 1000 })
+      const compressionResult = await compressImage(file, compressionSettings.value)
+      
+      if (!compressionResult.success) {
+        toast.error(compressionResult.error || 'Failed to compress image')
+        return
+      }
+
+      // Show compression result
+      const message = getCompressionMessage(compressionResult.originalSize, compressionResult.compressedSize)
+      toast.success(message)
+
+      // Upload compressed file
+      const url = await uploadFile(compressionResult.file)
       thumbnailPreview.value = url
       form.value.thumbnail_url = url
     } catch (error) {
       console.error('Thumbnail upload failed:', error)
-      alert('Failed to upload thumbnail')
+      toast.error('Failed to upload thumbnail')
     }
   }
 }
@@ -455,12 +479,26 @@ const handleBannerUpload = async (event) => {
   const file = event.target.files[0]
   if (file) {
     try {
-      const url = await uploadFile(file)
+      // Compress image first
+      toast.info('Compressing image...', { autoClose: 1000 })
+      const compressionResult = await compressImage(file, compressionSettings.value)
+      
+      if (!compressionResult.success) {
+        toast.error(compressionResult.error || 'Failed to compress image')
+        return
+      }
+
+      // Show compression result
+      const message = getCompressionMessage(compressionResult.originalSize, compressionResult.compressedSize)
+      toast.success(message)
+
+      // Upload compressed file
+      const url = await uploadFile(compressionResult.file)
       bannerPreview.value = url
       form.value.banner_url = url
     } catch (error) {
       console.error('Banner upload failed:', error)
-      alert('Failed to upload banner')
+      toast.error('Failed to upload banner')
     }
   }
 }
