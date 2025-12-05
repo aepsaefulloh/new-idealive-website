@@ -111,19 +111,28 @@
 
           <!-- Actions -->
           <div class="flex items-center justify-between">
-            <div class="flex gap-2">
-              <Button @click="editArticle(article)" variant="ghost" size="sm" icon="i-heroicons-pencil"
-                class="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+            <div class="flex gap-1.5 sm:gap-2">
+              <Button @click="editArticle(article)" variant="outline" size="sm" icon="i-heroicons-pencil"
+                class="text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50"
                 title="Edit Article" />
-              <Button @click="toggleFeatured(article.id)" variant="ghost" size="sm" icon="i-heroicons-star"
-                :class="article.featured ? 'text-yellow-600 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'"
+
+              <Button @click="toggleFeatured(article.id)" size="sm" :variant="article.featured ? 'solid' : 'outline'"
+                :icon="article.featured ? 'i-heroicons-star-solid' : 'i-heroicons-star'" :class="article.featured
+                  ? 'bg-yellow-500 hover:bg-yellow-600 text-white' // Solid Yellow saat featured
+                  : 'text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700'"
                 :title="article.featured ? 'Remove from featured' : 'Add to featured'" />
-              <Button @click="togglePublished(article.id)" variant="ghost" size="sm" icon="i-heroicons-eye"
-                :class="article.published ? 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'"
-                :title="article.published ? 'Unpublish' : 'Publish'" />
+
+              <Button @click="togglePublished(article.id)" size="sm" :variant="article.published ? 'solid' : 'outline'"
+                :icon="article.published ? 'i-heroicons-eye-solid' : 'i-heroicons-eye-slash-solid'" :class="article.published
+                  ? 'bg-green-500 hover:bg-green-600 text-white' // Solid Green saat published
+                  : 'text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700'"
+                :title="article.published ? 'Set as Draft' : 'Publish Article'">
+                {{ article.published ? 'Published' : 'Draft' }}
+              </Button>
             </div>
-            <Button @click="deleteArticle(article.id)" variant="ghost" size="sm" icon="i-heroicons-trash"
-              class="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" title="Delete Article" />
+
+            <Button @click="deleteArticle(article.id)" variant="solid" size="sm" icon="i-heroicons-trash"
+              class="text-white bg-red-600 dark:bg-red-400 hover:bg-red-500 dark:hover:bg-red-900/20" title="Delete Article" />
           </div>
         </div>
       </div>
@@ -207,7 +216,8 @@
               <input v-model="form.slug" type="text" :readonly="!showEditModal" disabled
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 placeholder="auto-generated-from-title" />
-              <p class="text-xs text-gray-500 mt-1">URL-friendly identifier {{ showEditModal ? '(editable)' : '(auto-generated)' }}</p>
+              <p class="text-xs text-gray-500 mt-1">URL-friendly identifier {{ showEditModal ? '(editable)' :
+                '(auto-generated)' }}</p>
             </div>
           </div>
 
@@ -467,7 +477,7 @@ const handleThumbnailUpload = async (event) => {
       // Compress image to WebP with 75% quality
       const compressed = await compressForThumbnail(file)
       console.log(`Thumbnail compressed: ${formatFileSize(compressed.originalSize)} → ${formatFileSize(compressed.compressedSize)} (${compressed.compressionRatio}% reduction)`)
-      
+
       // Store compressed file and show preview (don't upload yet)
       thumbnailFile.value = compressed.file
       thumbnailPreview.value = compressed.dataUrl
@@ -487,7 +497,7 @@ const handleBannerUpload = async (event) => {
       // Compress image to WebP with 75% quality
       const compressed = await compressForBanner(file)
       console.log(`Banner compressed: ${formatFileSize(compressed.originalSize)} → ${formatFileSize(compressed.compressedSize)} (${compressed.compressionRatio}% reduction)`)
-      
+
       // Store compressed file and show preview (don't upload yet)
       bannerFile.value = compressed.file
       bannerPreview.value = compressed.dataUrl
