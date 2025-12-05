@@ -286,6 +286,7 @@ import { toast } from 'vue3-toastify'
 import { useAdminArticlesStore } from '@/stores/modules/admin/articles'
 import { useAdminCategoriesStore } from '@/stores/modules/admin/categories'
 import { slugify, formatDate } from '@/utils'
+import { compressForThumbnail, compressForBanner, formatFileSize } from '@/utils/imageCompression'
 import TipTapEditor from '@/components/TipTapEditor.vue'
 import Button from '@/components/dashboard/ui/Button.vue'
 import TaggingSelector from '@/components/dashboard/ui/TaggingSelector.vue'
@@ -334,6 +335,8 @@ const thumbnailInput = ref(null)
 const bannerInput = ref(null)
 const thumbnailPreview = ref('')
 const bannerPreview = ref('')
+const thumbnailFile = ref(null) // Compressed file waiting to upload
+const bannerFile = ref(null) // Compressed file waiting to upload
 const newTag = ref('')
 
 // Helper function to strip HTML tags for preview
@@ -414,25 +417,44 @@ const handleSubmit = async () => {
     return
   }
 
-  const payload = {
-    ...form.value,
-    thumbnail_url: thumbnailPreview.value,
-    banner_url: bannerPreview.value,
-  }
+  try {
+    // Upload new images if there are compressed files waiting
+    let finalThumbnailUrl = form.value.thumbnail_url
+    let finalBannerUrl = form.value.banner_url
 
-  let result
-  if (showEditModal.value) {
-    result = await articlesStore.updateArticle(articlesStore.selectedArticle.id, payload)
-  } else {
-    result = await articlesStore.createArticle(payload)
-  }
+    if (thumbnailFile.value) {
+      toast.info('Uploading thumbnail...')
+      finalThumbnailUrl = await uploadFile(thumbnailFile.value, 'articles')
+    }
 
-  if (result.success) {
-    toast.success(result.message || (showEditModal.value ? 'Article updated successfully!' : 'Article created successfully!'))
-    closeModals()
-    resetForm()
-  } else {
-    toast.error(result.error || 'Failed to save article')
+    if (bannerFile.value) {
+      toast.info('Uploading banner...')
+      finalBannerUrl = await uploadFile(bannerFile.value, 'articles')
+    }
+
+    const payload = {
+      ...form.value,
+      thumbnail_url: finalThumbnailUrl,
+      banner_url: finalBannerUrl,
+    }
+
+    let result
+    if (showEditModal.value) {
+      result = await articlesStore.updateArticle(articlesStore.selectedArticle.id, payload)
+    } else {
+      result = await articlesStore.createArticle(payload)
+    }
+
+    if (result.success) {
+      toast.success(result.message || (showEditModal.value ? 'Article updated successfully!' : 'Article created successfully!'))
+      closeModals()
+      resetForm()
+    } else {
+      toast.error(result.error || 'Failed to save article')
+    }
+  } catch (error) {
+    console.error('Submit failed:', error)
+    toast.error('Failed to save article')
   }
 }
 
@@ -441,12 +463,18 @@ const handleThumbnailUpload = async (event) => {
   const file = event.target.files[0]
   if (file) {
     try {
-      const url = await uploadFile(file)
-      thumbnailPreview.value = url
-      form.value.thumbnail_url = url
+      toast.info('Compressing image...')
+      // Compress image to WebP with 75% quality
+      const compressed = await compressForThumbnail(file)
+      console.log(`Thumbnail compressed: ${formatFileSize(compressed.originalSize)} → ${formatFileSize(compressed.compressedSize)} (${compressed.compressionRatio}% reduction)`)
+      
+      // Store compressed file and show preview (don't upload yet)
+      thumbnailFile.value = compressed.file
+      thumbnailPreview.value = compressed.dataUrl
+      toast.success(`Image compressed (${compressed.compressionRatio}% smaller) - will upload on save`)
     } catch (error) {
-      console.error('Thumbnail upload failed:', error)
-      alert('Failed to upload thumbnail')
+      console.error('Thumbnail compression failed:', error)
+      toast.error('Failed to compress thumbnail')
     }
   }
 }
@@ -455,26 +483,35 @@ const handleBannerUpload = async (event) => {
   const file = event.target.files[0]
   if (file) {
     try {
-      const url = await uploadFile(file)
-      bannerPreview.value = url
-      form.value.banner_url = url
+      toast.info('Compressing image...')
+      // Compress image to WebP with 75% quality
+      const compressed = await compressForBanner(file)
+      console.log(`Banner compressed: ${formatFileSize(compressed.originalSize)} → ${formatFileSize(compressed.compressedSize)} (${compressed.compressionRatio}% reduction)`)
+      
+      // Store compressed file and show preview (don't upload yet)
+      bannerFile.value = compressed.file
+      bannerPreview.value = compressed.dataUrl
+      toast.success(`Image compressed (${compressed.compressionRatio}% smaller) - will upload on save`)
     } catch (error) {
-      console.error('Banner upload failed:', error)
-      alert('Failed to upload banner')
+      console.error('Banner compression failed:', error)
+      toast.error('Failed to compress banner')
     }
   }
 }
 
 // Upload file to Supabase Storage
-const uploadFile = async (file) => {
+const uploadFile = async (file, folder = 'articles') => {
   const supabase = useNuxtApp().$supabase
-  const fileExt = file.name.split('.').pop()
-  const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
-  const filePath = `articles/${fileName}`
+  // File is already in WebP format from compression
+  const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.webp`
+  const filePath = `${folder}/${fileName}`
 
   const { data, error } = await supabase.storage
     .from('images')
-    .upload(filePath, file)
+    .upload(filePath, file, {
+      contentType: 'image/webp',
+      cacheControl: '3600',
+    })
 
   if (error) {
     throw error
@@ -490,6 +527,7 @@ const uploadFile = async (file) => {
 // Remove thumbnail
 const removeThumbnail = () => {
   thumbnailPreview.value = ''
+  thumbnailFile.value = null
   form.value.thumbnail_url = ''
   if (thumbnailInput.value) {
     thumbnailInput.value.value = ''
@@ -499,6 +537,7 @@ const removeThumbnail = () => {
 // Remove banner
 const removeBanner = () => {
   bannerPreview.value = ''
+  bannerFile.value = null
   form.value.banner_url = ''
   if (bannerInput.value) {
     bannerInput.value.value = ''
@@ -530,6 +569,8 @@ const resetForm = () => {
   }
   thumbnailPreview.value = ''
   bannerPreview.value = ''
+  thumbnailFile.value = null
+  bannerFile.value = null
   newTag.value = ''
   if (thumbnailInput.value) thumbnailInput.value.value = ''
   if (bannerInput.value) bannerInput.value.value = ''
