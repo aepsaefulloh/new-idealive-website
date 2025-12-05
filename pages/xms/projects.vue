@@ -363,7 +363,7 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 import { useAdminProjectsStore, useAdminCategoriesStore } from '@/stores'
-import { formatDate, slugify } from '@/utils'
+import { formatDate, slugify, stripHtml } from '@/utils'
 import { compressForThumbnail, compressForBanner, formatFileSize } from '@/utils/imageCompression'
 import TipTapEditor from '@/components/TipTapEditor.vue'
 import Button from '@/components/dashboard/ui/Button.vue'
@@ -424,14 +424,6 @@ const thumbnailFile = ref(null) // Compressed file waiting to upload
 const bannerFile = ref(null) // Compressed file waiting to upload
 const newTag = ref('')
 const newFeature = ref('')
-
-// Helper function to strip HTML tags for preview
-const stripHtml = (html) => {
-  if (!html) return ''
-  const tmp = document.createElement('DIV')
-  tmp.innerHTML = html
-  return tmp.textContent || tmp.innerText || ''
-}
 
 // Load projects on mount
 const loadProjects = async () => {

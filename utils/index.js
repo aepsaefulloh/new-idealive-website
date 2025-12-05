@@ -94,6 +94,13 @@ export function statusColors(status) {
 
     return colorMap[status] || '#6c757d';
 }
+export const stripHtml = (html) => {
+    if (!html) return ''
+    const tmp = document.createElement('DIV')
+    tmp.innerHTML = html
+    return tmp.textContent || tmp.innerText || ''
+}
+
 
 
 export function getFileIcon(fileName) {
