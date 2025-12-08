@@ -1,302 +1,115 @@
-# 📸 Image Compression Utility - Dokumentasi
+# Image compression — ringkas dan praktis
 
-## Overview
-File `imageCompression.js` adalah utility untuk mengkompresi gambar di sisi **frontend** sebelum di-upload ke Supabase Storage. Gambar akan dikonversi ke format **WebP** dengan kualitas **75%**.
+Dokumentasi singkat untuk utility kompresi gambar di `utils/imageCompression.js`. Utility ini menjalankan kompresi di browser, mengubah gambar ke format WebP (default quality 75%) dan menghasilkan file siap di-upload ke Supabase Storage.
 
-**Fitur Utama:**
-- ✅ Kompresi dilakukan di browser (tidak membebani server)
-- ✅ Konversi otomatis ke format WebP
-- ✅ Preview langsung tanpa upload
-- ✅ Upload hanya saat form di-submit (hemat storage)
-- ✅ Tidak menggunakan library eksternal (pure Web API)
+**Keunggulan singkat:**
+- **Kompresi di browser:** mengurangi beban server.
+- **Konversi ke WebP:** ukuran lebih kecil dengan kualitas baik.
+- **Preview langsung:** bisa lihat hasil sebelum upload.
+- **Lazy upload:** file hanya di-upload saat form disubmit.
 
 ---
 
-## 🔄 Alur Kerja (Flow)
-
-### Flow Kompresi
-```
-┌─────────────────┐
-│  User pilih     │
-│  gambar (JPG,   │
-│  PNG, dll)      │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  FileReader     │
-│  membaca file   │
-│  sebagai        │
-│  DataURL        │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Image Object   │
-│  memuat gambar  │
-│  untuk dapat    │
-│  dimensi asli   │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Hitung dimensi │
-│  baru (jaga     │
-│  aspect ratio)  │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Canvas API     │
-│  gambar di-draw │
-│  ulang dengan   │
-│  dimensi baru   │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  canvas.toBlob  │
-│  konversi ke    │
-│  WebP 75%       │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Return File    │
-│  .webp yang     │
-│  sudah compress │
-└─────────────────┘
-```
-
-### Flow Upload (Lazy Upload)
-```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  Pilih Gambar   │────▶│  Kompresi &     │────▶│  Simpan di      │
-│                 │     │  Preview        │     │  Memory (ref)   │
-└─────────────────┘     └─────────────────┘     └────────┬────────┘
-                                                         │
-                        ┌────────────────────────────────┘
-                        │
-                        ▼
-        ┌───────────────────────────────┐
-        │  User bisa:                   │
-        │  • Ganti gambar (replace)     │
-        │  • Hapus gambar (clear)       │
-        │  • Cancel (tidak upload)      │
-        └───────────────┬───────────────┘
-                        │
-                        ▼ (Submit Form)
-                ┌───────────────┐
-                │  Upload ke    │
-                │  Supabase     │
-                │  Storage      │
-                └───────────────┘
-```
-
-**Keuntungan Lazy Upload:**
-| Aksi | Hasil |
-|------|-------|
-| Pilih gambar | Kompresi & preview (belum upload) |
-| Ganti gambar | File lama di-replace, tidak ada upload |
-| Cancel/Close | File terbuang, tidak ada yang ter-upload |
-| Submit | Baru upload ke Supabase, lalu simpan data |
+**Bagaimana alurnya (singkat):**
+1. User memilih file gambar.
+2. `FileReader` baca file sebagai DataURL.
+3. Gambar dimuat ke object `Image` untuk dapatkan dimensi asli.
+4. Hitung ukuran keluaran sambil menjaga aspect ratio.
+5. Gambar digambar ulang di `canvas` lalu diekspor dengan `canvas.toBlob` ke WebP.
+6. Hasilnya: `Blob` + `File` (.webp) + `dataUrl` untuk preview.
 
 ---
 
-## 📦 Fungsi yang Tersedia
+**Fungsi utama**
 
-### 1. `compressImage(file, options)`
-Fungsi utama untuk kompresi gambar.
+- `compressImage(file, options)` — fungsi utama.
+  - Parameter umum:
+    - `file` (File) — file input.
+    - `options.quality` (number, default 0.75)
+    - `options.maxWidth` (number, default 1920)
+    - `options.maxHeight` (number, default 1080)
+  - Mengembalikan objek:
+    ```javascript
+    {
+      blob,         // hasil Blob (WebP)
+      file,         // File .webp siap upload
+      dataUrl,      // base64 untuk preview
+      originalSize, // bytes
+      compressedSize,
+      compressionRatio,
+      width,
+      height
+    }
+    ```
 
-**Parameter:**
-| Parameter | Type | Default | Deskripsi |
-|-----------|------|---------|-----------|
-| `file` | File | required | File gambar yang akan dikompresi |
-| `options.quality` | number | 0.75 | Kualitas kompresi (0-1) |
-| `options.maxWidth` | number | 1920 | Lebar maksimum output |
-| `options.maxHeight` | number | 1080 | Tinggi maksimum output |
-
-**Return:**
-```javascript
-{
-  blob: Blob,           // Blob hasil kompresi
-  file: File,           // File .webp siap upload
-  dataUrl: string,      // Base64 untuk preview
-  originalSize: number, // Ukuran asli (bytes)
-  compressedSize: number, // Ukuran setelah kompresi
-  compressionRatio: string, // Persentase pengurangan
-  width: number,        // Lebar hasil
-  height: number        // Tinggi hasil
-}
-```
-
----
-
-### 2. `compressForThumbnail(file)`
-Preset untuk thumbnail dengan ukuran lebih kecil.
-
-**Konfigurasi:**
-- Quality: **75%**
-- Max Width: **800px**
-- Max Height: **600px**
-
-**Contoh penggunaan:**
-```javascript
-const compressed = await compressForThumbnail(file)
-// Upload compressed.file ke Supabase
-```
+- `compressForThumbnail(file)` — preset untuk thumbnail (max 800×600, quality 75%).
+- `compressForBanner(file)` — preset untuk banner (max 1920×1080, quality 75%).
+- `formatFileSize(bytes)` — helper untuk menampilkan ukuran yang mudah dibaca.
 
 ---
 
-### 3. `compressForBanner(file)`
-Preset untuk banner dengan ukuran lebih besar.
-
-**Konfigurasi:**
-- Quality: **75%**
-- Max Width: **1920px**
-- Max Height: **1080px**
-
-**Contoh penggunaan:**
-```javascript
-const compressed = await compressForBanner(file)
-// Upload compressed.file ke Supabase
-```
-
----
-
-### 4. `formatFileSize(bytes)`
-Helper untuk menampilkan ukuran file yang readable.
-
-**Contoh:**
-```javascript
-formatFileSize(1048576)  // "1 MB"
-formatFileSize(512000)   // "500 KB"
-```
-
----
-
-## 🎯 Contoh Implementasi di Vue
+Contoh singkat penggunaan (Vue):
 
 ```javascript
-// Import utility
-import { compressForThumbnail, compressForBanner, formatFileSize } from '@/utils/imageCompression'
+import { compressForThumbnail, formatFileSize } from '@/utils/imageCompression'
 
-// Refs untuk menyimpan file sementara
 const thumbnailFile = ref(null)
 const thumbnailPreview = ref('')
 
-// Handler kompresi (tanpa upload)
-const handleThumbnailUpload = async (event) => {
-  const file = event.target.files[0]
-  if (file) {
-    try {
-      toast.info('Compressing image...')
-      const compressed = await compressForThumbnail(file)
-      
-      // Simpan file & preview (belum upload)
-      thumbnailFile.value = compressed.file
-      thumbnailPreview.value = compressed.dataUrl
-      
-      console.log(`Compressed: ${formatFileSize(compressed.originalSize)} → ${formatFileSize(compressed.compressedSize)}`)
-      toast.success(`Image compressed (${compressed.compressionRatio}% smaller)`)
-    } catch (error) {
-      toast.error('Failed to compress image')
-    }
+const handleThumbnailUpload = async (e) => {
+  const f = e.target.files?.[0]
+  if (!f) return
+  try {
+    const result = await compressForThumbnail(f)
+    thumbnailFile.value = result.file
+    thumbnailPreview.value = result.dataUrl
+    console.log(`${formatFileSize(result.originalSize)} → ${formatFileSize(result.compressedSize)}`)
+  } catch (err) {
+    console.error('Compression failed', err)
   }
 }
 
-// Handler submit (upload saat submit)
-const handleSubmit = async () => {
-  let finalThumbnailUrl = form.value.thumbnail_url
-  
-  // Upload hanya jika ada file baru
-  if (thumbnailFile.value) {
-    toast.info('Uploading thumbnail...')
-    finalThumbnailUrl = await uploadFile(thumbnailFile.value, 'articles')
-  }
-  
-  // Simpan data dengan URL gambar
-  const payload = { ...form.value, thumbnail_url: finalThumbnailUrl }
-  // ... save to database
-}
-
-// Upload ke Supabase
-const uploadFile = async (file, folder) => {
+// Upload hanya saat submit
+const uploadFile = async (file, folder = 'images') => {
   const supabase = useNuxtApp().$supabase
-  const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.webp`
+  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.webp`
   const filePath = `${folder}/${fileName}`
 
-  const { error } = await supabase.storage
-    .from('images')
-    .upload(filePath, file, {
-      contentType: 'image/webp',
-      cacheControl: '3600',
-    })
-
+  const { error } = await supabase.storage.from('images').upload(filePath, file, {
+    contentType: 'image/webp',
+    cacheControl: '3600'
+  })
   if (error) throw error
 
-  const { data: { publicUrl } } = supabase.storage
-    .from('images')
-    .getPublicUrl(filePath)
-
-  return publicUrl
+  const { data } = supabase.storage.from('images').getPublicUrl(filePath)
+  return data.publicUrl
 }
 ```
 
 ---
 
-## ⚡ Kenapa WebP?
+Kenapa WebP?
+- Ukuran lebih kecil dengan kualitas yang setara.
+- Dukungan di browser modern sangat baik (kecuali IE).
 
-| Format | Ukuran | Kualitas | Browser Support |
-|--------|--------|----------|-----------------|
-| JPEG | Medium | Good | ✅ Semua |
-| PNG | Large | Excellent | ✅ Semua |
-| **WebP** | **Small** | **Excellent** | ✅ Modern (95%+) |
-
-WebP memberikan kompresi **25-34% lebih baik** dari JPEG dengan kualitas visual yang sama.
+Contoh kasar hasil kompresi (bergantung konten):
+- 2.5 MB → ~450 KB
+- 5.0 MB → ~800 KB
 
 ---
 
-## 📊 Contoh Hasil Kompresi
-
-| File Asli | Ukuran Asli | Ukuran WebP 75% | Pengurangan |
-|-----------|-------------|-----------------|-------------|
-| photo.jpg | 2.5 MB | 450 KB | ~82% |
-| banner.png | 5.0 MB | 800 KB | ~84% |
-| logo.png | 500 KB | 120 KB | ~76% |
-
-*Hasil bervariasi tergantung konten gambar*
+Tips dan catatan
+- Proses terjadi di client; pastikan UX (spinner/toast) saat kompresi berlangsung.
+- Aspect ratio selalu dijaga — gambar tidak akan terdistorsi.
+- WebP mendukung transparansi seperti PNG.
 
 ---
 
-## 🔧 Konfigurasi Kustom
+File terkait
+- `utils/imageCompression.js` — implementasi utility
+- `pages/xms/articles.vue`, `pages/xms/projects.vue` — contoh pemakaian
 
-Jika ingin kualitas atau ukuran berbeda:
+Jika mau, saya bisa:
+- menyingkat contoh kode lebih jauh, atau
+- menambahkan potongan `API` test sederhana untuk mencoba utility di browser.
 
-```javascript
-import { compressImage } from '@/utils/imageCompression'
-
-// Kompresi dengan konfigurasi kustom
-const compressed = await compressImage(file, {
-  quality: 0.85,      // Kualitas 85%
-  maxWidth: 1200,     // Maks lebar 1200px
-  maxHeight: 800      // Maks tinggi 800px
-})
-```
-
----
-
-## ⚠️ Catatan Penting
-
-1. **Browser Support**: WebP didukung 95%+ browser modern. IE tidak mendukung WebP.
-2. **Kompresi di Frontend**: Proses terjadi di browser user, tidak membebani server.
-3. **Aspect Ratio**: Selalu dijaga, gambar tidak akan terdistorsi.
-4. **Transparansi**: WebP mendukung transparansi seperti PNG.
-
----
-
-## 📁 File Terkait
-
-- `utils/imageCompression.js` - Utility compression
-- `pages/xms/articles.vue` - Implementasi di articles
-- `pages/xms/projects.vue` - Implementasi di projects
