@@ -9,9 +9,9 @@
       <!-- Desktop Nav -->
       <div class="hidden md:flex gap-8 items-center">
         <NuxtLink v-for="(item, index) in navItems" :key="index" :to="item.link"
-          class="text-[#2054FA]/60 transition-all duration-300" :class="{
-            '!text-[#2054FA] heading scale-125': isActive(item.link) && !isSpecialPage,
-            '!text-white heading scale-110': isSpecialPage && isActive(item.link),
+          class="text-[#2054FA]/60 transition-all duration-300 pb-1 border-b-2 border-transparent" :class="{
+            '!text-[#2054FA] !border-custom-primary heading': isActive(item.link) && !isSpecialPage,
+            '!text-white !border-white heading': isSpecialPage && isActive(item.link),
             'text-white/60': isSpecialPage && !isActive(item.link)
           }">
           {{ item.name }}
@@ -101,10 +101,10 @@ const menuOpen = ref(false);
 
 const navItems = [
   { name: "Home", link: "/" },
-  { name: "About", link: "about" },
-  { name: "Work", link: "work" },
-  { name: "Career", link: "career" },
-  { name: "Contact", link: "contact" },
+  { name: "About", link: "/about" },
+  { name: "Work", link: "/work" },
+  { name: "Career", link: "/career" },
+  { name: "Contact", link: "/contact" },
 ];
 
 const specialPages = ['/about', '/career', '/contact', '/login'];
