@@ -18,27 +18,27 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-    font-family: 'Secondary', sans-serif; /* Fallback to sans-serif */
-    overflow: auto;
+@layer base {
+    body {
+        font-family: 'Secondary', sans-serif;
+        overflow: auto;
+    }
 }
 
-.heading{
-    font-family: 'Primary', serif; /* Fallback to serif */
-}
+@layer components {
+    .bg-idealive {
+        @apply bg-[#2054FA];
+    }
 
-.bg-idealive{
-    @apply bg-[#2054FA]
-}
+    .text-idealive {
+        @apply text-[#2054FA];
+    }
 
-.text-idealive{
-    @apply text-[#2054FA]
-}
+    .px-desktop {
+        @apply md:px-[2.646vw] px-[20px];
+    }
 
-.px-desktop{
-    @apply md:px-[2.646vw] px-[20px]
-}
-
-.btn-main{
-    @apply bg-[#2054FA] text-white px-[20px] py-[10px] inline-flex items-center gap-[10px] transition-colors duration-300 relative overflow-hidden;
+    .btn-main {
+        @apply bg-[#2054FA] text-white px-[20px] py-[10px] inline-flex items-center gap-[10px] transition-colors duration-300 relative overflow-hidden;
+    }
 }

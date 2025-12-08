@@ -8,7 +8,7 @@
         </span>
         <br>
         <span class="reveal-mask animate-invisible">
-          <span class="reveal-word heading">Live it.</span>
+          <span class="reveal-word heading font-primary">Live it.</span>
         </span>
       </h1>
     </div>
@@ -45,7 +45,7 @@
       </span>
       <br>
       <span class="reveal-mask animate-invisible">
-        <span class="reveal-word heading">Live it.</span>
+        <span class="reveal-word heading font-primary">Live it.</span>
       </span>
     </h1>
   </section>
@@ -59,9 +59,9 @@
 
       <img class="absolute image md:w-[65.675vw] z-[2]" src="/images/logo-idealive.svg" alt="Animated Image" />
       <div class="items relative justify-evenly items-center w-full flex z-[2]">
-        <h1 class="md:text-[3.307vw] heading absolute">Agency</h1>
-        <h1 class="md:text-[3.307vw] heading absolute">Laboratory</h1>
-        <h1 class="md:text-[3.307vw] heading absolute">Engine</h1>
+        <h1 class="md:text-[3.307vw] heading font-primary absolute">Agency</h1>
+        <h1 class="md:text-[3.307vw] heading font-primary absolute">Laboratory</h1>
+        <h1 class="md:text-[3.307vw] heading font-primary absolute">Engine</h1>
       </div>
       <div class="absolute z-[0] flex w-full h-full overflow-hidden background-images">
         <img v-for="(img, index) in backgroundImages" :key="index" class="w-full absolute opacity-0" :src="img"

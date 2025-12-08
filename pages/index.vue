@@ -2,7 +2,6 @@
   <div>
     <LazyHomeHero />
     <LazyHomeProject />
-    <LazyHomeCta />
   </div>
 </template>
 

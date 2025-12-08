@@ -4,12 +4,10 @@
       delay: intervalDelay,
       disableOnInteraction: false
     }" :loop="true" :slides-per-view="1" :space-between="20" :navigation="false" :pagination="false" :breakpoints="{
-        // Tablet (md): >= 768px -> 3 item
         768: {
           slidesPerView: 3,
           spaceBetween: 30
         },
-        // Desktop (lg): >= 1024px -> 5 item
         1024: {
           slidesPerView: 5,
           spaceBetween: 40
@@ -33,7 +31,6 @@ import 'swiper/css';
 // Delay autoplay
 const intervalDelay = 2500;
 
-// Data dummy (pastikan path gambar benar)
 const logos = ref([
   { client_logo: '/images/logo1.png' },
   { client_logo: '/images/logo2.png' },

@@ -27,7 +27,7 @@
               </p>
               <div class="flex flex-col">
                 <h6 class="">
-                  <span class="reveal-masks md:text-[2.381vw] heading text-[5.667vw] md:mb-4 mb-2 leading-[110%]">
+                  <span class="reveal-masks md:text-[2.381vw] heading font-primary text-[5.667vw] md:mb-4 mb-2 leading-[110%]">
                     <span class="reveal-wordy py-1" v-html="data.title"></span>
                   </span>
                 </h6>
