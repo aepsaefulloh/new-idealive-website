@@ -143,6 +143,9 @@
               <div>
                 <h3 class="font-semibold text-gray-900 dark:text-white">{{ project.title }}</h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ project.description }}</p>
+                <div v-if="project.clients" class="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                  Client: {{ project.clients.name }}
+                </div>
                 <div class="flex gap-2 mt-2">
                   <span v-if="project.featured"
                     class="text-xs px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 rounded-full">

@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS projects (
   demo_url TEXT,
   github_url TEXT,
   category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
+  client_id INTEGER REFERENCES clients(id) ON DELETE SET NULL,
   featured BOOLEAN DEFAULT false,
   published BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -38,6 +39,7 @@ CREATE INDEX IF NOT EXISTS idx_projects_slug ON projects(slug);
 CREATE INDEX IF NOT EXISTS idx_projects_featured ON projects(featured);
 CREATE INDEX IF NOT EXISTS idx_projects_published ON projects(published);
 CREATE INDEX IF NOT EXISTS idx_projects_category_id ON projects(category_id);
+CREATE INDEX IF NOT EXISTS idx_projects_client_id ON projects(client_id);
 
 -- -----------------------------------------------------------------------------
 -- RLS & Policies

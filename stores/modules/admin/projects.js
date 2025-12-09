@@ -42,6 +42,10 @@ export const useAdminProjectsStore = defineStore('admin-projects', {
               name,
               slug,
               type
+            ),
+            clients (
+              id,
+              name
             )
           `)
           .order('created_at', { ascending: false })
@@ -94,6 +98,7 @@ export const useAdminProjectsStore = defineStore('admin-projects', {
             demo_url: payload.demo_url,
             github_url: payload.github_url,
             category_id: payload.category_id,
+            client_id: payload.client_id,
             featured: payload.featured || false,
             published: payload.published !== undefined ? payload.published : true,
           }])

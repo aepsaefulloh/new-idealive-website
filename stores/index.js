@@ -7,11 +7,13 @@ import { useRecaptchaStore } from './modules/recaptcha'
 
 import { useAdminArticlesStore } from './modules/admin/articles'
 import { useAdminCategoriesStore } from './modules/admin/categories'
+import { useAdminClientsStore } from './modules/admin/clients'
 import { useAdminCmsStore } from './modules/admin/cms'
 import { useAdminProjectsStore } from './modules/admin/projects'
 
 import { usePublicArticlesStore } from './modules/public/articles'
 import { usePublicCategoriesStore } from './modules/public/categories'
+import { usePublicClientsStore } from './modules/public/clients'
 import { usePublicCmsStore } from './modules/public/cms'
 import { usePublicProjectsStore } from './modules/public/projects'
 
@@ -25,11 +27,13 @@ export {
 
   useAdminArticlesStore,
   useAdminCategoriesStore,
+  useAdminClientsStore,
   useAdminCmsStore,
   useAdminProjectsStore,
 
   usePublicArticlesStore,
   usePublicCategoriesStore,
+  usePublicClientsStore,
   usePublicCmsStore,
   usePublicProjectsStore,
 }

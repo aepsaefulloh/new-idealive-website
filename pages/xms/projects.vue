@@ -97,7 +97,7 @@
         class="group bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:border-blue-500/30 dark:hover:border-blue-500/30 transition-all duration-300 flex flex-col h-full">
 
         <!-- Project Image -->
-        <div class="aspect-video bg-gray-100 dark:bg-gray-900 relative overflow-hidden">
+        <div class="bg-gray-100 dark:bg-gray-900 relative md:max-h-48 overflow-hidden">
           <img v-if="project.thumbnail_url" :src="project.thumbnail_url" :alt="project.title"
             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
           <div v-else class="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50 dark:bg-gray-800">
@@ -196,19 +196,32 @@
                 <p class="text-xs text-gray-500 mt-1">URL-friendly (auto-generated)</p>
               </div>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Category
-              </label>
-              <select v-model="form.category_id"
-                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                <option value="">Select a category (optional)</option>
-                <option v-for="category in categoriesStore.projectCategories" :key="category.id" :value="category.id">
-                  {{ category.name }}
-                </option>
-              </select>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Category
+                </label>
+                <select v-model="form.category_id"
+                  class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                  <option value="">Select a category (optional)</option>
+                  <option v-for="category in categoriesStore.projectCategories" :key="category.id" :value="category.id">
+                    {{ category.name }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Client
+                </label>
+                <select v-model="form.client_id"
+                  class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                  <option value="">Select a client (optional)</option>
+                  <option v-for="client in clientsStore.clients" :key="client.id" :value="client.id">
+                    {{ client.name }}
+                  </option>
+                </select>
+              </div>
             </div>
-
           </div>
 
           <!-- Description & Overview -->
@@ -362,7 +375,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { toast } from 'vue3-toastify'
-import { useAdminProjectsStore, useAdminCategoriesStore } from '@/stores'
+import { useAdminProjectsStore, useAdminCategoriesStore, useAdminClientsStore } from '@/stores'
 import { formatDate, slugify, stripHtml } from '@/utils'
 import { compressForThumbnail, compressForBanner, formatFileSize } from '@/utils/imageCompression'
 import TipTapEditor from '@/components/TipTapEditor.vue'
@@ -376,6 +389,7 @@ definePageMeta({
 
 const projectsStore = useAdminProjectsStore()
 const categoriesStore = useAdminCategoriesStore()
+const clientsStore = useAdminClientsStore()
 let subscription = null
 
 // Reactive variables for toast messages
@@ -402,6 +416,7 @@ const form = ref({
   demo_url: '',
   github_url: '',
   category_id: null,
+  client_id: null,
   featured: false,
   published: true,
 })
@@ -453,6 +468,7 @@ const editProject = (project) => {
     demo_url: project.demo_url || '',
     github_url: project.github_url || '',
     category_id: project.category_id || null,
+    client_id: project.client_id || null,
     featured: project.featured || false,
     published: project.published !== undefined ? project.published : true,
   }
@@ -530,7 +546,7 @@ const handleThumbnailUpload = async (event) => {
       // Compress image to WebP with 75% quality
       const compressed = await compressForThumbnail(file)
       console.log(`Thumbnail compressed: ${formatFileSize(compressed.originalSize)} → ${formatFileSize(compressed.compressedSize)} (${compressed.compressionRatio}% reduction)`)
-      
+
       // Store compressed file and show preview (don't upload yet)
       thumbnailFile.value = compressed.file
       thumbnailPreview.value = compressed.dataUrl
@@ -550,7 +566,7 @@ const handleBannerUpload = async (event) => {
       // Compress image to WebP with 75% quality
       const compressed = await compressForBanner(file)
       console.log(`Banner compressed: ${formatFileSize(compressed.originalSize)} → ${formatFileSize(compressed.compressedSize)} (${compressed.compressionRatio}% reduction)`)
-      
+
       // Store compressed file and show preview (don't upload yet)
       bannerFile.value = compressed.file
       bannerPreview.value = compressed.dataUrl
@@ -647,6 +663,7 @@ const resetForm = () => {
 onMounted(async () => {
   await loadProjects()
   await categoriesStore.fetchCategories()
+  await clientsStore.fetchClients()
 
   // Subscribe to real-time updates
   subscription = projectsStore.subscribeToUpdates((payload) => {

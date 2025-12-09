@@ -33,10 +33,11 @@ export const usePublicProjectsStore = defineStore('public-projects', {
           .from('projects')
           .select(`
             *,
-            categories(id, name, slug)
+            categories(id, name, slug),
+            clients(id, name, image_url)
           `)
           .eq('published', true)
-          .order('sort_order', { ascending: true })
+          .order('created_at', { ascending: false })
 
         if (error) {
           this.error = error.message || 'Failed to fetch projects'
