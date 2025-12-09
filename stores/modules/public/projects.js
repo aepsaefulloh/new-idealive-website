@@ -69,7 +69,8 @@ export const usePublicProjectsStore = defineStore('public-projects', {
           .from('projects')
           .select(`
             *,
-            categories(id, name, slug)
+            categories(id, name, slug),
+            clients(id, name, image_url)
           `)
           .eq('slug', slug)
           .eq('published', true)

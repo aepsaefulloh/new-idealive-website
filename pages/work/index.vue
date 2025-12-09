@@ -14,12 +14,11 @@
       <MasonryWall :items="filteredProjects" :ssr-columns="3" :column-width="masonryConfig.columnWidth"
          :gap="masonryConfig.gap" :min-columns="1" :max-columns="3" class="mt-12 md:mt-16">
          <template #default="{ item }">
-            <div class="group relative overflow-hidden shadow-sm bg-white border border-gray-100 mb-6 md:mb-8">
+            <NuxtLink :to="`/work/${item.slug}`" class="group relative overflow-hidden shadow-sm bg-white border border-gray-100 mb-6 md:mb-8 block cursor-pointer">
                <div class="overflow-hidden">
                   <img :src="item.thumbnail_url" :alt="item.title"
                      class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105" />
                </div>
-
                <div
                   class="absolute inset-0 bg-custom-primary/90 text-white flex flex-col items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <div class="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4 text-center w-full">
@@ -32,7 +31,7 @@
                      <p class="text-xs text-white/80 uppercase tracking-wide">{{ item.year }}</p>
                   </div>
                </div>
-            </div>
+            </NuxtLink>
          </template>
       </MasonryWall>
 
@@ -100,10 +99,12 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* Hide scrollbar for Chrome, Safari and Opera */
 .scrollbar-hide::-webkit-scrollbar {
    display: none;
 }
 
+/* Hide scrollbar for IE, Edge and Firefox */
 .scrollbar-hide {
    -ms-overflow-style: none;
    scrollbar-width: none;

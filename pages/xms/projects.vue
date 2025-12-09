@@ -238,9 +238,9 @@
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Detailed Overview
               </label>
-              <TipTapEditor v-model="form.overview" placeholder="Detailed project overview" :limit="2000"
+              <TipTapEditor v-model="form.overview" placeholder="Detailed project overview"
                 class="w-full" />
-              <p class="text-xs text-gray-500 mt-1">Maximum 2000 characters</p>
+              <!-- <p class="text-xs text-gray-500 mt-1">Maximum 2000 characters</p> -->
             </div>
           </div>
 
