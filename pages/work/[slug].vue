@@ -65,7 +65,7 @@
 
         <div class="lg:col-span-6 h-[calc(100vh-10rem)] overflow-y-auto scrollbar-hide">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div v-for="(item, index) in dummyImages" :key="item.id"
+            <div v-for="(item, index) in dynamicImages" :key="item.id"
               :class="[(index === 1 || index === 2) ? 'md:col-span-1' : 'md:col-span-2']">
               <img :src="item.url" :alt="project.title" class="w-full h-auto object-cover rounded-sm" />
             </div>
@@ -141,13 +141,13 @@ const paginatedOverview = computed(() => {
   return overviewPages.value[index]
 })
 
-const dummyImages = [
-  { id: 1, url: 'https://images.unsplash.com/photo-1508672019048-805c876b67e2?auto=format&fit=crop&w=800&q=80' },
-  { id: 2, url: 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=800&q=80' },
-  { id: 3, url: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80' },
-  { id: 4, url: 'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=800&q=80' },
-  { id: 5, url: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80' },
-]
+const dynamicImages = computed(() => {
+  if (!project.value || !project.value.banner_images) return []
+  return project.value.banner_images.map((url, index) => ({
+    id: index + 1,
+    url: url
+  }))
+})
 
 onMounted(async () => {
   isLoading.value = true
