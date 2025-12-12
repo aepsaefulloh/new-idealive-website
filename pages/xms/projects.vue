@@ -313,18 +313,26 @@
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Banner Image
+                Banner Images (multiple)
               </label>
               <div class="space-y-2">
-                <input ref="bannerInput" type="file" accept="image/*" @change="handleBannerUpload"
+                <input ref="bannerInput" type="file" accept="image/*" multiple @change="handleBannerUpload"
                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
-                <div v-if="bannerPreview" class="relative group">
-                  <img :src="bannerPreview" alt="Banner preview"
-                    class="w-full h-32 object-cover rounded-xl border border-gray-200 dark:border-gray-700" />
-                  <button @click="removeBanner"
-                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
-                  </button>
+
+                <!-- Multiple banners preview + ordering -->
+                <div v-if="bannerPreviews.length" class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div v-for="(b, idx) in bannerPreviews" :key="idx" class="relative group">
+                    <img :src="b.url" alt="Banner preview"
+                      class="w-full h-24 object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                    <div class="absolute inset-0 flex items-start justify-end gap-1 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button type="button" @click="moveBanner(idx, idx-1)"
+                        class="px-2 py-1 text-xs rounded bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700">↑</button>
+                      <button type="button" @click="moveBanner(idx, idx+1)"
+                        class="px-2 py-1 text-xs rounded bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700">↓</button>
+                      <button type="button" @click="removeBannerAt(idx)"
+                        class="px-2 py-1 text-xs rounded bg-red-500 text-white">Delete</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -407,7 +415,7 @@ const form = ref({
   description: '',
   overview: '',
   thumbnail_url: '',
-  banner_url: '',
+  banner_images: [],
   tags: [],
   features: [],
   year: '',
@@ -434,9 +442,9 @@ watch(() => form.value.title, (newTitle, oldTitle) => {
 const thumbnailInput = ref(null)
 const bannerInput = ref(null)
 const thumbnailPreview = ref('')
-const bannerPreview = ref('')
+const bannerPreviews = ref([])
 const thumbnailFile = ref(null) // Compressed file waiting to upload
-const bannerFile = ref(null) // Compressed file waiting to upload
+const bannerFiles = ref([])
 const newTag = ref('')
 const newFeature = ref('')
 
@@ -459,7 +467,7 @@ const editProject = (project) => {
     description: project.description || '',
     overview: project.overview || '',
     thumbnail_url: project.thumbnail_url || '',
-    banner_url: project.banner_url || '',
+    banner_images: Array.isArray(project.banner_images) ? project.banner_images : [],
     tags: project.tags || [],
     features: project.features || [],
     year: project.year || '',
@@ -473,7 +481,7 @@ const editProject = (project) => {
     published: project.published !== undefined ? project.published : true,
   }
   thumbnailPreview.value = project.thumbnail_url || ''
-  bannerPreview.value = project.banner_url || ''
+  bannerPreviews.value = (Array.isArray(project.banner_images) ? project.banner_images : []).map(url => ({ url }))
   showEditModal.value = true
 }
 
@@ -499,22 +507,33 @@ const handleSubmit = async () => {
   try {
     // Upload new images if there are compressed files waiting
     let finalThumbnailUrl = form.value.thumbnail_url
-    let finalBannerUrl = form.value.banner_url
+    let finalBannerImages = Array.isArray(form.value.banner_images) ? [...form.value.banner_images] : []
 
     if (thumbnailFile.value) {
       toast.info('Uploading thumbnail...')
       finalThumbnailUrl = await uploadFile(thumbnailFile.value, 'projects')
     }
 
-    if (bannerFile.value) {
-      toast.info('Uploading banner...')
-      finalBannerUrl = await uploadFile(bannerFile.value, 'projects')
+    if (bannerFiles.value.length) {
+      toast.info(`Uploading ${bannerFiles.value.length} banner image(s)...`)
+      const uploaded = []
+      for (const file of bannerFiles.value) {
+        const url = await uploadFile(file, 'projects')
+        uploaded.push(url)
+      }
+      finalBannerImages = uploaded
+    } else if (bannerPreviews.value.length && !bannerFiles.value.length) {
+      // Persist reordered/removed existing banners when no new uploads were added
+      finalBannerImages = bannerPreviews.value.map((item) => item.url)
+    } else if (!bannerPreviews.value.length && !bannerFiles.value.length) {
+      // All banners removed
+      finalBannerImages = []
     }
 
     const payload = {
       ...form.value,
       thumbnail_url: finalThumbnailUrl,
-      banner_url: finalBannerUrl,
+      banner_images: finalBannerImages.length > 0 ? finalBannerImages : [],
     }
 
     let result
@@ -559,22 +578,20 @@ const handleThumbnailUpload = async (event) => {
 }
 
 const handleBannerUpload = async (event) => {
-  const file = event.target.files[0]
-  if (file) {
-    try {
-      toast.info('Compressing image...')
-      // Compress image to WebP with 75% quality
+  const files = Array.from(event.target.files || [])
+  if (!files.length) return
+  try {
+    toast.info(`Compressing ${files.length} banner image(s)...`)
+    for (const file of files) {
       const compressed = await compressForBanner(file)
+      bannerFiles.value.push(compressed.file)
+      bannerPreviews.value.push({ url: compressed.dataUrl })
       console.log(`Banner compressed: ${formatFileSize(compressed.originalSize)} → ${formatFileSize(compressed.compressedSize)} (${compressed.compressionRatio}% reduction)`)
-
-      // Store compressed file and show preview (don't upload yet)
-      bannerFile.value = compressed.file
-      bannerPreview.value = compressed.dataUrl
-      toast.success(`Image compressed (${compressed.compressionRatio}% smaller) - will upload on save`)
-    } catch (error) {
-      console.error('Banner compression failed:', error)
-      toast.error('Failed to compress banner')
     }
+    toast.success('All selected banners compressed — will upload on save')
+  } catch (error) {
+    console.error('Banner compression failed:', error)
+    toast.error('Failed to compress some banner(s)')
   }
 }
 
@@ -613,13 +630,20 @@ const removeThumbnail = () => {
   }
 }
 
-// Remove banner
-const removeBanner = () => {
-  bannerPreview.value = ''
-  bannerFile.value = null
-  form.value.banner_url = ''
-  if (bannerInput.value) {
-    bannerInput.value.value = ''
+const removeBannerAt = (index) => {
+  bannerPreviews.value.splice(index, 1)
+  if (bannerFiles.value.length > index) {
+    bannerFiles.value.splice(index, 1)
+  }
+}
+
+const moveBanner = (from, to) => {
+  if (to < 0 || to >= bannerPreviews.value.length) return
+  const [p] = bannerPreviews.value.splice(from, 1)
+  bannerPreviews.value.splice(to, 0, p)
+  if (bannerFiles.value.length === bannerPreviews.value.length && bannerFiles.value.length) {
+    const [f] = bannerFiles.value.splice(from, 1)
+    bannerFiles.value.splice(to, 0, f)
   }
 }
 
@@ -638,7 +662,7 @@ const resetForm = () => {
     description: '',
     overview: '',
     thumbnail_url: '',
-    banner_url: '',
+    banner_images: [],
     tags: [],
     features: [],
     year: '',
@@ -651,9 +675,9 @@ const resetForm = () => {
     published: true,
   }
   thumbnailPreview.value = ''
-  bannerPreview.value = ''
   thumbnailFile.value = null
-  bannerFile.value = null
+  bannerFiles.value = []
+  bannerPreviews.value = []
   newTag.value = ''
   newFeature.value = ''
   if (thumbnailInput.value) thumbnailInput.value.value = ''
