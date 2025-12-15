@@ -128,9 +128,9 @@ export const usePublicCmsStore = defineStore('public-cms', {
           const { data, error } = await supabase
             .from('contact_info')
             .select('*')
-            .single()
+            .maybeSingle()
 
-          if (error && error.code !== 'PGRST116') {
+          if (error) {
             this.error = error.message || 'Failed to fetch contact info'
             return { success: false, error: this.error }
           }
