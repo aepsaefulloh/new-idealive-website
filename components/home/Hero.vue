@@ -74,7 +74,7 @@
     </div>
   </section>
 
-  <section id="section3" class="section3 relative bg-idealive revert py-[5.622vw]">
+  <section id="section3" class="section3 relative bg-idealive revert">
     <HomeAbout />
   </section>
 </template>
@@ -251,7 +251,10 @@ const setupDesktopAnimations = (imgTimeline) => {
       }
     )
     .to("#section2", { backgroundColor: "#2054FA" })
-    .to(".transition-overlay", { opacity: 1, duration: 0.5, ease: "power2.inOut" });
+    .fromTo(".transition-overlay", 
+      { yPercent: 100, opacity: 1 }, 
+      { yPercent: 0, opacity: 1, duration: 1, ease: "power2.inOut", force3D: true }
+    );
 };
 
 const debounce = (fn, delay) => {

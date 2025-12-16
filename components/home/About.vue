@@ -2,7 +2,7 @@
   <div>
     <div class="container-xl bg-idealive">
       <div
-        class="container mx-auto md:h-dvh flex h-auto flex-col items-center justify-center md:gap-[11.64vw] gap-[20.513vw] md:px-0 px-[20px] md:py-0 py-[22.564vw]">
+        class="container mx-auto md:min-h-screen flex h-auto flex-col items-center justify-center md:justify-start md:pt-[25vh] md:gap-[11.64vw] gap-[20.513vw] md:px-0 px-[20px] md:py-0 py-[22.564vw]">
         <div class="flex flex-col justify-center gap-4 main-trigger">
           <h2 class="md:text-[4.299vw] text-[5.5vw] leading-[110%] text-center text-white">
             <span class="reveal-masks animate-invisibles">
@@ -72,15 +72,16 @@ const headline = () => {
     },
   });
 
-  tl.set(words, { yPercent: 100, skewX: -1 });
+  tl.set(words, { y: 50, opacity: 0 });
   tl.add(() => {
     masks.forEach((el) => el.classList.remove("animate-invisibles"));
   });
   tl.to(words, {
-    yPercent: 0,
-    skewX: 0,
-    duration: 1.4,
-    stagger: 0.1,
+    y: 0,
+    opacity: 1,
+    duration: 1.2,
+    stagger: 0.05,
+    ease: "power3.out"
   }, 0);
 };
 
