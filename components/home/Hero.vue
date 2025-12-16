@@ -71,7 +71,7 @@
         </video>
       </div>
       <div class="transition-overlay absolute inset-0 z-[10] pointer-events-none">
-        <div class="absolute -top-[25vh] left-0 w-full h-[25vh] bg-gradient-to-t from-[#2054FA] to-transparent"></div>
+        <div class="absolute -top-[50vh] left-0 w-full h-[50vh] bg-gradient-to-t from-[#2054FA] via-[#2054FA]/80 to-transparent"></div>
         <div class="w-full h-full bg-[#2054FA]"></div>
       </div>
     </div>
