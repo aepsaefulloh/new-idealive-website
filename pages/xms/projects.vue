@@ -293,7 +293,7 @@
           </div>
 
           <!-- File Uploads -->
-          <div class="grid md:grid-cols-2 gap-6">
+          <div class="grid md:grid-cols-1 gap-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Thumbnail Image
