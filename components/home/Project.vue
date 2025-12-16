@@ -1,6 +1,9 @@
 <template>
-  <div class="">
-    <section class="container-xl agis px-desktop md:py-[10.582vw] py-[12.821vw]">
+  <div class="bg-white relative z-30">
+    <!-- Gradient Top -->
+    <div class="absolute -top-[20vh] left-0 w-full h-[20vh] bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"></div>
+    
+    <section class="container-xl agis px-desktop md:pt-[10vw] md:pb-[10.582vw] py-[12.821vw]">
       <h5 ref="workHeading" class="md:text-[3.968vw] text-center text-idealive text-[6.667vw] overflow-hidden">
         <span class="work-text">
           <span v-for="(char, index) in 'Work'.split('')" :key="index" class="char inline-block">

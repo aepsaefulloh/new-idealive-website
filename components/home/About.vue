@@ -1,8 +1,11 @@
 <template>
-  <div>
+  <div class="about-container relative z-20 md:-mt-[100vh]">
+    <!-- Gradient Top -->
+    <div class="absolute -top-[50vh] left-0 w-full h-[50vh] bg-gradient-to-t from-[#2054FA] via-[#2054FA]/80 to-transparent pointer-events-none"></div>
+
     <div class="container-xl bg-idealive">
       <div
-        class="container mx-auto md:min-h-screen flex h-auto flex-col items-center justify-center md:justify-start md:pt-[8vh] md:gap-[6vw] gap-[20.513vw] md:px-0 px-[20px] md:py-0 py-[22.564vw]">
+        class="container mx-auto h-screen flex flex-col items-center justify-center md:gap-[3vw] gap-[20.513vw] md:px-0 px-[20px]">
         <div class="flex flex-col justify-center gap-4 main-trigger">
           <h2 class="md:text-[4.299vw] text-[5.5vw] leading-[110%] text-center text-white">
             <span class="reveal-masks animate-invisibles">
@@ -31,6 +34,8 @@
         <UtilsClientReuse />
       </div>
     </div>
+    
+    <!-- Bottom Overlay Wrapper Removed -->
   </div>
 </template>
 
@@ -83,6 +88,17 @@ const headline = () => {
     stagger: 0.05,
     ease: "power3.out"
   }, 0);
+
+  // Pin About section for Project to slide over
+  if (!isMobile) {
+    ScrollTrigger.create({
+      trigger: ".about-container",
+      start: "top top",
+      end: "bottom top",
+      pin: true,
+      pinSpacing: false
+    });
+  }
 };
 
 onMounted(() => {

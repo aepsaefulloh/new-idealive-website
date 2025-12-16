@@ -234,7 +234,7 @@ const setupDesktopAnimations = (imgTimeline) => {
       [".solid-bg", ".image"],
       {
         opacity: 0,
-        duration: 0.5,
+        duration: 0.3,
         ease: "power2.inOut",
         onComplete: () => {
           if (imgTimeline && imgTimeline.paused()) {
@@ -242,7 +242,7 @@ const setupDesktopAnimations = (imgTimeline) => {
           }
         }
       },
-      "+=0.2"
+      "<0.1"
     )
     .fromTo(
       ".items h1",
@@ -256,7 +256,7 @@ const setupDesktopAnimations = (imgTimeline) => {
     .to("#section2", { backgroundColor: "#2054FA" })
     .fromTo(".transition-overlay", 
       { yPercent: 125 }, 
-      { yPercent: 0, duration: 1.5, ease: "power1.inOut", force3D: true }
+      { yPercent: 0, duration: 1, ease: "power1.inOut", force3D: true }
     );
 };
 
