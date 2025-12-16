@@ -11,7 +11,11 @@
          </button>
       </div>
 
-      <MasonryWall :items="filteredProjects" :ssr-columns="3" :column-width="masonryConfig.columnWidth"
+      <div v-if="isLoading" class="mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+         <SkeletonLoading v-for="n in 6" :key="n" type="card" />
+      </div>
+
+      <MasonryWall v-else :items="projects" :ssr-columns="3" :column-width="masonryConfig.columnWidth"
          :gap="masonryConfig.gap" :min-columns="1" :max-columns="3" class="mt-12 md:mt-16">
          <template #default="{ item }">
             <NuxtLink :to="`/work/${item.slug}`" class="group relative overflow-hidden shadow-sm bg-white border border-gray-100 mb-6 md:mb-8 block cursor-pointer">
@@ -35,7 +39,7 @@
          </template>
       </MasonryWall>
 
-      <div v-if="filteredProjects.length === 0" class="text-center text-custom-primary/60 mt-12">
+      <div v-if="projects.length === 0" class="text-center text-custom-primary/60 mt-12">
          No portfolio found for this category.
       </div>
    </section>
@@ -44,24 +48,21 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { usePublicProjectsStore, usePublicCategoriesStore } from '~/stores'
+import SkeletonLoading from '~/components/Utils/SkeletonLoading.vue'
 
 const projectsStore = usePublicProjectsStore()
 const categoriesStore = usePublicCategoriesStore()
 
 const activeFilter = ref('All')
 
+const limit = 24
+
 const projects = computed(() => projectsStore.projects)
+const isLoading = computed(() => projectsStore.isLoading)
 
 const filters = computed(() => {
    const projectCategories = categoriesStore.projectCategories
    return ['All', ...projectCategories.map(c => c.name)]
-})
-
-const filteredProjects = computed(() => {
-   if (activeFilter.value === 'All') {
-      return projects.value
-   }
-   return projects.value.filter(p => p.categories?.name === activeFilter.value)
 })
 
 const masonryConfig = computed(() => {
@@ -74,21 +75,32 @@ const masonryConfig = computed(() => {
    return { columns: 3, columnWidth: 350, gap: 24 }
 })
 
+const loadProjects = async () => {
+   const fetchOptions = { limit: limit }
+
+   if (activeFilter.value !== 'All') {
+      const category = categoriesStore.projectCategories.find(
+         c => c.name === activeFilter.value
+      )
+      
+      if (category?.id) {
+         fetchOptions.categoryId = category.id
+      }
+   }
+
+   await projectsStore.fetchProjects(fetchOptions)
+}
+
+watch(activeFilter, loadProjects)
+
 watch(filters, (newFilters) => {
    if (!newFilters.includes(activeFilter.value)) {
       activeFilter.value = 'All'
    }
 })
 
-const PAGE_LIMIT = 24
-
-const loadProjects = async (opts = {}) => {
-   const options = { limit: PAGE_LIMIT, ...opts }
-   await projectsStore.fetchProjects(options)
-}
-
+// Lifecycle
 onMounted(async () => {
-   // Ensure categories loaded first so we can resolve category id when filtering
    await categoriesStore.fetchCategories()
    await loadProjects()
 
@@ -102,36 +114,13 @@ onMounted(async () => {
       window.removeEventListener('resize', handleResize)
    })
 })
-
-watch(activeFilter, async (val) => {
-   if (val === 'All') {
-      await loadProjects()
-      return
-   }
-
-   // Find category id from name; if not present, refetch categories
-   let category = categoriesStore.projectCategories.find(c => c.name === val)
-   if (!category) {
-      await categoriesStore.fetchCategories()
-      category = categoriesStore.projectCategories.find(c => c.name === val)
-   }
-
-   if (category && Number.isInteger(category.id)) {
-      await loadProjects({ categoryId: category.id })
-   } else {
-      // Fallback to client-side filter if category id not found
-      await loadProjects()
-   }
-})
 </script>
 
 <style scoped>
-/* Hide scrollbar for Chrome, Safari and Opera */
 .scrollbar-hide::-webkit-scrollbar {
    display: none;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
 .scrollbar-hide {
    -ms-overflow-style: none;
    scrollbar-width: none;
