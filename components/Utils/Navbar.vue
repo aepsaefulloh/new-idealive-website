@@ -17,10 +17,14 @@
           {{ item.name }}
         </NuxtLink>
       </div>
-      <NuxtLink to="/" class="text-idealive md:block hidden" :class="{ '!text-white': isSpecialPage }">
-        {{ contactInfo?.email || 'Loading...' }}
-      </NuxtLink>
-
+      
+      <div class="md:block hidden min-w-[150px] flex justify-end">
+        <SkeletonLoading v-if="isLoading || !contactInfo?.email" type="text" class="w-40 h-6" />
+        <NuxtLink v-else to="/" class="text-idealive block text-right" :class="{ '!text-white': isSpecialPage }">
+          {{ contactInfo?.email }}
+        </NuxtLink>
+      </div>
+      
       <!-- Mobile Hamburger Menu -->
       <div class="md:hidden">
         <button @click="toggleMenu" class="text-idealive">
@@ -91,8 +95,9 @@ import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
 import { gsap } from "gsap";
 import { useContactInfo } from "@/composables/useContactInfo";
+import SkeletonLoading from '~/components/Utils/SkeletonLoading.vue'
 
-const { contactInfo, fetchIfNeeded } = useContactInfo();
+const { contactInfo, isLoading, fetchIfNeeded } = useContactInfo();
 const route = useRoute();
 const navbarClass = ref("bg-transparent");
 const lastScrollY = ref(0);

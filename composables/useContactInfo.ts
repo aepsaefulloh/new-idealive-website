@@ -5,6 +5,7 @@ export const useContactInfo = () => {
   const cmsStore = usePublicCmsStore()
 
   const contactInfo = computed(() => cmsStore.getContactInfo)
+  const isLoading = computed(() => cmsStore.isLoading)
 
   const fetchIfNeeded = async () => {
     await cmsStore.fetchContactInfo()
@@ -12,6 +13,7 @@ export const useContactInfo = () => {
 
   return {
     contactInfo,
+    isLoading,
     fetchIfNeeded
   }
 }
