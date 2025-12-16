@@ -9,10 +9,10 @@
       <!-- Desktop Nav -->
       <div class="hidden md:flex gap-8 items-center">
         <NuxtLink v-for="(item, index) in navItems" :key="index" :to="item.link"
-          class="text-[#2054FA]/60 transition-all duration-300 pb-1 border-b-2 border-transparent" :class="{
-            '!text-[#2054FA] !border-custom-primary heading': isActive(item.link) && !isSpecialPage,
+          class="text-[#0030C2] transition-all duration-300 pb-1 border-b-2 border-transparent" :class="{
+            '!text-[#0030C2] !border-custom-primary heading': isActive(item.link) && !isSpecialPage,
             '!text-white !border-white heading': isSpecialPage && isActive(item.link),
-            'text-white/60': isSpecialPage && !isActive(item.link)
+            'text-white': isSpecialPage && !isActive(item.link)
           }">
           {{ item.name }}
         </NuxtLink>
@@ -20,16 +20,16 @@
       
       <div class="md:block hidden min-w-[150px] flex justify-end">
         <SkeletonLoading v-if="isLoading || !contactInfo?.email" type="text" class="w-40 h-6" />
-        <NuxtLink v-else to="/" class="text-idealive block text-right" :class="{ '!text-white': isSpecialPage }">
+        <NuxtLink v-else to="/" class="text-[#0030C2] block text-right" :class="{ '!text-white': isSpecialPage }">
           {{ contactInfo?.email }}
         </NuxtLink>
       </div>
       
       <!-- Mobile Hamburger Menu -->
       <div class="md:hidden">
-        <button @click="toggleMenu" class="text-idealive">
+        <button @click="toggleMenu" class="text-[#0030C2]">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-            :stroke="isSpecialPage ? '#ffff' : '#2054FA'" class="w-6 h-6">
+            :stroke="isSpecialPage ? '#ffff' : '#0030C2'" class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
         </button>
