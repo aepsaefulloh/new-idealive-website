@@ -92,9 +92,12 @@ onMounted(async () => {
     animateWorkHeading();
   });
 
-  // Fetch latest projects if not loaded
+  // Fetch latest 4 projects if not loaded
   if (!projectsStore.projects || projectsStore.projects.length === 0) {
-    await projectsStore.fetchProjects()
+    await projectsStore.fetchProjects({ limit: 4 })
+  } else if (projectsStore.projects.length < 4) {
+    // If store has fewer than 4 items, try to fetch latest 4 (idempotent)
+    await projectsStore.fetchProjects({ limit: 4 })
   }
 });
 

@@ -18,7 +18,9 @@ export const usePublicProjectsStore = defineStore('public-projects', {
       return useNuxtApp().$supabase
     },
 
-    async fetchProjects() {
+    // fetchProjects accepts an optional options object: { limit }
+    async fetchProjects(options = {}) {
+      const { limit } = options
       this.isLoading = true
       this.error = ''
 
@@ -29,7 +31,7 @@ export const usePublicProjectsStore = defineStore('public-projects', {
           throw new Error('Supabase not initialized')
         }
 
-        const { data, error } = await supabase
+        let query = supabase
           .from('projects')
           .select(`
             *,
@@ -39,11 +41,18 @@ export const usePublicProjectsStore = defineStore('public-projects', {
           .eq('published', true)
           .order('created_at', { ascending: false })
 
+        if (Number.isInteger(limit) && limit > 0) {
+          query = query.limit(limit)
+        }
+
+        const { data, error } = await query
+
         if (error) {
           this.error = error.message || 'Failed to fetch projects'
           return { success: false, error: this.error }
         }
 
+        // If a limit was provided we may only set partial list — callers should handle it appropriately
         this.projects = data || []
         return { success: true, data: this.projects }
       } catch (err) {
@@ -53,6 +62,7 @@ export const usePublicProjectsStore = defineStore('public-projects', {
         this.isLoading = false
       }
     },
+
 
     async getProjectBySlug(slug) {
       this.isLoading = true
