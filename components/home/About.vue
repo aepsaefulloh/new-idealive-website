@@ -1,7 +1,7 @@
 <template>
   <div class="about-container relative z-20 md:-mt-[50vh]">
     <!-- Gradient Top -->
-    <div class="absolute -top-[50vh] left-0 w-full h-[50vh] bg-gradient-to-t from-[#2054FA] via-[#2054FA]/80 to-transparent pointer-events-none"></div>
+    <div class="md:block hidden absolute -top-[50vh] left-0 w-full h-[50vh] bg-gradient-to-t from-[#2054FA] via-[#2054FA]/80 to-transparent pointer-events-none"></div>
 
     <div class="container-xl bg-idealive">
       <div
@@ -60,6 +60,12 @@ const headline = () => {
   gsap.registerPlugin(ScrollTrigger);
 
   const isMobile = window.innerWidth < 768;
+
+  if (isMobile) {
+    masks.forEach((el) => el.classList.remove("animate-invisibles"));
+    return;
+  }
+
   const startPosition = isMobile ? "top 85%" : "top 80%";
 
   const tl = gsap.timeline({
