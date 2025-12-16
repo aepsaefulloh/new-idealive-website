@@ -71,7 +71,6 @@
         </div>
     </div>
 
-    <!-- Fallback -->
     <div v-else class="h-full w-full bg-gray-200 rounded"></div>
   </div>
 </template>
@@ -86,5 +85,4 @@ defineProps({
 </script>
 
 <style scoped>
-/* Optional: Add custom shimmer animation if Tailwind's animate-pulse isn't enough */
 </style>
