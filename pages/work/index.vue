@@ -80,11 +80,17 @@ watch(filters, (newFilters) => {
    }
 })
 
+const PAGE_LIMIT = 24
+
+const loadProjects = async (opts = {}) => {
+   const options = { limit: PAGE_LIMIT, ...opts }
+   await projectsStore.fetchProjects(options)
+}
+
 onMounted(async () => {
-   await Promise.all([
-      projectsStore.fetchProjects(),
-      categoriesStore.fetchCategories()
-   ])
+   // Ensure categories loaded first so we can resolve category id when filtering
+   await categoriesStore.fetchCategories()
+   await loadProjects()
 
    const handleResize = () => {
       masonryConfig.value
@@ -95,6 +101,27 @@ onMounted(async () => {
    onUnmounted(() => {
       window.removeEventListener('resize', handleResize)
    })
+})
+
+watch(activeFilter, async (val) => {
+   if (val === 'All') {
+      await loadProjects()
+      return
+   }
+
+   // Find category id from name; if not present, refetch categories
+   let category = categoriesStore.projectCategories.find(c => c.name === val)
+   if (!category) {
+      await categoriesStore.fetchCategories()
+      category = categoriesStore.projectCategories.find(c => c.name === val)
+   }
+
+   if (category && Number.isInteger(category.id)) {
+      await loadProjects({ categoryId: category.id })
+   } else {
+      // Fallback to client-side filter if category id not found
+      await loadProjects()
+   }
 })
 </script>
 

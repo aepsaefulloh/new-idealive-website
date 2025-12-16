@@ -18,7 +18,6 @@ export const usePublicProjectsStore = defineStore('public-projects', {
       return useNuxtApp().$supabase
     },
 
-    // fetchProjects accepts an optional options object: { limit }
     async fetchProjects(options = {}) {
       const { limit } = options
       this.isLoading = true
@@ -45,6 +44,10 @@ export const usePublicProjectsStore = defineStore('public-projects', {
           query = query.limit(limit)
         }
 
+        if (options && Number.isInteger(options.categoryId)) {
+          query = query.eq('category_id', options.categoryId)
+        }
+
         const { data, error } = await query
 
         if (error) {
@@ -52,7 +55,6 @@ export const usePublicProjectsStore = defineStore('public-projects', {
           return { success: false, error: this.error }
         }
 
-        // If a limit was provided we may only set partial list — callers should handle it appropriately
         this.projects = data || []
         return { success: true, data: this.projects }
       } catch (err) {
