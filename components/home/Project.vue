@@ -9,21 +9,21 @@
         </span>
       </h5>
       <div class="md:mt-[4.63vw] mt-[10.256vw] grid grid-cols-1 md:gap-[40px] gap-[100px] md:grid-cols-2">
-        <NuxtLink v-for="(item, index) in highlight" :key="index" :class="[
+        <NuxtLink v-for="(project, index) in highlight" :key="project.id || index" :to="`/work/${project.slug}`" :class="[
           index === 0 || index === 3 ? 'md:col-span-2' : '',
           getImageClass(index),
         ]" class="w-full relative">
-          <UtilsFreeze :gifSrc="item.work.cover" :alt="item.work.title" />
+          <UtilsFreeze :gifSrc="project.thumbnail_url || (project.banner_images && project.banner_images[0]) || project.banner_url" :alt="project.title" />
           <div class="absolute top-0 left-0 inset-0 text-white bg-black/30 md:flex hidden flex-col md:p-8">
-            <p>{{ item.work.title }}</p>
+            <p>{{ project.title }}</p>
             <p class="mt-auto sticky bottom-8 md:pt-10">
-              {{ item.work.project_date }}
+              {{ project.year || (project.created_at ? new Date(project.created_at).getFullYear() : '') }}
             </p>
           </div>
           <div class="absolute -bottom-14 md:hidden flex flex-col gap-1">
-            <p class="leading-[100%] text-[18px]">{{ item.work.title }}</p>
+            <p class="leading-[100%] text-[18px]">{{ project.title }}</p>
             <p class="text-[14px] text-[#424242]/60">
-              {{ item.work.project_date }}
+              {{ project.year || (project.created_at ? new Date(project.created_at).getFullYear() : '') }}
             </p>
           </div>
         </NuxtLink>
@@ -42,41 +42,16 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+import { usePublicProjectsStore } from '~/stores'
+
 const workHeading = ref(null);
-const highlight = ref([
-  {
-    work: {
-      slug: 'work-1',
-      cover: '/images/dummy1.webp',
-      title: 'Project One',
-      project_date: '2023'
-    }
-  },
-  {
-    work: {
-      slug: 'work-2',
-      cover: '/images/dummy2.webp',
-      title: 'Project Two',
-      project_date: '2023'
-    }
-  },
-  {
-    work: {
-      slug: 'work-3',
-      cover: '/images/dummy3.jpg',
-      title: 'Project Three',
-      project_date: '2023'
-    }
-  },
-  {
-    work: {
-      slug: 'work-4',
-      cover: '/images/dummy4.jpg',
-      title: 'Project Four',
-      project_date: '2023'
-    }
-  }
-]);
+const projectsStore = usePublicProjectsStore()
+
+const highlight = computed(() => {
+  // Use latest 4 projects (store fetch orders by created_at desc)
+  const projects = projectsStore.projects || []
+  return projects.slice(0, 4)
+})
 
 function getImageClass(index) {
   const classes = {
@@ -112,10 +87,15 @@ const animateWorkHeading = () => {
   });
 };
 
-onMounted(() => {
+onMounted(async () => {
   ctx = gsap.context(() => {
     animateWorkHeading();
   });
+
+  // Fetch latest projects if not loaded
+  if (!projectsStore.projects || projectsStore.projects.length === 0) {
+    await projectsStore.fetchProjects()
+  }
 });
 
 onBeforeUnmount(() => {
