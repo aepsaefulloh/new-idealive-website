@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white relative z-30">
+  <div class="bg-white relative z-30 md:mt-[50vh]">
     <!-- Gradient Top -->
     <div class="absolute -top-[20vh] left-0 w-full h-[20vh] bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"></div>
     
