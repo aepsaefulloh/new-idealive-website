@@ -64,9 +64,13 @@
         <h1 class="md:text-[3.307vw] heading font-primary absolute">Engine</h1>
       </div>
       <div class="absolute z-[0] flex w-full h-full overflow-hidden background-images">
-        <img v-for="(img, index) in backgroundImages" :key="index" class="w-full absolute opacity-0" :src="img"
-          alt="" />
+        <video v-for="(video, index) in backgroundImages" :key="index" 
+          class="w-full h-full object-cover absolute opacity-0" 
+          autoplay muted loop playsinline>
+          <source :src="video" type="video/mp4">
+        </video>
       </div>
+      <div class="transition-overlay absolute inset-0 bg-idealive z-[10] opacity-0 pointer-events-none"></div>
     </div>
   </section>
 
@@ -85,7 +89,7 @@ gsap.registerPlugin(ScrollTrigger);
 const videoOverlay = ref(null);
 const videoPlayer = ref(null);
 const backgroundImages = ref([
-  '/images/hero.gif'
+  '/images/hero.mp4'
 ]);
 
 let ctx;
@@ -169,18 +173,21 @@ const box = () => {
 };
 
 const setupBackgroundImagesAnimation = () => {
-  const image = document.querySelector(".background-images img");
-  if (!image) return null;
+  const video = document.querySelector(".background-images video");
+  if (!video) return null;
 
   const tl = gsap.timeline({
     defaults: { ease: "power2.inOut" },
     paused: true
   });
 
-  tl.to(image, {
+  tl.to(video, {
     opacity: 1,
     duration: 0.8,
-    force3D: true
+    force3D: true,
+    onStart: () => {
+      video.play().catch(() => {});
+    }
   });
 
   return tl;
@@ -243,23 +250,8 @@ const setupDesktopAnimations = (imgTimeline) => {
         force3D: true
       }
     )
-    .to("#section2", { backgroundColor: "#2054FA" });
-
-  ScrollTrigger.create({
-    trigger: ".section3",
-    start: "top 90%",
-    end: "bottom 90%",
-    scrub: 1,
-    id: "shrink",
-    animation: gsap.fromTo(
-      ".containerElement",
-      { clipPath: "inset(0% 0% 0% 0% round 0px)" },
-      {
-        clipPath: "inset(3% 3% 3% 3% round 5px)",
-        force3D: true
-      }
-    )
-  });
+    .to("#section2", { backgroundColor: "#2054FA" })
+    .to(".transition-overlay", { opacity: 1, duration: 0.5, ease: "power2.inOut" });
 };
 
 const debounce = (fn, delay) => {
