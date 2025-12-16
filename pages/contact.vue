@@ -5,11 +5,11 @@
         <!-- Left Column: Info -->
         <div class="lg:col-span-6 flex flex-col justify-between h-full">
             <div>
-                <h1 class="text-6xl md:text-8xl lg:text-[100px] leading-tight mb-8 md:mb-12 font-normal">
+                <h1 class="mb-6 text-6xl md:text-8xl lg:text-[100px] leading-tight font-normal">
                     Get In Touch
                 </h1>
                 
-                <div class="flex flex-col gap-6 text-xl md:text-2xl lg:text-3xl mb-12">
+                <div class="flex flex-col gap-3 text-xl md:text-2xl lg:text-3xl">
                     <a :href="`mailto:${contactInfo?.email || 'hello@idealive.co.id'}`" class="hover:opacity-80 transition-opacity w-fit">
                     {{ contactInfo?.email || 'hello@idealive.co.id' }}
                     </a>
@@ -17,6 +17,19 @@
                     {{ contactInfo?.phone || '+628129011923412' }}
                     </a>
                 </div>
+            </div>
+            <!-- Map -->
+            <div class="my-8 md:my-12 w-full h-[250px] rounded-2xl overflow-hidden bg-white/5 grayscale hover:grayscale-0 transition-all duration-500 border border-white/10">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.7661580234453!2d106.78802777990354!3d-6.294432045326183!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f1f2c3d31da5%3A0x594ecb4831889547!2sIDEALIVE!5e0!3m2!1sid!2sid!4v1765884148356!5m2!1sid!2sid" 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+                
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-auto">
@@ -45,6 +58,8 @@
                     </div>
                 </div>
             </div>
+
+            
         </div>
 
         <!-- Right Column: Form -->
