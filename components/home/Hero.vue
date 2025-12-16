@@ -70,7 +70,10 @@
           <source :src="video" type="video/mp4">
         </video>
       </div>
-      <div class="transition-overlay absolute inset-0 bg-idealive z-[10] opacity-0 pointer-events-none"></div>
+      <div class="transition-overlay absolute inset-0 z-[10] pointer-events-none">
+        <div class="absolute -top-[25vh] left-0 w-full h-[25vh] bg-gradient-to-t from-[#2054FA] to-transparent"></div>
+        <div class="w-full h-full bg-[#2054FA]"></div>
+      </div>
     </div>
   </section>
 
@@ -252,8 +255,8 @@ const setupDesktopAnimations = (imgTimeline) => {
     )
     .to("#section2", { backgroundColor: "#2054FA" })
     .fromTo(".transition-overlay", 
-      { yPercent: 100, opacity: 1 }, 
-      { yPercent: 0, opacity: 1, duration: 1, ease: "power2.inOut", force3D: true }
+      { yPercent: 125 }, 
+      { yPercent: 0, duration: 1.5, ease: "power1.inOut", force3D: true }
     );
 };
 
