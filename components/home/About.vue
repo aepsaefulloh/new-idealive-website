@@ -2,7 +2,7 @@
   <div>
     <div class="container-xl bg-idealive">
       <div
-        class="container mx-auto md:min-h-screen flex h-auto flex-col items-center justify-center md:justify-start md:pt-[25vh] md:gap-[11.64vw] gap-[20.513vw] md:px-0 px-[20px] md:py-0 py-[22.564vw]">
+        class="container mx-auto md:min-h-screen flex h-auto flex-col items-center justify-center md:justify-start md:pt-[8vh] md:gap-[6vw] gap-[20.513vw] md:px-0 px-[20px] md:py-0 py-[22.564vw]">
         <div class="flex flex-col justify-center gap-4 main-trigger">
           <h2 class="md:text-[4.299vw] text-[5.5vw] leading-[110%] text-center text-white">
             <span class="reveal-masks animate-invisibles">
@@ -55,7 +55,7 @@ const headline = () => {
   gsap.registerPlugin(ScrollTrigger);
 
   const isMobile = window.innerWidth < 768;
-  const startPosition = isMobile ? "top 85%" : "top 75%";
+  const startPosition = isMobile ? "top 85%" : "top 80%";
 
   const tl = gsap.timeline({
     scrollTrigger: {
