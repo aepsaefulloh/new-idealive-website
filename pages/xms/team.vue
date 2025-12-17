@@ -17,12 +17,12 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div
         class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-between">
         <div>
           <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Total Members</p>
-          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ team.length }}</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ totalMembers }}</p>
         </div>
         <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
           <UIcon name="i-heroicons-users" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -37,16 +37,6 @@
         </div>
         <div class="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
           <UIcon name="i-heroicons-check-circle" class="w-5 h-5 text-green-600 dark:text-green-400" />
-        </div>
-      </div>
-      <div
-        class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Divisions</p>
-          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ uniqueDivisions.length }}</p>
-        </div>
-        <div class="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center">
-          <UIcon name="i-heroicons-squares-2x2" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
         </div>
       </div>
     </div>
@@ -239,8 +229,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { toast } from 'vue3-toastify'
+import { useAdminTeamStore } from '@/stores'
 import { compressForThumbnail, formatFileSize } from '@/utils/imageCompression'
 import Button from '@/components/dashboard/ui/Button.vue'
 
@@ -250,12 +241,11 @@ definePageMeta({
 })
 
 const supabase = useNuxtApp().$supabase
+const teamStore = useAdminTeamStore()
+let subscription = null
 
-const team = ref([])
-const isLoading = ref(false)
 const showCreateModal = ref(false)
 const showEditModal = ref(false)
-const selectedMember = ref(null)
 
 const form = ref({
   fullname: '',
@@ -271,33 +261,18 @@ const imageInput = ref(null)
 const imagePreview = ref('')
 const imageFile = ref(null)
 
-const uniqueDivisions = computed(() => {
-  const divisions = team.value.map(m => m.division).filter(Boolean)
-  return [...new Set(divisions)]
-})
+const team = computed(() => teamStore.team)
+const isLoading = computed(() => teamStore.isLoading)
+const totalMembers = computed(() => teamStore.totalMembers)
 
 const loadTeam = async () => {
-  try {
-    isLoading.value = true
-    const { data, error } = await supabase
-      .from('team')
-      .select('*')
-      .order('sort_order', { ascending: true })
-
-    if (error) throw error
-    team.value = data || []
-  } catch (error) {
-    console.error('Load team failed:', error)
-    toast.error('Failed to load team members')
-  } finally {
-    isLoading.value = false
-  }
+  await teamStore.fetchTeam()
 }
 
 const refreshTeam = () => loadTeam()
 
 const editMember = (member) => {
-  selectedMember.value = member
+  teamStore.selectMember(member)
   form.value = {
     fullname: member.fullname || '',
     jobdesk: member.jobdesk || '',
@@ -313,22 +288,22 @@ const editMember = (member) => {
 
 const confirmDelete = async (member) => {
   if (confirm(`Are you sure you want to delete "${member.fullname}"? This action cannot be undone.`)) {
-    try {
-      const { error } = await supabase.from('team').delete().eq('id', member.id)
-      if (error) throw error
-      toast.success('Team member deleted successfully!')
-      await loadTeam()
-    } catch (error) {
-      console.error('Delete failed:', error)
-      toast.error('Failed to delete team member')
+    const result = await teamStore.deleteMember(member.id)
+    if (result.success) {
+      toast.success(result.message)
+    } else {
+      toast.error(result.error || 'Failed to delete team member')
     }
   }
 }
 
 const handleSubmit = async () => {
-  try {
-    isLoading.value = true
+  if (showEditModal.value && !teamStore.selectedMember?.id) {
+    toast.error('No member selected for editing')
+    return
+  }
 
+  try {
     let finalImageUrl = form.value.image_url
     if (imageFile.value) {
       toast.info('Uploading image...')
@@ -340,26 +315,23 @@ const handleSubmit = async () => {
       image_url: finalImageUrl,
     }
 
-    let error
-    if (showEditModal.value && selectedMember.value?.id) {
-      const result = await supabase.from('team').update(payload).eq('id', selectedMember.value.id)
-      error = result.error
+    let result
+    if (showEditModal.value) {
+      result = await teamStore.updateMember(teamStore.selectedMember.id, payload)
     } else {
-      const result = await supabase.from('team').insert([payload])
-      error = result.error
+      result = await teamStore.createMember(payload)
     }
 
-    if (error) throw error
-
-    toast.success(showEditModal.value ? 'Team member updated successfully!' : 'Team member added successfully!')
-    closeModals()
-    resetForm()
-    await loadTeam()
+    if (result.success) {
+      toast.success(result.message)
+      closeModals()
+      resetForm()
+    } else {
+      toast.error(result.error || 'Failed to save team member')
+    }
   } catch (error) {
     console.error('Submit failed:', error)
     toast.error('Failed to save team member')
-  } finally {
-    isLoading.value = false
   }
 }
 
@@ -413,7 +385,7 @@ const removeImage = () => {
 const closeModals = () => {
   showCreateModal.value = false
   showEditModal.value = false
-  selectedMember.value = null
+  teamStore.clearSelection()
   resetForm()
 }
 
@@ -432,16 +404,20 @@ const resetForm = () => {
   if (imageInput.value) imageInput.value.value = ''
 }
 
-onMounted(() => {
-  loadTeam()
+onMounted(async () => {
+  await loadTeam()
+
+  // Subscribe to real-time updates
+  subscription = teamStore.subscribeToUpdates((payload) => {
+    console.log('Real-time team update received:', payload)
+    loadTeam()
+  })
+})
+
+onUnmounted(() => {
+  if (subscription) {
+    subscription.unsubscribe()
+  }
 })
 </script>
 
-<style scoped>
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-</style>
