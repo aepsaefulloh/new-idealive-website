@@ -57,7 +57,7 @@
       <!-- Solid background overlay that will fade out -->
       <div class="solid-bg absolute inset-0 bg-[#2054FA] z-[1]"></div>
 
-      <img class="absolute image md:w-[65.675vw] z-[2]" src="/images/logo-idealive.svg" alt="Animated Image" />
+      <img class="absolute image md:w-[65.675vw] z-[2]" src="/images/logo-idealive.svg" fetchpriority="high" alt="Animated Image" />
       <div class="items relative justify-evenly items-center w-full flex z-[2]">
         <h1 class="md:text-[3.307vw] heading font-primary absolute">Agency</h1>
         <h1 class="md:text-[3.307vw] heading font-primary absolute">Laboratory</h1>
