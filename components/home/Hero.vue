@@ -22,7 +22,7 @@
     <div ref="videoOverlay"
       class="fixed inset-x-0 bottom-0 h-full w-full bg-black z-50 overflow-hidden scale-y-0 origin-bottom">
       <div class="relative w-full h-full flex items-center justify-center">
-        <button @click="hideVideo" class="absolute top-4 right-4 text-white z-10 p-2">
+        <button @click="hideVideo" class="absolute top-4 right-4 text-white z-10 p-2" aria-label="Close video">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M18 6L6 18M6 6L18 18" stroke="white" stroke-width="2" stroke-linecap="round"
               stroke-linejoin="round" />

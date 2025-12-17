@@ -27,7 +27,7 @@
       
       <!-- Mobile Hamburger Menu -->
       <div class="md:hidden">
-        <button @click="toggleMenu" class="text-[#0030C2]">
+        <button @click="toggleMenu" class="text-[#0030C2]" aria-label="Toggle menu">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
             :stroke="isSpecialPage ? '#ffff' : '#0030C2'" class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -43,7 +43,7 @@
           <div class="absolute top-0 left-0 flex justify-between w-full py-6 px-[20px]">
             <NuxtLink to="/" @click="toggleMenu"><img src="/images/logo-idealive.svg" class="w-[90px]"
                 alt="Idealive Logo" /></NuxtLink>
-            <button @click="toggleMenu" class="text-white">
+            <button @click="toggleMenu" class="text-white" aria-label="Close menu">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                 class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -66,7 +66,7 @@
             <div class="nav-item-border absolute bottom-0 left-0 h-[1px] bg-white/60 w-0"></div>
           </NuxtLink>
           <div class="!mt-auto">
-            <h5 class="md:text-[4.63vw] text-[10.256vw] leading-[110%] flex items-center gap-4">
+            <div class="md:text-[4.63vw] text-[10.256vw] leading-[110%] flex items-center gap-4 font-bold">
               Make your
               <svg class="mt-[0.8vw] md:w-[3vw] w-[6vw]" viewBox="0 0 41 38" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
@@ -74,11 +74,11 @@
                   d="M2.92892 17.0027H2.19678V20.8749H31.5235L19.7858 32.2845L19.2791 32.7751L19.7536 33.2978L21.4023 35.1084L21.9119 35.6662L22.4566 35.1405L38.5813 19.4586L39.1202 18.9388L38.5813 18.4132L22.4566 2.74001L21.9119 2.21436L21.4023 2.77213L19.7536 4.5827L19.2791 5.10251L19.7858 5.59604L31.5235 17.0056L2.92892 17.0027Z"
                   fill="white" stroke="white" stroke-width="0.537946" />
               </svg>
-            </h5>
-            <h5 class="md:text-[4.63vw] text-[10.256vw] leading-[110%] flex items-center gap-4">
+            </div>
+            <div class="md:text-[4.63vw] text-[10.256vw] leading-[110%] flex items-center gap-4 font-bold">
               brand
               <UtilsWording />
-            </h5>
+            </div>
             <div class="flex text-[12px] justify-between mt-6">
               <a :href="`tel:${contactInfo?.[0]?.phone || '+628129011923412'}`">{{ contactInfo?.[0]?.phone || '+628129011923412' }}</a>
               <a :href="`mailto:${contactInfo?.[0]?.email || 'hello@idealive.co.id'}`">{{ contactInfo?.[0]?.email || 'hello@idealive.co.id' }}</a>

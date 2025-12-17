@@ -4,13 +4,13 @@
     <div class="md:block hidden absolute -top-[20vh] left-0 w-full h-[20vh] bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"></div>
     
     <section class="container-xl agis px-desktop md:pt-[10vw] md:pb-[10.582vw] py-[12.821vw]">
-      <h5 ref="workHeading" class="md:text-[3.968vw] text-center text-idealive text-[6.667vw] overflow-hidden">
+      <h2 ref="workHeading" class="md:text-[3.968vw] text-center text-idealive text-[6.667vw] overflow-hidden">
         <span class="work-text">
           <span v-for="(char, index) in 'Work'.split('')" :key="index" class="char inline-block">
             {{ char }}
           </span>
         </span>
-      </h5>
+      </h2>
       <div class="md:mt-[4.63vw] mt-[10.256vw] grid grid-cols-1 md:gap-[40px] gap-[100px] md:grid-cols-2">
         <NuxtLink v-for="(project, index) in highlight" :key="project.id || index" :to="project.slug ? `/work/${project.slug}` : '/work'" :class="[
           index === 0 || index === 3 ? 'md:col-span-2' : '',

@@ -4,8 +4,8 @@
       <div class="card bg-idealive md:px-[2.646vw] md:py-[7vw] py-[15.385vw] px-[20px]" ref="countingTrigger">
         <div class="grid md:grid-cols-[45%,55%] text-white items-center md:gap-0 gap-[10.256vw] tot">
           <div class="md:pe-20 md:order-1 order-2">
-            <h5 class="md:text-[3.968vw] leading-[110%] md:mb-[1.984vw] mb-[5.128vw] text-[6.667vw]"
-              v-html="copy.title"></h5>
+            <h2 class="md:text-[3.968vw] leading-[110%] md:mb-[1.984vw] mb-[5.128vw] text-[6.667vw]"
+              v-html="copy.title"></h2>
             <p class="md:mb-[2.646vw] mb-[7.692vw] md:text-[1.323vw] text-[14px]">
               {{ copy.description }}
             </p>

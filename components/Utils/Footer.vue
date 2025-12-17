@@ -4,7 +4,7 @@
       <div class="border-b border-[#2054FA] md:pb-10 pb-4">
         <div class="grid md:grid-cols-6 md:gap-0 gap-[40px]">
           <div class="flex flex-col md:col-span-4">
-            <h5 class="md:text-[4.63vw] text-[10.256vw] leading-[110%] flex items-center gap-4">
+            <div class="md:text-[4.63vw] text-[10.256vw] leading-[110%] flex items-center gap-4 font-bold">
               {{ content.brandText }}
               <svg
                 class="mt-[0.8vw] md:w-[3vw] w-[6vw]"
@@ -19,11 +19,11 @@
                   stroke-width="0.537946"
                 />
               </svg>
-            </h5>
-            <h5 class="md:text-[4.63vw] text-[10.256vw] leading-[110%] flex md:gap-6 gap-2">
+            </div>
+            <div class="md:text-[4.63vw] text-[10.256vw] leading-[110%] flex md:gap-6 gap-2 font-bold">
               <span v-html="content.brandText2"></span>
               <UtilsWording />
-            </h5>
+            </div>
           </div>
           <div class="flex md:col-span-2 gap-[34.615vw] copy md:gap-[11.64vw] w-full">
             <ul v-for="(links, section) in content.links" :key="section">
