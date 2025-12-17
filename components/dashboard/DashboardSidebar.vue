@@ -206,6 +206,11 @@ const otherMenuItems = [
         icon: 'i-heroicons-document-text'
     },
     {
+        name: 'Teams',
+        path: '/xms/team',
+        icon: 'i-heroicons-users'
+    },
+    {
         name: 'Contact Messages',
         path: '/xms/contact',
         icon: 'i-heroicons-envelope'

@@ -5,13 +5,10 @@
       <div class="flex items-center gap-4">
         <Button @click="toggleSidebar" variant="ghost" size="sm" icon="i-heroicons-bars-3-bottom-left"
           class="text-gray-500" />
-
-        <!-- Breadcrumbs or Page Title could go here -->
       </div>
 
       <div class="flex items-center gap-3 sm:gap-4">
-        <!-- Search (Hidden on mobile for now or expandable) -->
-        <div class="hidden md:block relative group">
+        <!-- <div class="hidden md:block relative group">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <UIcon name="i-heroicons-magnifying-glass"
               class="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
@@ -19,11 +16,10 @@
           <input type="text"
             class="block w-64 pl-10 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl leading-5 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 sm:text-sm"
             placeholder="Search anything...">
-        </div>
+        </div> -->
 
-        <div class="h-8 w-px bg-gray-200 dark:bg-gray-700 mx-2 hidden sm:block"></div>
+        <!-- <div class="h-8 w-px bg-gray-200 dark:bg-gray-700 mx-2 hidden sm:block"></div> -->
 
-        <!-- Theme Toggle -->
         <Button @click="themeStore.toggleTheme" variant="ghost" size="sm" class="text-gray-500 group">
           <UIcon v-if="themeStore.isDark" name="i-heroicons-sun"
             class="w-5 h-5 text-yellow-500 transition-transform group-hover:rotate-90" />
@@ -31,14 +27,12 @@
             class="w-5 h-5 text-blue-600 transition-transform group-hover:-rotate-12" />
         </Button>
 
-        <!-- Notifications -->
         <Button variant="ghost" size="sm" class="text-gray-500 relative">
           <UIcon name="i-heroicons-bell" class="w-5 h-5" />
           <span
             class="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-gray-900"></span>
         </Button>
 
-        <!-- User Profile -->
         <Dropdown>
           <template #trigger>
             <button
