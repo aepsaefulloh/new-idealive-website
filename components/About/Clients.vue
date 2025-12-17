@@ -1,7 +1,9 @@
 <template>
     <section class="py-16 md:py-24">
         <div v-if="clientsStore.isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            <div v-for="i in 8" :key="i" class="relative aspect-video overflow-hidden flex items-center justify-center bg-gray-200/40 dark:bg-gray-700/40 animate-pulse"></div>
+            <div v-for="i in 8" :key="i" class="relative aspect-video overflow-hidden flex items-center justify-center">
+                <SkeletonLoading type="image" />
+            </div>
         </div>
         <div v-else-if="clients && clients.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             <div v-for="client in clients" :key="client.id || client.name"
@@ -29,6 +31,7 @@
 <script setup>
 import { onMounted, computed } from 'vue'
 import { usePublicClientsStore } from '~/stores'
+import SkeletonLoading from '~/components/Utils/SkeletonLoading.vue'
 
 const clientsStore = usePublicClientsStore()
 

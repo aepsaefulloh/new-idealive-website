@@ -13,9 +13,13 @@
           spaceBetween: 40
         }
       }" class="w-full" @swiper="onSwiper" @slideChange="onSlideChange">
-      <swiper-slide v-for="(logo, index) in logos" :key="index">
-        <div class="flex items-center justify-center h-24">
-          <img :src="logo.client_logo" alt="Client logo" />
+      <swiper-slide v-if="!clientsStore.isLoading" v-for="i in 6" :key="`skeleton-${i}`">
+          <SkeletonLoading  type="image" class="w-full" />
+      </swiper-slide>
+
+      <swiper-slide v-else v-for="(logo, index) in logos" :key="logo.id || index">
+        <div class="flex items-center justify-center h-24 w-full">
+          <img :src="logo.client_logo" :alt="logo.name || 'Client logo'" loading="lazy" class="h-24 object-contain" />
         </div>
       </swiper-slide>
     </swiper>
@@ -23,29 +27,39 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, onMounted } from 'vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
+import { usePublicClientsStore } from '~/stores';
+import SkeletonLoading from '~/components/Utils/SkeletonLoading.vue';
 
 // Delay autoplay
 const intervalDelay = 2500;
 
-const logos = ref([
-  { client_logo: '/images/logo1.png' },
-  { client_logo: '/images/logo2.png' },
-  { client_logo: '/images/logo1.png' },
-  { client_logo: '/images/logo2.png' },
-  { client_logo: '/images/logo1.png' },
-  { client_logo: '/images/logo2.png' },
-]);
+const clientsStore = usePublicClientsStore();
+
+const logos = computed(() => {
+  const clients = (clientsStore.activeClients && clientsStore.activeClients.length) ? clientsStore.activeClients : (clientsStore.clients || []);
+  return clients.map(c => ({
+    id: c.id,
+    client_logo: c.image_url || c.logo || '/images/placeholder-client.svg',
+    name: c.name || 'Client logo'
+  }));
+});
+
+onMounted(async () => {
+  if (!clientsStore.clients || clientsStore.clients.length === 0) {
+    await clientsStore.fetchClients();
+  }
+});
 
 const onSwiper = (swiper) => {
-  // console.log(swiper);
+  // noop
 };
 
 const onSlideChange = () => {
-  // console.log('slide change');
+  // noop
 };
 </script>
 
