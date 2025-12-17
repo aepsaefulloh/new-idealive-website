@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     display: 'swap',
     prefetch: true,
     preconnect: true,
+    preload: true,
   },
   css: ['~/assets/css/main.css'],
   colorMode: {
@@ -32,6 +33,10 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: 'en'
       },
+      link: [
+        { rel: 'preload', href: '/fonts/ScotchDeckCond-Rm.ttf', as: 'font', type: 'font/ttf', crossorigin: 'anonymous' },
+        { rel: 'preload', href: '/fonts/NeueMontreal-Regular.otf', as: 'font', type: 'font/otf', crossorigin: 'anonymous' }
+      ],
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },

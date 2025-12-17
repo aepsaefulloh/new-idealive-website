@@ -294,8 +294,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.animate-invisible {
-  visibility: hidden;
+@media (min-width: 768px) {
+  .animate-invisible {
+    visibility: hidden;
+  }
 }
 
 .reveal-mask {

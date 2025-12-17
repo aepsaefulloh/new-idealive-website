@@ -63,7 +63,9 @@ onMounted(() => {
   transition: transform 1s ease-in-out;
 }
 
-.animate-invisible {
-  visibility: hidden;
+@media (min-width: 768px) {
+  .animate-invisible {
+    visibility: hidden;
+  }
 }
 </style>
