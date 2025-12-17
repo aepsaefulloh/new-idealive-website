@@ -12,21 +12,21 @@
         </span>
       </h5>
       <div class="md:mt-[4.63vw] mt-[10.256vw] grid grid-cols-1 md:gap-[40px] gap-[100px] md:grid-cols-2">
-        <NuxtLink v-for="(project, index) in highlight" :key="project.id || index" :to="`/work/${project.slug}`" :class="[
+        <NuxtLink v-for="(project, index) in highlight" :key="project.id || index" :to="project.slug ? `/work/${project.slug}` : '/work'" :class="[
           index === 0 || index === 3 ? 'md:col-span-2' : '',
           getImageClass(index),
         ]" class="w-full relative">
-          <UtilsFreeze :gifSrc="project.thumbnail_url || (project.banner_images && project.banner_images[0]) || project.banner_url" :alt="project.title" />
+          <UtilsFreeze :gifSrc="project.thumbnail_url" :alt="project.title" />
           <div class="absolute top-0 left-0 inset-0 text-white bg-black/30 md:flex hidden flex-col md:p-8">
             <p>{{ project.title }}</p>
             <p class="mt-auto sticky bottom-8 md:pt-10">
-              {{ project.year || (project.created_at ? new Date(project.created_at).getFullYear() : '') }}
+              {{ project.year }}
             </p>
           </div>
           <div class="absolute -bottom-14 md:hidden flex flex-col gap-1">
             <p class="leading-[100%] text-[18px]">{{ project.title }}</p>
             <p class="text-[14px] text-[#424242]/60">
-              {{ project.year || (project.created_at ? new Date(project.created_at).getFullYear() : '') }}
+              {{ project.year }}
             </p>
           </div>
         </NuxtLink>
@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
