@@ -128,7 +128,6 @@ export const usePublicCmsStore = defineStore('public-cms', {
           const { data, error } = await supabase
             .from('contact_info')
             .select('*')
-            .maybeSingle()
 
           if (error) {
             this.error = error.message || 'Failed to fetch contact info'

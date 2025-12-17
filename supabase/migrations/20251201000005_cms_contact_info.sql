@@ -13,12 +13,14 @@ CREATE TABLE IF NOT EXISTS contact_info (
   email VARCHAR(255),
   phone VARCHAR(50),
   location VARCHAR(255),
-  github_url TEXT,
+  facebook_url TEXT,
   linkedin_url TEXT,
   twitter_url TEXT,
   dribbble_url TEXT,
   instagram_url TEXT,
   website_url TEXT,
+  map_url TEXT,
+  map_url_iframe TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

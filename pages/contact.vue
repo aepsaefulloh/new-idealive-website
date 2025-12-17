@@ -10,18 +10,18 @@
                 </h1>
                 
                 <div class="flex flex-col gap-3 text-xl md:text-2xl lg:text-3xl">
-                    <a :href="`mailto:${contactInfo?.email || 'hello@idealive.co.id'}`" class="hover:opacity-80 transition-opacity w-fit">
-                    {{ contactInfo?.email || 'hello@idealive.co.id' }}
+                    <a :href="`mailto:${contactInfo?.[0]?.email || 'hello@idealive.co.id'}`" class="hover:opacity-80 transition-opacity w-fit">
+                    {{ contactInfo?.[0]?.email || 'hello@idealive.co.id' }}
                     </a>
-                    <a :href="`tel:${contactInfo?.phone || '+628129011923412'}`" class="hover:opacity-80 transition-opacity w-fit">
-                    {{ contactInfo?.phone || '+628129011923412' }}
+                    <a :href="`tel:${contactInfo?.[0]?.phone || '+628129011923412'}`" class="hover:opacity-80 transition-opacity w-fit">
+                    {{ contactInfo?.[0]?.phone || '+628129011923412' }}
                     </a>
                 </div>
             </div>
             <!-- Map -->
             <div class="my-8 md:my-12 w-full h-[250px] rounded-2xl overflow-hidden bg-white/5 grayscale hover:grayscale-0 transition-all duration-500 border border-white/10">
                 <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.7661580234453!2d106.78802777990354!3d-6.294432045326183!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f1f2c3d31da5%3A0x594ecb4831889547!2sIDEALIVE!5e0!3m2!1sid!2sid!4v1765884148356!5m2!1sid!2sid" 
+                    :src="contactInfo?.[0]?.map_url_iframe || '' "
                     width="100%" 
                     height="100%" 
                     style="border:0;" 
@@ -37,8 +37,17 @@
                 <div>
                     <h3 class="text-lg font-bold mb-4">Office</h3>
                     <p class="text-base md:text-lg leading-relaxed opacity-90">
-                    {{ contactInfo?.address || 'Jl. H. Ismail No.12 1, RT.1/RW.4, Cilandak Bar., Kec. Cilandak, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12430' }}
-                    </p>
+                      <NuxtLink 
+                        v-if="contactInfo?.[0]?.map_url" 
+                        :to="contactInfo?.[0]?.map_url" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="hover:underline"
+                      >
+                    {{ contactInfo?.[0]?.location || 'Jl. H. Ismail No.12 1, RT.1/RW.4, Cilandak Bar., Kec. Cilandak, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12430' }}
+                    </NuxtLink>  
+                  </p>
+                
                 </div>
 
                 <!-- Social -->
@@ -134,13 +143,13 @@ useHead({
 })
 
 const socials = computed(() => {
-  const data = contactInfo.value || {}
+  const data = contactInfo.value?.[0] || {}
   const socialLinks = []
   
   if (data.instagram_url) socialLinks.push({ name: 'Instagram', url: data.instagram_url })
   if (data.linkedin_url) socialLinks.push({ name: 'Linkedin', url: data.linkedin_url })
   
-  if (data.github_url) socialLinks.push({ name: 'GitHub', url: data.github_url })
+  if (data.facebook_url) socialLinks.push({ name: 'Facebook', url: data.facebook_url })
   if (data.twitter_url) socialLinks.push({ name: 'Twitter', url: data.twitter_url })
   if (data.dribbble_url) socialLinks.push({ name: 'Dribbble', url: data.dribbble_url })
   

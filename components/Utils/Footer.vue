@@ -36,7 +36,7 @@
         </div>
         <div class="">
           <div class="flex md:flex-row flex-col md:mt-0 mt-[7.692vw] items-end md:justify-between md:gap-0 gap-[20.513vw]">
-            <a href="" class="md:w-[25vw] md:pt-[10.582vw] copy">{{ content.address }}</a>
+            <NuxtLink :to="contactInfo?.[0]?.map_url || '#'" target="_blank" rel="noopener noreferrer" class="md:w-[25vw] md:pt-[10.582vw] copy">{{ content.address }}</NuxtLink>
             <ul class="flex md:gap-20 md:justify-end justify-between w-full">
               <li v-for="(url, platform) in content.social" :key="platform" class="mb-2">
                 <a :href="url" target="_blank" class="">
@@ -56,30 +56,41 @@
 </template>
 
 <script setup>
-const content = {
+import { computed, onMounted } from 'vue'
+import { useContactInfo } from '@/composables/useContactInfo'
+
+const { contactInfo, fetchIfNeeded } = useContactInfo()
+
+const content = computed(() => ({
   brandText: "Make your",
   brandText2: "brand ",
   copyright: "Copyright © 2022 Idealive. PT Raksasa Sembilan Media All Rights Reserved.",
-  address: "Jl. H. Ismail No.12 1, RT.1/RW.4, Cilandak Bar., Kec. Cilandak, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12430",
+  address: contactInfo.value?.[0]?.location || 'Jl. H. Ismail No.12 1, RT.1/RW.4, Cilandak Bar., Kec. Cilandak, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12430',
   links: {
     Content: {
       Home: "/",
       About: "/about",
       Work: "/work",
-      Career: "/career",
+      Career: "/career",  
       Contact: "/contact",
     },
     Contact: {
-      "hello@idealive.co.id": "mailto:hello@idealive.co.id",
-      "+627377123733213": "tel:+627377123733213",
+      [contactInfo.value?.[0]?.email || 'hello@idealive.co.id']: `mailto:${contactInfo.value?.[0]?.email || 'hello@idealive.co.id'}`,
+      [contactInfo.value?.[0]?.phone || '+627377123733213']: `tel:${contactInfo.value?.[0]?.phone || '+627377123733213'}`,
     },
   },
   social: {
-    Instagram: "https://instagram.com",
-    "Linked In": "https://linkedin.com",
-    Facebook: "https://facebook.com",
+    ...(contactInfo.value?.[0]?.instagram_url && { Instagram: contactInfo.value?.[0]?.instagram_url }),
+    ...(contactInfo.value?.[0]?.linkedin_url && { "Linked In": contactInfo.value?.[0]?.linkedin_url }),
+    ...(contactInfo.value?.[0]?.facebook_url && { Facebook: contactInfo.value?.[0]?.facebook_url }),
+    ...(contactInfo.value?.[0]?.twitter_url && { Twitter: contactInfo.value?.[0]?.twitter_url }),
+    ...(contactInfo.value?.[0]?.dribbble_url && { Dribbble: contactInfo.value?.[0]?.dribbble_url }),
   },
-};
+}))
+
+onMounted(async () => {
+  await fetchIfNeeded()
+})
 </script>
 
 <style scoped>

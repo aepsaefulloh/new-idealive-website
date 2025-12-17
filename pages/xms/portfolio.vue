@@ -86,13 +86,29 @@
               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500"
               placeholder="City, Country" />
           </div>
+          <div class="grid md:grid-cols-2 gap-6">
+             <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Map URL</label>
+              <input v-model="contactInfo.map_url" type="url"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500"
+                placeholder="https://maps.google.com/..." />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">URL Iframe</label>
+              <input v-model="contactInfo.map_url_iframe" type="url"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500"
+                placeholder="https://maps.google.com/..." />
+            </div>
+           
+          </div>
+
         </div>
         <div class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">GitHub URL</label>
-            <input v-model="contactInfo.github_url" type="url"
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Facebook URL</label>
+            <input v-model="contactInfo.facebook_url" type="url"
               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500"
-              placeholder="https://github.com/username" />
+              placeholder="https://facebook.com/username" />
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">LinkedIn URL</label>
@@ -233,17 +249,14 @@ definePageMeta({
   middleware: 'cms-auth'
 })
 
-// Use Pinia stores
 const supabaseStore = useSupabaseStore()
 const authStore = useAuthStore()
 const contactStore = useContactStore()
 const projectsStore = useAdminProjectsStore()
 const cmsStore = useAdminCmsStore()
 
-// Reactive variables
 const isLoading = ref(false)
 
-// Format date helper
 const formatDate = (dateString) => {
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', {
@@ -254,41 +267,29 @@ const formatDate = (dateString) => {
   })
 }
 
-// Show only recent 3 messages
 const recentMessages = computed(() => contactStore.messages.slice(0, 3))
-
-// Use CMS store data
 const heroSection = computed(() => cmsStore.heroSection)
 const aboutSection = computed(() => cmsStore.aboutSection)
 const contactInfo = computed(() => cmsStore.contactInfo)
 
-// Projects
 const projects = computed(() => projectsStore.projects)
 
-/**
- * Load contact messages and CMS data on mount
- */
+
 const loadContactMessages = async () => {
   await contactStore.fetchMessages()
 }
 
-/**
- * Load projects data
- */
+
 const loadProjects = async () => {
   await projectsStore.fetchProjects()
 }
 
-/**
- * Load CMS data on mount
- */
+
 const loadCmsData = async () => {
   await cmsStore.loadAllCmsData()
 }
 
-/**
- * Save hero section
- */
+
 const saveHeroSection = async () => {
   const result = await cmsStore.updateHeroSection(heroSection.value)
   if (result.success) {
@@ -298,9 +299,7 @@ const saveHeroSection = async () => {
   }
 }
 
-/**
- * Save about section
- */
+
 const saveAboutSection = async () => {
   const result = await cmsStore.updateAboutSection(aboutSection.value)
   if (result.success) {
@@ -310,9 +309,7 @@ const saveAboutSection = async () => {
   }
 }
 
-/**
- * Save contact information
- */
+
 const saveContactInfo = async () => {
   const result = await cmsStore.updateContactInfo(contactInfo.value)
   if (result.success) {
@@ -322,9 +319,7 @@ const saveContactInfo = async () => {
   }
 }
 
-/**
- * Load messages and CMS data on mount
- */
+
 onMounted(async () => {
   await loadContactMessages()
   await loadProjects()

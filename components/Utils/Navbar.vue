@@ -19,9 +19,9 @@
       </div>
       
       <div class="md:block hidden min-w-[150px] flex justify-end">
-        <SkeletonLoading v-if="isLoading || !contactInfo?.email" type="text" class="w-40 h-6" />
+        <SkeletonLoading v-if="isLoading || !contactInfo?.[0]?.email" type="text" class="w-40 h-6" />
         <NuxtLink v-else to="/" class="text-[#0030C2] block text-right" :class="{ '!text-white': isSpecialPage }">
-          {{ contactInfo?.email }}
+          {{ contactInfo?.[0]?.email }}
         </NuxtLink>
       </div>
       
@@ -80,8 +80,8 @@
               <UtilsWording />
             </h5>
             <div class="flex text-[12px] justify-between mt-6">
-              <a href="tel:+628129011923412">+628129011923412</a>
-              <a href="mailto:hello@idealive.co.id">hello@idealive.co.id</a>
+              <a :href="`tel:${contactInfo?.[0]?.phone || '+628129011923412'}`">{{ contactInfo?.[0]?.phone || '+628129011923412' }}</a>
+              <a :href="`mailto:${contactInfo?.[0]?.email || 'hello@idealive.co.id'}`">{{ contactInfo?.[0]?.email || 'hello@idealive.co.id' }}</a>
             </div>
           </div>
         </div>

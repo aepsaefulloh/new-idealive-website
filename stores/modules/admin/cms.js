@@ -2,44 +2,40 @@ import { defineStore } from 'pinia'
 
 export const useAdminCmsStore = defineStore('admin-cms', {
   state: () => ({
-    // Hero Section
     heroSection: {
       title: 'Hello World',
       subtitle: 'Building Modern Web Experiences',
       description: 'Specialized in Vue.js, Nuxt, React, and modern JavaScript frameworks.'
     },
 
-    // About Section
     aboutSection: {
       bio: 'I am a passionate web developer with expertise in creating modern, responsive web applications.'
     },
 
-    // Contact Info
     contactInfo: {
       email: 'hello@example.com',
       phone: '+1 (234) 567-890',
       location: 'San Francisco, CA',
-      github_url: 'https://github.com/username',
+      facebook_url: 'https://facebook.com/username',
       linkedin_url: 'https://linkedin.com/in/username',
       twitter_url: 'https://twitter.com/username',
       dribbble_url: 'https://dribbble.com/username',
       instagram_url: '',
-      website_url: ''
+      website_url: '',
+      map_url: '',
+      map_url_iframe: ''
     },
 
-    // Loading states
     isLoading: false,
     heroLoading: false,
     aboutLoading: false,
     contactInfoLoading: false,
 
-    // Error states
     error: '',
     heroError: '',
     aboutError: '',
     contactInfoError: '',
 
-    // Success messages
     successMessage: '',
     heroSuccess: '',
     aboutSuccess: '',
@@ -54,7 +50,6 @@ export const useAdminCmsStore = defineStore('admin-cms', {
       return useNuxtApp().$supabase
     },
 
-    // Hero Section Actions
     async fetchHeroSection() {
       this.heroLoading = true
       this.heroError = ''
@@ -71,7 +66,7 @@ export const useAdminCmsStore = defineStore('admin-cms', {
           .select('*')
           .single()
 
-        if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+        if (error && error.code !== 'PGRST116') {
           throw error
         }
 
@@ -107,7 +102,7 @@ export const useAdminCmsStore = defineStore('admin-cms', {
         const { data, error } = await supabase
           .from('hero_section')
           .upsert([{
-            id: 1, // Always use ID 1 for single hero section
+            id: 1,
             ...updates
           }])
           .select()
@@ -135,7 +130,6 @@ export const useAdminCmsStore = defineStore('admin-cms', {
       }
     },
 
-    // About Section Actions
     async fetchAboutSection() {
       this.aboutLoading = true
       this.aboutError = ''
@@ -186,7 +180,7 @@ export const useAdminCmsStore = defineStore('admin-cms', {
         const { data, error } = await supabase
           .from('about_section')
           .upsert([{
-            id: 1, // Always use ID 1 for single about section
+            id: 1,
             ...updates
           }])
           .select()
@@ -212,7 +206,6 @@ export const useAdminCmsStore = defineStore('admin-cms', {
       }
     },
 
-    // Contact Info Actions
     async fetchContactInfo() {
       this.contactInfoLoading = true
       this.contactInfoError = ''
@@ -229,7 +222,7 @@ export const useAdminCmsStore = defineStore('admin-cms', {
           .select('*')
           .single()
 
-        if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+        if (error && error.code !== 'PGRST116') {
           throw error
         }
 
@@ -238,12 +231,14 @@ export const useAdminCmsStore = defineStore('admin-cms', {
             email: data.email || '',
             phone: data.phone || '',
             location: data.location || '',
-            github_url: data.github_url || '',
+            facebook_url: data.facebook_url || '',
             linkedin_url: data.linkedin_url || '',
             twitter_url: data.twitter_url || '',
             dribbble_url: data.dribbble_url || '',
             instagram_url: data.instagram_url || '',
-            website_url: data.website_url || ''
+            website_url: data.website_url || '',
+            map_url: data.map_url || '',
+            map_url_iframe: data.map_url_iframe || ''
           }
         }
 
@@ -271,7 +266,7 @@ export const useAdminCmsStore = defineStore('admin-cms', {
         const { data, error } = await supabase
           .from('contact_info')
           .upsert([{
-            id: 1, // Always use ID 1 for single contact info
+            id: 1,
             ...updates
           }])
           .select()
@@ -285,7 +280,7 @@ export const useAdminCmsStore = defineStore('admin-cms', {
             email: data[0].email || '',
             phone: data[0].phone || '',
             location: data[0].location || '',
-            github_url: data[0].github_url || '',
+            facebook_url: data[0].facebook_url || '',
             linkedin_url: data[0].linkedin_url || '',
             twitter_url: data[0].twitter_url || '',
             dribbble_url: data[0].dribbble_url || '',
@@ -347,7 +342,6 @@ export const useAdminCmsStore = defineStore('admin-cms', {
     },
 
     async fetchPublicContent() {
-      // Ambil konten dari server API publik tanpa auth
       try {
         const res = await $fetch('/api/public/content')
         if (res?.success && res.data) {
@@ -366,7 +360,7 @@ export const useAdminCmsStore = defineStore('admin-cms', {
               email: res.data.contact.email || '',
               phone: res.data.contact.phone || '',
               location: res.data.contact.location || '',
-              github_url: res.data.contact.github_url || '',
+              facebook_url: res.data.contact.facebook_url || '',
               linkedin_url: res.data.contact.linkedin_url || '',
               twitter_url: res.data.contact.twitter_url || '',
               dribbble_url: res.data.contact.dribbble_url || '',
