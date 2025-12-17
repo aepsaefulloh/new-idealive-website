@@ -141,13 +141,17 @@ const hideVideo = () => {
 const header = () => {
   const words = document.querySelectorAll(".reveal-word");
   const masks = document.querySelectorAll(".reveal-mask.animate-invisible");
-  const tl = gsap.timeline({
-    defaults: { ease: "power4.out" },
-    onStart: () => {
-      masks.forEach((el) => el.classList.remove("animate-invisible"));
-    }
-  });
+  
+  // Set initial state for words
   gsap.set(words, { yPercent: 100, skewX: -2 });
+  
+  // Make masks visible immediately before animation starts to avoid reflow during animation
+  gsap.set(masks, { autoAlpha: 1 });
+
+  const tl = gsap.timeline({
+    defaults: { ease: "power4.out" }
+  });
+  
   tl.to(words, {
     yPercent: 0,
     skewX: 0,
@@ -161,16 +165,18 @@ const header = () => {
 const box = () => {
   const containerElement = document.querySelector(".containerElement");
   if (!containerElement) return;
-  containerElement.classList.remove("animate-invisible");
 
   gsap.fromTo(
     containerElement,
-    { clipPath: "inset(0% 50% 0% 50% round 5px)" },
+    { clipPath: "inset(0% 50% 0% 50% round 5px)", autoAlpha: 1 },
     {
       clipPath: "inset(3% 3% 3% 3% round 5px)",
       duration: 1,
       force3D: true,
-      ease: "power2.out"
+      ease: "power2.out",
+      onComplete: () => {
+        containerElement.classList.remove("animate-invisible");
+      }
     }
   );
 };

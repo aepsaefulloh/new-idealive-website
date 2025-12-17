@@ -4,7 +4,7 @@
       <NuxtLink to="/">
         <img src="/images/logo-idealive-blue.svg" class="md:w-[107px] w-[90px]" :class="{
           'filter grayscale brightness-[999999]': isSpecialPage,
-        }" alt="Idealive Logo" />
+        }" alt="Idealive Logo" fetchpriority="high" />
       </NuxtLink>
       <!-- Desktop Nav -->
       <div class="hidden md:flex gap-8 items-center">

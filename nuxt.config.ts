@@ -33,10 +33,7 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: 'en'
       },
-      link: [
-        { rel: 'preload', href: '/fonts/ScotchDeckCond-Rm.ttf', as: 'font', type: 'font/ttf', crossorigin: 'anonymous' },
-        { rel: 'preload', href: '/fonts/NeueMontreal-Regular.otf', as: 'font', type: 'font/otf', crossorigin: 'anonymous' }
-      ],
+
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -68,6 +65,8 @@ export default defineNuxtConfig({
         { name: 'apple-mobile-web-app-title', content: 'Website' },            
       ],
       link: [
+        { rel: 'preload', href: '/fonts/ScotchDeckCond-Rm.ttf', as: 'font', type: 'font/ttf', crossorigin: 'anonymous' },
+        { rel: 'preload', href: '/fonts/NeueMontreal-Regular.otf', as: 'font', type: 'font/otf', crossorigin: 'anonymous' },
         // Favicon
         { rel: 'icon', type: 'image/x-icon', href: '/images/favicon/favicon.ico' },
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/images/favicon/favicon-16x16.png' },
