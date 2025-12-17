@@ -57,10 +57,10 @@ const highlight = computed(() => {
 
 function getImageClass(index) {
   const classes = {
-    0: "aspect-video",
+    0: "md:h-[40vw] h-[66.154vw]",
     1: "md:h-[60vw] h-[99.231vw]",
     2: "md:h-[60vw] h-[99.231vw]",
-    3: "aspect-video",
+    3: "md:h-[40vw] h-[66.154vw]",
   };
   return classes[index] || "";
 }
