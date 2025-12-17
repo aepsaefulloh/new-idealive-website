@@ -152,14 +152,16 @@ const animateMobileNavItems = (el) => {
 
 const handleScroll = () => {
   const currentScrollY = window.scrollY;
-
-  if (currentScrollY < 50) {
-    navbarClass.value = 'bg-transparent';
-  } else {
-    navbarClass.value = isSpecialPage.value ? 'bg-idealive' : 'bg-white';
-  }
-
-  lastScrollY.value = currentScrollY;
+  
+  // Use requestAnimationFrame to avoid forced reflows during scroll
+  requestAnimationFrame(() => {
+    if (currentScrollY < 50) {
+      navbarClass.value = 'bg-transparent';
+    } else {
+      navbarClass.value = isSpecialPage.value ? 'bg-idealive' : 'bg-white';
+    }
+    lastScrollY.value = currentScrollY;
+  });
 };
 
 onMounted(async () => {

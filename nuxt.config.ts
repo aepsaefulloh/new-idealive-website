@@ -6,8 +6,7 @@ export default defineNuxtConfig({
   googleFonts: {
     families: {
       'Syne': [400, 500, 600, 700, 800],
-      'Space Grotesk': [300, 400, 500, 600, 700],
-      'Inter': [300, 400, 500, 600]
+      'Space Grotesk': [300, 400, 500, 600, 700]
     },
     display: 'swap',
     prefetch: true,
@@ -67,6 +66,8 @@ export default defineNuxtConfig({
       link: [
         { rel: 'preload', href: '/fonts/ScotchDeckCond-Rm.ttf', as: 'font', type: 'font/ttf', crossorigin: 'anonymous' },
         { rel: 'preload', href: '/fonts/NeueMontreal-Regular.otf', as: 'font', type: 'font/otf', crossorigin: 'anonymous' },
+        { rel: 'preload', href: '/fonts/Inter-Light.ttf', as: 'font', type: 'font/ttf', crossorigin: 'anonymous' },
+        { rel: 'preload', href: '/fonts/Inter-Regular.ttf', as: 'font', type: 'font/ttf', crossorigin: 'anonymous' },
         // Favicon
         { rel: 'icon', type: 'image/x-icon', href: '/images/favicon/favicon.ico' },
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/images/favicon/favicon-16x16.png' },
