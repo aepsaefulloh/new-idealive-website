@@ -1,7 +1,7 @@
 <template>
   <Transition @enter="onEnter" @leave="onLeave" :css="false">
     <div v-if="isVisible" class="transition-overlay fixed inset-0 bg-white flex items-center justify-center z-[9999]">
-      <img src="/images/logo-idealive-blue.svg" class="w-[20vw]" alt="Idealive Logo">
+      <img src="/images/logo-idealive-blue.svg" fetchpriority="high" class="w-[20vw]" alt="Idealive Logo">
     </div>
   </Transition>
 </template>
