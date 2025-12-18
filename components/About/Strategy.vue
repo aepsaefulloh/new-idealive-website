@@ -38,10 +38,7 @@
         </div>
 
         <div class="mt-14 md:mt-16 flex justify-center">
-            <button class="btn-main">
-                See all portfolio
-                <span aria-hidden="true">→</span>
-            </button>
+            <UtilsButtonCta :title="'See all portfolio'" :root="'/work'" />
         </div>
     </section>
 </template>
