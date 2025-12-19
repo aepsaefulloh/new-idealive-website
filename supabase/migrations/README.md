@@ -17,6 +17,7 @@ migrations/
 ├── 20251201000008_articles.sql       # Blog articles
 ├── 20251201000009_contact_messages.sql # Contact form
 ├── 20251201000010_storage.sql        # Storage bucket
+├── 20251201000011_team.sql            # Team section
 └── README.md
 ```
 
@@ -53,6 +54,7 @@ npx supabase db push
 | 8 | `articles` | Articles | 1, 6 |
 | 9 | `contact_messages` | Contact form | 1 |
 | 10 | `storage` | Storage bucket | - |
+| 11 | `team` | Team section | 1 |
 
 ## 🚀 How to Run
 
@@ -78,6 +80,7 @@ npx supabase migration up
 | `projects` | Published | ❌ | ✅ |
 | `articles` | Published | ❌ | ✅ |
 | `contact_messages` | ❌ | ✅ | ✅ |
+| `team` | ✅ | ❌ | ✅ |
 
 ## 📦 Storage
 
