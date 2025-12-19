@@ -1,5 +1,5 @@
 <template>
-  <div class="about-container relative z-20 md:-mt-[50vh]">
+  <div class="about-container relative z-20 md:-mt-[40vh]">
     <!-- Gradient Top -->
     <div class="md:block hidden absolute -top-[50vh] left-0 w-full h-[50vh] bg-gradient-to-t from-[#2054FA] via-[#2054FA]/80 to-transparent pointer-events-none"></div>
 
