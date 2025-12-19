@@ -11,11 +11,11 @@
             </p>
             <p class="mb-4 font-[600]">Get in Touch</p>
             <div class="flex md:text-[1.058vw] text-[12px] md:gap-6 items-center gap-3">
-              <NuxtLink :to="'mailto:' + (contactInfo?.email || '')" :title="contactInfo?.email" class="bg-white text-black py-2.5 px-5 rounded-full">
-                {{ contactInfo?.email || 'Loading...' }}
+              <NuxtLink :to="'mailto:' + (contactInfo?.[0]?.email || '')" :title="contactInfo?.[0]?.email" class="bg-white text-black py-2.5 px-5 rounded-full">
+                {{ contactInfo?.[0]?.email || 'Loading...' }}
               </NuxtLink>
-              <NuxtLink :to="'tel:' + (contactInfo?.phone || '')" :title="contactInfo?.phone" class="bg-white text-black py-2.5 px-5 rounded-full">
-                {{ contactInfo?.phone || 'Loading...' }}
+              <NuxtLink :to="'tel:' + (contactInfo?.[0]?.phone || '')" :title="contactInfo?.[0]?.phone" class="bg-white text-black py-2.5 px-5 rounded-full">
+                {{ contactInfo?.[0]?.phone || 'Loading...' }}
               </NuxtLink>
             </div>
           </div>
