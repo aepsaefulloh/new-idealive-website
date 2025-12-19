@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS hero_section (
   title VARCHAR(255) NOT NULL,
   subtitle VARCHAR(255),
   description TEXT,
+  image_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

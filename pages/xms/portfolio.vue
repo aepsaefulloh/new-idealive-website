@@ -34,6 +34,21 @@
               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 resize-none"
               placeholder="Enter hero description"></textarea>
           </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Hero Image</label>
+            <div class="space-y-2">
+                <input ref="heroImageInput" type="file" accept="image/*" @change="handleHeroImageUpload"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100" />
+                <div v-if="heroImagePreview" class="relative group w-fit">
+                    <img :src="heroImagePreview" alt="Hero image preview"
+                        class="h-32 w-auto object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                    <button @click="removeHeroImage"
+                        class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
+                    </button>
+                </div>
+            </div>
+          </div>
           <Button @click="saveHeroSection" :loading="isLoading" variant="primary" block>
             Save Hero Section
           </Button>
@@ -52,6 +67,21 @@
             <textarea v-model="aboutSection.bio" rows="4"
               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 resize-none"
               placeholder="Enter your bio"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">About Image</label>
+            <div class="space-y-2">
+                <input ref="aboutImageInput" type="file" accept="image/*" @change="handleAboutImageUpload"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                <div v-if="aboutImagePreview" class="relative group w-fit">
+                    <img :src="aboutImagePreview" alt="About image preview"
+                        class="h-32 w-auto object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                    <button @click="removeAboutImage"
+                        class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
+                    </button>
+                </div>
+            </div>
           </div>
           <Button @click="saveAboutSection" :loading="isLoading" variant="primary" block>
             Save About Section
@@ -242,6 +272,7 @@
 import { onMounted, computed, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 import { useSupabaseStore, useAuthStore, useContactStore, useAdminProjectsStore, useAdminCmsStore } from '@/stores'
+import { compressForThumbnail, formatFileSize } from '@/utils/imageCompression'
 import Button from '@/components/dashboard/ui/Button.vue'
 
 definePageMeta({
@@ -256,6 +287,13 @@ const projectsStore = useAdminProjectsStore()
 const cmsStore = useAdminCmsStore()
 
 const isLoading = ref(false)
+const heroImageFile = ref(null)
+const heroImagePreview = ref('')
+const heroImageInput = ref(null)
+
+const aboutImageFile = ref(null)
+const aboutImagePreview = ref('')
+const aboutImageInput = ref(null)
 
 const formatDate = (dateString) => {
   const date = new Date(dateString)
@@ -287,25 +325,147 @@ const loadProjects = async () => {
 
 const loadCmsData = async () => {
   await cmsStore.loadAllCmsData()
-}
-
-
-const saveHeroSection = async () => {
-  const result = await cmsStore.updateHeroSection(heroSection.value)
-  if (result.success) {
-    toast.success(cmsStore.heroSuccess)
-  } else {
-    toast.error(result.error || 'Failed to save hero section')
+  // Initialize previews from store data
+  if (heroSection.value?.image_url) {
+    heroImagePreview.value = heroSection.value.image_url
+  }
+  if (aboutSection.value?.image_url) {
+    aboutImagePreview.value = aboutSection.value.image_url
   }
 }
 
+const handleHeroImageUpload = async (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    try {
+      toast.info('Compressing image...')
+      const compressed = await compressForThumbnail(file)
+      console.log(`Hero image compressed: ${formatFileSize(compressed.originalSize)} → ${formatFileSize(compressed.compressedSize)} (${compressed.compressionRatio}% reduction)`)
+
+      heroImageFile.value = compressed.file
+      heroImagePreview.value = compressed.dataUrl
+      toast.success(`Image compressed (${compressed.compressionRatio}% smaller) - will upload on save`)
+    } catch (error) {
+      console.error('Image compression failed:', error)
+      toast.error('Failed to compress image')
+    }
+  }
+}
+
+const removeHeroImage = () => {
+  heroImagePreview.value = ''
+  heroImageFile.value = null
+  if (heroImageInput.value) {
+    heroImageInput.value.value = ''
+  }
+  // If we are removing an existing saved image, we might want to flag it or handle it in save
+  // For now, simpler to just clear preview and let save handle store update 
+  // (NOTE: To strictly delete from DB/Storage requires more logic, here we just update data to empty string if intended)
+  heroSection.value.image_url = ''
+}
+
+const handleAboutImageUpload = async (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    try {
+      toast.info('Compressing image...')
+      const compressed = await compressForThumbnail(file)
+      console.log(`About image compressed: ${formatFileSize(compressed.originalSize)} → ${formatFileSize(compressed.compressedSize)} (${compressed.compressionRatio}% reduction)`)
+
+      aboutImageFile.value = compressed.file
+      aboutImagePreview.value = compressed.dataUrl
+      toast.success(`Image compressed (${compressed.compressionRatio}% smaller) - will upload on save`)
+    } catch (error) {
+      console.error('Image compression failed:', error)
+      toast.error('Failed to compress image')
+    }
+  }
+}
+
+const removeAboutImage = () => {
+  aboutImagePreview.value = ''
+  aboutImageFile.value = null
+  if (aboutImageInput.value) {
+    aboutImageInput.value.value = ''
+  }
+  aboutSection.value.image_url = ''
+}
+
+const uploadFile = async (file, folder = 'cms_images') => {
+  const supabase = useNuxtApp().$supabase
+  const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2)}.webp`
+
+  const { data, error } = await supabase.storage
+    .from('images')
+    .upload(fileName, file, {
+      contentType: 'image/webp',
+      cacheControl: '3600',
+    })
+
+  if (error) {
+    throw error
+  }
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('images')
+    .getPublicUrl(fileName)
+
+  return publicUrl
+}
+
+const saveHeroSection = async () => {
+  try {
+    let finalImageUrl = heroSection.value.image_url || ''
+
+    if (heroImageFile.value) {
+      toast.info('Uploading hero image...')
+      finalImageUrl = await uploadFile(heroImageFile.value, 'hero')
+    }
+
+    const payload = {
+      ...heroSection.value,
+      image_url: finalImageUrl
+    }
+
+    const result = await cmsStore.updateHeroSection(payload)
+    if (result.success) {
+      toast.success(cmsStore.heroSuccess)
+      // Reset file input after successful save
+      heroImageFile.value = null
+    } else {
+      toast.error(result.error || 'Failed to save hero section')
+    }
+  } catch (err) {
+      console.error('Save failed:', err)
+      toast.error('Failed to save hero section')
+  }
+}
 
 const saveAboutSection = async () => {
-  const result = await cmsStore.updateAboutSection(aboutSection.value)
-  if (result.success) {
-    toast.success(cmsStore.aboutSuccess)
-  } else {
-    toast.error(result.error || 'Failed to save about section')
+  try {
+    let finalImageUrl = aboutSection.value.image_url || ''
+
+    if (aboutImageFile.value) {
+      toast.info('Uploading about image...')
+      finalImageUrl = await uploadFile(aboutImageFile.value, 'about')
+    }
+
+    const payload = {
+      ...aboutSection.value,
+      image_url: finalImageUrl
+    }
+
+    const result = await cmsStore.updateAboutSection(payload)
+    if (result.success) {
+      toast.success(cmsStore.aboutSuccess)
+       // Reset file input after successful save
+       aboutImageFile.value = null
+    } else {
+      toast.error(result.error || 'Failed to save about section')
+    }
+  } catch (err) {
+      console.error('Save failed:', err)
+      toast.error('Failed to save about section')
   }
 }
 

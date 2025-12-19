@@ -11,6 +11,7 @@
 CREATE TABLE IF NOT EXISTS about_section (
   id SERIAL PRIMARY KEY,
   bio TEXT,
+  image_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

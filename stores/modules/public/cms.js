@@ -64,6 +64,8 @@ export const usePublicCmsStore = defineStore('public-cms', {
           return { success: false, error: this.error }
         }
 
+
+
         this.heroSection = data
         return { success: true, data }
       } catch (err) {
@@ -94,6 +96,8 @@ export const usePublicCmsStore = defineStore('public-cms', {
           this.error = error.message || 'Failed to fetch about section'
           return { success: false, error: this.error }
         }
+
+
 
         this.aboutSection = data
         return { success: true, data }
@@ -149,6 +153,7 @@ export const usePublicCmsStore = defineStore('public-cms', {
       return await this.fetchContactInfoPromise
     }
   },
+
   getters: {
     getContactInfo(state) {
       return state.contactInfo

@@ -5,11 +5,13 @@ export const useAdminCmsStore = defineStore('admin-cms', {
     heroSection: {
       title: 'Hello World',
       subtitle: 'Building Modern Web Experiences',
-      description: 'Specialized in Vue.js, Nuxt, React, and modern JavaScript frameworks.'
+      description: 'Specialized in Vue.js, Nuxt, React, and modern JavaScript frameworks.',
+      image_url: ''
     },
 
     aboutSection: {
-      bio: 'I am a passionate web developer with expertise in creating modern, responsive web applications.'
+      bio: 'I am a passionate web developer with expertise in creating modern, responsive web applications.',
+      image_url: ''
     },
 
     contactInfo: {
@@ -74,7 +76,8 @@ export const useAdminCmsStore = defineStore('admin-cms', {
           this.heroSection = {
             title: data.title,
             subtitle: data.subtitle,
-            description: data.description
+            description: data.description,
+            image_url: data.image_url || ''
           }
         }
 
@@ -115,7 +118,8 @@ export const useAdminCmsStore = defineStore('admin-cms', {
           this.heroSection = {
             title: data[0].title,
             subtitle: data[0].subtitle,
-            description: data[0].description
+            description: data[0].description,
+            image_url: data[0].image_url || ''
           }
           this.heroSuccess = 'Hero section updated successfully!'
           return { success: true, data: this.heroSection }
@@ -152,7 +156,8 @@ export const useAdminCmsStore = defineStore('admin-cms', {
 
         if (data) {
           this.aboutSection = {
-            bio: data.bio
+            bio: data.bio,
+            image_url: data.image_url || ''
           }
         }
 
@@ -191,7 +196,8 @@ export const useAdminCmsStore = defineStore('admin-cms', {
 
         if (data && data.length > 0) {
           this.aboutSection = {
-            bio: data[0].bio
+            bio: data[0].bio,
+            image_url: data[0].image_url || ''
           }
           this.aboutSuccess = 'About section updated successfully!'
           return { success: true, data: this.aboutSection }
@@ -349,11 +355,15 @@ export const useAdminCmsStore = defineStore('admin-cms', {
             this.heroSection = {
               title: res.data.hero.title,
               subtitle: res.data.hero.subtitle,
-              description: res.data.hero.description
+              description: res.data.hero.description,
+              image_url: res.data.hero.image_url || ''
             }
           }
           if (res.data.about) {
-            this.aboutSection = { bio: res.data.about.bio }
+            this.aboutSection = { 
+              bio: res.data.about.bio,
+              image_url: res.data.about.image_url || ''
+            }
           }
           if (res.data.contact) {
             this.contactInfo = {
