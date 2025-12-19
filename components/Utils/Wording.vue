@@ -3,12 +3,12 @@
     <div class="text-center my-auto">
       <div 
       ref="containerRef" 
-      class="relative md:w-[30vw] md:h-[5vw] h-[11vw] !w-[60vw] overflow-hidden reveal-mask animate-invisible "
+      class="relative md:w-[30vw] md:h-[5.5vw] h-[11vw] !w-[60vw] overflow-hidden reveal-mask animate-invisible "
     >
       <div 
         v-for="(text, index) in texts" 
         :key="index" 
-        class="text absolute inset-0 flex items-center justify-start md:text-[4.63vw] text-[10.256vw] leading-[130%]"
+        class="text absolute inset-0 flex items-center justify-start md:text-[4.63vw] text-[10vw] leading-[130%]"
       >
         {{ text }}
       </div>
@@ -31,7 +31,7 @@ const sme = () => {
 
   gsap.set(textElements, { yPercent: 100 });
 
-  const tl = gsap.timeline({ repeat: -1 }); // Loop infinitely without delay
+  const tl = gsap.timeline({ repeat: -1 });
   tl.add(() => {
     masks.forEach((el) => el.classList.remove("animate-invisible"));
   });
@@ -44,7 +44,7 @@ const sme = () => {
       ease: "power2.out"
     })
     .to(text, {
-      yPercent: isLastText ? 0 : -100,  // Stop the last text from moving out of view
+      yPercent: isLastText ? 0 : -100,
       duration: 0.3,
       ease: "power2.in",
       delay: 1

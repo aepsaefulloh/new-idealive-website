@@ -4,7 +4,7 @@
       <div class="border-b border-[#2054FA] md:pb-10 pb-4">
         <div class="grid md:grid-cols-6 md:gap-0 gap-[40px]">
           <div class="flex flex-col md:col-span-4">
-            <div class="md:text-[4.63vw] text-[10.256vw] leading-[110%] flex items-center gap-4 font-bold">
+            <div class="md:text-[4.63vw] text-[10vw] leading-[110%] flex items-center gap-4 font-bold">
               {{ content.brandText }}
               <svg class="mt-[0.8vw] md:w-[3vw] w-[6vw]" viewBox="0 0 41 38" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
@@ -13,7 +13,7 @@
                   fill="#2054FA" stroke="#2054FA" stroke-width="0.537946" />
               </svg>
             </div>
-            <div class="md:text-[4.63vw] text-[10.256vw] leading-[110%] flex md:gap-6 gap-2 font-bold">
+            <div class="md:text-[4.63vw] text-[10vw] leading-[110%] flex md:gap-6 gap-2 font-bold">
               <span v-html="content.brandText2"></span>
               <UtilsWording />
             </div>
