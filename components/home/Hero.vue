@@ -18,7 +18,7 @@
       <div class="solid-bg absolute inset-0 bg-[#2054FA] z-[1]"></div>
 
       <img class="absolute image md:w-[65.675vw] w-[80vw] z-[2]" src="/images/logo-idealive.svg" fetchpriority="high"
-        alt="Animated Image" />
+        alt="Animated Image" width="993" height="224" />
       <div class="items relative justify-evenly items-center w-full flex z-[2]">
         <h1 class="md:text-[3.307vw] text-[8vw] heading font-primary absolute">Agency</h1>
         <h1 class="md:text-[3.307vw] text-[8vw] heading font-primary absolute">Laboratory</h1>
