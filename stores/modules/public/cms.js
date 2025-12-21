@@ -5,6 +5,7 @@ export const usePublicCmsStore = defineStore('public-cms', {
     heroSection: null,
     aboutSection: null,
     contactInfo: null,
+    services: [],
     isLoading: false,
     error: '',
     isContactInfoFetched: false,
@@ -14,6 +15,29 @@ export const usePublicCmsStore = defineStore('public-cms', {
   actions: {
     getSupabase() {
       return useNuxtApp().$supabase
+    },
+
+    async fetchServices() {
+      this.isLoading = true
+      this.error = ''
+
+      try {
+        const supabase = this.getSupabase()
+        const { data, error } = await supabase
+          .from('service')
+          .select('*')
+          .order('order_num', { ascending: true })
+
+        if (error) throw error
+
+        this.services = data
+        return { success: true, data }
+      } catch (err) {
+        this.error = err.message
+        return { success: false, error: err.message }
+      } finally {
+        this.isLoading = false
+      }
     },
 
     async fetchContent() {
@@ -163,6 +187,9 @@ export const usePublicCmsStore = defineStore('public-cms', {
     },
     getHeroSection(state) {
       return state.heroSection
+    },
+    getServices(state) {
+      return state.services
     }
   }
 })

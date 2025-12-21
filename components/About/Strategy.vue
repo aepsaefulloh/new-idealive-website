@@ -44,38 +44,53 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { usePublicCmsStore } from '@/stores';
 
-const strategies = [
-    {
-        title: 'Brand Strategy & Story Building',
-        subtitle: 'Crafting narratives that align business goals with audience insight and market trends.',
-    },
-    {
-        title: '360 Integrated Marketing Experience',
-        subtitle: 'Holistic campaigns across channels to deliver consistent, memorable brand experiences.',
-    },
-    {
-        title: 'Digital Media Planning & Buying',
-        subtitle: 'Performance-focused planning with smart placement, targeting, and optimization.',
-    },
-    {
-        title: 'Content & Creative Production',
-        subtitle: 'From concept to delivery—visuals, motion, and copy that convert and captivate.',
-    },
-    {
-        title: 'Social & Community Engagement',
-        subtitle: 'Building loyal communities with always-on content, activations, and influencer strategy.',
-    },
-    {
-        title: 'Analytics & Growth Strategy',
-        subtitle: 'Data-driven insights to iterate, scale, and sustain brand momentum.',
-    },
-];
+const publicCmsStore = usePublicCmsStore();
+
+const strategies = computed(() => {
+    if (publicCmsStore.services && publicCmsStore.services.length > 0) {
+        return publicCmsStore.services.map(s => ({
+            title: s.title,
+            subtitle: s.description
+        }));
+    }
+    return [
+        {
+            title: 'Brand Strategy & Story Building',
+            subtitle: 'Crafting narratives that align business goals with audience insight and market trends.',
+        },
+        {
+            title: '360 Integrated Marketing Experience',
+            subtitle: 'Holistic campaigns across channels to deliver consistent, memorable brand experiences.',
+        },
+        {
+            title: 'Digital Media Planning & Buying',
+            subtitle: 'Performance-focused planning with smart placement, targeting, and optimization.',
+        },
+        {
+            title: 'Content & Creative Production',
+            subtitle: 'From concept to delivery—visuals, motion, and copy that convert and captivate.',
+        },
+        {
+            title: 'Social & Community Engagement',
+            subtitle: 'Building loyal communities with always-on content, activations, and influencer strategy.',
+        },
+        {
+            title: 'Analytics & Growth Strategy',
+            subtitle: 'Data-driven insights to iterate, scale, and sustain brand momentum.',
+        },
+    ];
+});
 
 const openIndex = ref(null);
 
 const toggle = (idx) => {
     openIndex.value = openIndex.value === idx ? null : idx;
 };
+
+onMounted(async () => {
+    await publicCmsStore.fetchServices();
+});
 </script>

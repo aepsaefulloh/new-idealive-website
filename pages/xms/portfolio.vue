@@ -13,6 +13,8 @@
 
     <ContactInfo />
 
+    <Services />
+
     <RecentProjects />
 
     <ContactMessages />
@@ -25,6 +27,7 @@ import { useAdminCmsStore } from '@/stores'
 import HeroSection from '@/components/dashboard/portfolio/HeroSection.vue'
 import AboutSection from '@/components/dashboard/portfolio/AboutSection.vue'
 import ContactInfo from '@/components/dashboard/portfolio/ContactInfo.vue'
+import Services from '@/components/dashboard/portfolio/Services.vue'
 import RecentProjects from '@/components/dashboard/portfolio/RecentProjects.vue'
 import ContactMessages from '@/components/dashboard/portfolio/ContactMessages.vue'
 

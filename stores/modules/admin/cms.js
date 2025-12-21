@@ -31,6 +31,11 @@ export const useAdminCmsStore = defineStore('admin-cms', {
       total_awards: 0
     },
 
+    services: [],
+    servicesLoading: false,
+    servicesError: '',
+    servicesSuccess: '',
+
     isLoading: false,
     heroLoading: false,
     aboutLoading: false,
@@ -53,6 +58,111 @@ export const useAdminCmsStore = defineStore('admin-cms', {
   actions: {
     getSupabase() {
       return useNuxtApp().$supabase
+    },
+
+    // Services Actions
+    async fetchServices() {
+      this.servicesLoading = true
+      this.servicesError = ''
+
+      try {
+        const supabase = this.getSupabase()
+        const { data, error } = await supabase
+          .from('service')
+          .select('*')
+          .order('order_num', { ascending: true })
+
+        if (error) throw error
+
+        this.services = data
+        return { success: true, data }
+      } catch (err) {
+        this.servicesError = err.message
+        return { success: false, error: err.message }
+      } finally {
+        this.servicesLoading = false
+      }
+    },
+
+    async createService(serviceData) {
+      this.servicesLoading = true
+      this.servicesError = ''
+      this.servicesSuccess = ''
+
+      try {
+        const supabase = this.getSupabase()
+        const { data, error } = await supabase
+          .from('service')
+          .insert([serviceData])
+          .select()
+
+        if (error) throw error
+
+        this.services.push(data[0])
+        this.services.sort((a, b) => a.order_num - b.order_num)
+        this.servicesSuccess = 'Service created successfully'
+        return { success: true, data: data[0] }
+      } catch (err) {
+        this.servicesError = err.message
+        return { success: false, error: err.message }
+      } finally {
+        this.servicesLoading = false
+      }
+    },
+
+    async updateService(id, updates) {
+      this.servicesLoading = true
+      this.servicesError = ''
+      this.servicesSuccess = ''
+
+      try {
+        const supabase = this.getSupabase()
+        const { data, error } = await supabase
+          .from('service')
+          .update(updates)
+          .eq('id', id)
+          .select()
+
+        if (error) throw error
+
+        const index = this.services.findIndex(s => s.id === id)
+        if (index !== -1) {
+          this.services[index] = data[0]
+          this.services.sort((a, b) => a.order_num - b.order_num)
+        }
+        this.servicesSuccess = 'Service updated successfully'
+        return { success: true, data: data[0] }
+      } catch (err) {
+        this.servicesError = err.message
+        return { success: false, error: err.message }
+      } finally {
+        this.servicesLoading = false
+      }
+    },
+
+    async deleteService(id) {
+      this.servicesLoading = true
+      this.servicesError = ''
+      this.servicesSuccess = ''
+
+      try {
+        const supabase = this.getSupabase()
+        const { error } = await supabase
+          .from('services')
+          .delete()
+          .eq('id', id)
+
+        if (error) throw error
+
+        this.services = this.services.filter(s => s.id !== id)
+        this.servicesSuccess = 'Service deleted successfully'
+        return { success: true }
+      } catch (err) {
+        this.servicesError = err.message
+        return { success: false, error: err.message }
+      } finally {
+        this.servicesLoading = false
+      }
     },
 
     async fetchHeroSection() {
@@ -343,7 +453,8 @@ export const useAdminCmsStore = defineStore('admin-cms', {
         await Promise.all([
           this.fetchHeroSection(),
           this.fetchAboutSection(),
-          this.fetchContactInfo()
+          this.fetchContactInfo(),
+          this.fetchServices()
         ])
 
         return { success: true }
