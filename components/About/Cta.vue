@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { ref, onMounted, onBeforeUnmount, nextTick, computed, watch } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useContactInfo } from "@/composables/useContactInfo";
@@ -61,27 +61,41 @@ const copy = {
   description: `Discover how our creative strategies can live your brand. We're here to help you stand out and make an impact.`,
 };
 
-const statis = [
-  { value: 100, title: "Clients", sub: "Trust us" },
-  {
-    value: 50,
-    title: "Offline Activation",
-    sub: "Instantly Connected Audiences",
-  },
-  { value: 40, title: "Project Insights", sub: "At Glance" },
-];
+const statis = computed(() => {
+  const info = contactInfo.value?.[0] || {};
+  return [
+    { 
+      value: info.total_clients || 0, 
+      title: "Clients", 
+      sub: "Trust us" 
+    },
+    {
+      value: info.total_projects || 0,
+      title: "Offline Activation",
+      sub: "Instantly Connected Audiences",
+    },
+    { 
+      value: info.total_awards || 0, 
+      title: "Project Insights", 
+      sub: "At Glance" 
+    },
+  ];
+});
 
 
 onMounted(async () => {
-  if (process.client) {
-    await nextTick();
+  await fetchIfNeeded();
+});
 
+watch(() => contactInfo.value, async (newVal) => {
+  if (newVal && process.client) {
+    if (ctx) ctx.revert(); 
+    await nextTick();
     ctx = gsap.context(() => {
       initAnimations();
     }, countingTrigger.value);
   }
-  await fetchIfNeeded();
-});
+}, { deep: true, immediate: true }); 
 
 onBeforeUnmount(() => {
   if (ctx) ctx.revert();
@@ -102,7 +116,7 @@ const initAnimations = () => {
   const counterElements = countingTrigger.value.querySelectorAll(".counter");
 
   counterElements.forEach((counter, index) => {
-    const targetValue = statis[index].value;
+    const targetValue = statis.value[index].value;
 
     const countAnimation = gsap.to(counter, {
       innerHTML: targetValue,
@@ -122,6 +136,7 @@ const initAnimations = () => {
 
   revealElements.forEach((element, index) => {
     const wordElement = element.querySelector(".reveal-wordy");
+    if (!wordElement) return;
 
     gsap.set(element, {
       overflow: "hidden",

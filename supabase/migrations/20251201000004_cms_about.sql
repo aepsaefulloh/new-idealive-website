@@ -11,6 +11,7 @@
 CREATE TABLE IF NOT EXISTS about_section (
   id SERIAL PRIMARY KEY,
   bio TEXT,
+  description TEXT,
   image_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -31,8 +32,9 @@ CREATE POLICY "Authenticated manage about" ON about_section
 -- -----------------------------------------------------------------------------
 -- Sample Data
 -- -----------------------------------------------------------------------------
-INSERT INTO about_section (bio) VALUES
-('I am a passionate web developer with expertise in creating modern, responsive web applications.');
+INSERT INTO about_section (bio, description) VALUES
+('I am a passionate web developer with expertise in creating modern, responsive web applications.',
+ 'I am a passionate web developer with expertise in creating modern, responsive web applications.');
 
 -- -----------------------------------------------------------------------------
 -- Trigger

@@ -21,6 +21,9 @@ CREATE TABLE IF NOT EXISTS contact_info (
   website_url TEXT,
   map_url TEXT,
   map_url_iframe TEXT,
+  total_clients INT,
+  total_projects INT,
+  total_awards INT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -40,9 +43,9 @@ CREATE POLICY "Authenticated manage contact info" ON contact_info
 -- -----------------------------------------------------------------------------
 -- Sample Data
 -- -----------------------------------------------------------------------------
-INSERT INTO contact_info (email, phone, location, github_url, linkedin_url) VALUES
+INSERT INTO contact_info (email, phone, location, facebook_url, linkedin_url, twitter_url, dribbble_url, instagram_url, website_url, map_url, map_url_iframe, total_clients, total_projects, total_awards) VALUES
 ('hello@example.com', '+1 234 567 890', 'San Francisco, CA', 
- 'https://github.com/username', 'https://linkedin.com/in/username');
+ 'https://github.com/username', 'https://linkedin.com/in/username', 'https://twitter.com/username', 'https://dribbble.com/username', 'https://instagram.com/username', 'https://website.com', 'https://map.com', 'https://map.com', 100, 50, 20);
 
 -- -----------------------------------------------------------------------------
 -- Trigger

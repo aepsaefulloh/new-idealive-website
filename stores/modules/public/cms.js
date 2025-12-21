@@ -4,11 +4,11 @@ export const usePublicCmsStore = defineStore('public-cms', {
   state: () => ({
     heroSection: null,
     aboutSection: null,
-    contactInfo: null,  
+    contactInfo: null,
     isLoading: false,
     error: '',
-    isContactInfoFetched: false,  
-    fetchContactInfoPromise: null,  
+    isContactInfoFetched: false,
+    fetchContactInfoPromise: null,
   }),
 
   actions: {
@@ -139,14 +139,14 @@ export const usePublicCmsStore = defineStore('public-cms', {
           }
 
           this.contactInfo = data
-          this.isContactInfoFetched = true  
+          this.isContactInfoFetched = true
           return { success: true, data }
         } catch (err) {
           this.error = err.message || 'Failed to fetch contact info'
           return { success: false, error: this.error }
         } finally {
           this.isLoading = false
-          this.fetchContactInfoPromise = null 
+          this.fetchContactInfoPromise = null
         }
       })()
 
@@ -157,6 +157,12 @@ export const usePublicCmsStore = defineStore('public-cms', {
   getters: {
     getContactInfo(state) {
       return state.contactInfo
+    },
+    getAboutSection(state) {
+      return state.aboutSection
+    },
+    getHeroSection(state) {
+      return state.heroSection
     }
   }
 })

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <AboutHero />
+    <AboutHero :aboutSection="aboutSection" />
     <AboutStrategy />
     <AboutQuote />
     <AboutTeam />
@@ -15,5 +15,14 @@ useHead({
   meta: [
     { name: 'description', content: 'Founded in Jakarta in 2017, Idealive bridges brands and audiences with creativity and strategy.' }
   ]
+})
+
+import { usePublicCmsStore } from '@/stores'
+
+const cmsStore = usePublicCmsStore()
+const aboutSection = computed(() => cmsStore.getAboutSection)
+
+onMounted(async () => {
+  await cmsStore.fetchAboutSection()
 })
 </script>

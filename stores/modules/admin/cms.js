@@ -25,7 +25,10 @@ export const useAdminCmsStore = defineStore('admin-cms', {
       instagram_url: '',
       website_url: '',
       map_url: '',
-      map_url_iframe: ''
+      map_url_iframe: '',
+      total_clients: 0,
+      total_projects: 0,
+      total_awards: 0
     },
 
     isLoading: false,
@@ -157,6 +160,7 @@ export const useAdminCmsStore = defineStore('admin-cms', {
         if (data) {
           this.aboutSection = {
             bio: data.bio,
+            description: data.description,
             image_url: data.image_url || ''
           }
         }
@@ -197,6 +201,7 @@ export const useAdminCmsStore = defineStore('admin-cms', {
         if (data && data.length > 0) {
           this.aboutSection = {
             bio: data[0].bio,
+            description: data[0].description,
             image_url: data[0].image_url || ''
           }
           this.aboutSuccess = 'About section updated successfully!'
@@ -244,7 +249,10 @@ export const useAdminCmsStore = defineStore('admin-cms', {
             instagram_url: data.instagram_url || '',
             website_url: data.website_url || '',
             map_url: data.map_url || '',
-            map_url_iframe: data.map_url_iframe || ''
+            map_url_iframe: data.map_url_iframe || '',
+            total_clients: data.total_clients || 0,
+            total_projects: data.total_projects || 0,
+            total_awards: data.total_awards || 0
           }
         }
 
@@ -291,7 +299,12 @@ export const useAdminCmsStore = defineStore('admin-cms', {
             twitter_url: data[0].twitter_url || '',
             dribbble_url: data[0].dribbble_url || '',
             instagram_url: data[0].instagram_url || '',
-            website_url: data[0].website_url || ''
+            website_url: data[0].website_url || '',
+            map_url: data[0].map_url || '',
+            map_url_iframe: data[0].map_url_iframe || '',
+            total_clients: data[0].total_clients || 0,
+            total_projects: data[0].total_projects || 0,
+            total_awards: data[0].total_awards || 0
           }
           this.contactInfoSuccess = 'Contact information updated successfully!'
           return { success: true, data: this.contactInfo }
@@ -362,6 +375,7 @@ export const useAdminCmsStore = defineStore('admin-cms', {
           if (res.data.about) {
             this.aboutSection = { 
               bio: res.data.about.bio,
+              description: res.data.about.description,
               image_url: res.data.about.image_url || ''
             }
           }
@@ -375,7 +389,12 @@ export const useAdminCmsStore = defineStore('admin-cms', {
               twitter_url: res.data.contact.twitter_url || '',
               dribbble_url: res.data.contact.dribbble_url || '',
               instagram_url: res.data.contact.instagram_url || '',
-              website_url: res.data.contact.website_url || ''
+              website_url: res.data.contact.website_url || '',
+              map_url: res.data.contact.map_url || '',
+              map_url_iframe: res.data.contact.map_url_iframe || '',
+              total_clients: res.data.contact.total_clients || 0,
+              total_projects: res.data.contact.total_projects || 0,
+              total_awards: res.data.contact.total_awards || 0
             }
           }
           return { success: true, data: res.data }
