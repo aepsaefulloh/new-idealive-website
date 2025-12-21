@@ -81,6 +81,7 @@ npx supabase migration up
 | `articles` | Published | ❌ | ✅ |
 | `contact_messages` | ❌ | ✅ | ✅ |
 | `team` | ✅ | ❌ | ✅ |
+| `services` | ✅ | ❌ | ✅ |
 
 ## 📦 Storage
 
