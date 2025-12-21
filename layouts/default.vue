@@ -20,7 +20,7 @@ import CustomCursor from '~/components/CustomCursor.vue'
 import Navbar from '~/components/Utils/Navbar.vue'
 import Footer from '~/components/Utils/Footer.vue'
 import { useRoute } from 'vue-router'
-import { onMounted, onBeforeUnmount } from 'vue'
+import { onMounted, onBeforeUnmount, watch } from 'vue'
 import { ScrollSmoother } from 'gsap/ScrollSmoother'
 
 const route = useRoute()
@@ -46,6 +46,12 @@ onMounted(() => {
 onBeforeUnmount(() => {
   if (smoother) {
     smoother.kill();
+  }
+});
+
+watch(() => route.path, () => {
+  if (smoother) {
+    smoother.scrollTop(0);
   }
 });
 </script>

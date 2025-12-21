@@ -17,14 +17,14 @@
           {{ item.name }}
         </NuxtLink>
       </div>
-      
+
       <div class="md:block hidden min-w-[150px] flex justify-end">
         <SkeletonLoading v-if="isLoading || !contactInfo?.[0]?.email" type="text" class="w-40 h-6" />
         <NuxtLink v-else to="/" class="text-[#0030C2] block text-right" :class="{ '!text-white': isSpecialPage }">
           {{ contactInfo?.[0]?.email }}
         </NuxtLink>
       </div>
-      
+
       <!-- Mobile Hamburger Menu -->
       <div class="md:hidden">
         <button @click="toggleMenu" class="text-[#0030C2]" aria-label="Toggle menu">
@@ -80,8 +80,10 @@
               <UtilsWording />
             </div>
             <div class="flex text-[12px] justify-between mt-6">
-              <a :href="`tel:${contactInfo?.[0]?.phone || '+628129011923412'}`">{{ contactInfo?.[0]?.phone || '+628129011923412' }}</a>
-              <a :href="`mailto:${contactInfo?.[0]?.email || 'hello@idealive.co.id'}`">{{ contactInfo?.[0]?.email || 'hello@idealive.co.id' }}</a>
+              <a :href="`tel:${contactInfo?.[0]?.phone || '+628129011923412'}`">{{ contactInfo?.[0]?.phone ||
+                '+628129011923412' }}</a>
+              <a :href="`mailto:${contactInfo?.[0]?.email || 'hello@idealive.co.id'}`">{{ contactInfo?.[0]?.email ||
+                'hello@idealive.co.id' }}</a>
             </div>
           </div>
         </div>
@@ -152,7 +154,7 @@ const animateMobileNavItems = (el) => {
 
 const handleScroll = () => {
   const currentScrollY = window.scrollY;
-  
+
   // Use requestAnimationFrame to avoid forced reflows during scroll
   requestAnimationFrame(() => {
     if (currentScrollY < 50) {
