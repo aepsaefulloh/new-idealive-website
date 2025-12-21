@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-white relative z-30 md:mt-[50vh]">
+  <div class="bg-white relative z-30 mt-[50vh]">
     <!-- Gradient Top -->
-    <div class="md:block hidden absolute -top-[20vh] left-0 w-full h-[20vh] bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"></div>
+    <div class="absolute -top-[20vh] left-0 w-full h-[20vh] bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"></div>
     
     <section class="container-xl agis px-desktop md:pt-[10vw] md:pb-[10.582vw] py-[12.821vw]">
       <h2 ref="workHeading" class="md:text-[3.968vw] text-center text-idealive text-[6.667vw] overflow-hidden">

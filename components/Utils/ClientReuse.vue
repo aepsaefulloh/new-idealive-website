@@ -8,11 +8,11 @@
       delay: intervalDelay,
       disableOnInteraction: false,
       pauseOnMouseEnter: true
-    }" :loop="shouldLoop" :slides-per-view="1" :space-between="20" :breakpoints="{
-        640: { slidesPerView: 2, spaceBetween: 20 },
-        768: { slidesPerView: 3, spaceBetween: 30 },
-        1024: { slidesPerView: 5, spaceBetween: 40 }
-      }" class="w-full select-none">
+    }" :loop="shouldLoop" :slides-per-view="2" :space-between="20" :breakpoints="{
+      640: { slidesPerView: 2, spaceBetween: 20 },
+      768: { slidesPerView: 3, spaceBetween: 30 },
+      1024: { slidesPerView: 5, spaceBetween: 40 }
+    }" class="w-full select-none">
       <swiper-slide v-for="item in clients" :key="item.id || item.image_url">
         <a :href="item.website_url || '#'" :class="[item.website_url ? 'cursor-pointer' : 'cursor-default']"
           target="_blank" rel="noopener noreferrer" class="flex items-center justify-center h-28 w-full group">

@@ -1,44 +1,5 @@
 <template>
-  <!-- Mobile -->
-  <section class="container-xl h-dvh px-desktop pb-[40px] flex flex-col md:hidden">
-    <div class="my-auto">
-      <h1 class="md:text-[8.598vw] text-[12.308vw] leading-[100%] text-idealive home-head">
-        <span class="reveal-mask animate-invisible">
-          <span class="reveal-word py-2">Dream it</span>
-        </span>
-        <br>
-        <span class="reveal-mask animate-invisible">
-          <span class="reveal-word heading font-primary">Live it.</span>
-        </span>
-      </h1>
-    </div>
-    <div class="aspect-square bg-idealive flex flex-col items-center justify-center text-white p-3">
-      <div class="">&nbsp;</div>
-      <img src="/images/logo-idealive.svg" class="w-[38.718vw] my-auto" alt="Idealive logo" />
-      <a @click.prevent="showVideo" href="#" class="text-[12px]">See Showreel</a>
-    </div>
-
-    <!-- Video Overlay -->
-    <div ref="videoOverlay"
-      class="fixed inset-x-0 bottom-0 h-full w-full bg-black z-50 overflow-hidden scale-y-0 origin-bottom">
-      <div class="relative w-full h-full flex items-center justify-center">
-        <button @click="hideVideo" class="absolute top-4 right-4 text-white z-10 p-2" aria-label="Close video">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M18 6L6 18M6 6L18 18" stroke="white" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round" />
-          </svg>
-        </button>
-
-        <video ref="videoPlayer" class="w-full h-full object-cover" playsinline preload="metadata">
-          <source src="/images/test.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-      </div>
-    </div>
-  </section>
-  <!-- End Mobile -->
-
-  <section id="section1" class="md:pt-[9.921vw] pb-[5.622vw] px-desktop md:flex hidden items-center min-h-[33vw]">
+  <section id="section1" class="md:pt-[9.921vw] pt-[10vh] pb-[5.622vw] px-desktop flex items-center min-h-[33vw]">
     <h1 class="md:text-[8.598vw] text-[12.308vw] leading-[100%] text-idealive">
       <span class="reveal-mask animate-invisible">
         <span class="reveal-word py-4">Dream it</span>
@@ -51,27 +12,28 @@
   </section>
 
   <section id="section2"
-    class="section2 md:flex hidden justify-center items-center w-full h-screen relative overflow-hidden">
+    class="section2 flex justify-center items-center w-full h-screen relative overflow-hidden">
     <div
       class="containerElement animate-invisible relative flex justify-center items-center bg-[#2054FA] w-full h-full text-white overflow-hidden revert">
-      <!-- Solid background overlay that will fade out -->
       <div class="solid-bg absolute inset-0 bg-[#2054FA] z-[1]"></div>
 
-      <img class="absolute image md:w-[65.675vw] z-[2]" src="/images/logo-idealive.svg" fetchpriority="high" alt="Animated Image" />
+      <img class="absolute image md:w-[65.675vw] w-[80vw] z-[2]" src="/images/logo-idealive.svg" fetchpriority="high"
+        alt="Animated Image" />
       <div class="items relative justify-evenly items-center w-full flex z-[2]">
-        <h1 class="md:text-[3.307vw] heading font-primary absolute">Agency</h1>
-        <h1 class="md:text-[3.307vw] heading font-primary absolute">Laboratory</h1>
-        <h1 class="md:text-[3.307vw] heading font-primary absolute">Engine</h1>
+        <h1 class="md:text-[3.307vw] text-[8vw] heading font-primary absolute">Agency</h1>
+        <h1 class="md:text-[3.307vw] text-[8vw] heading font-primary absolute">Laboratory</h1>
+        <h1 class="md:text-[3.307vw] text-[8vw] heading font-primary absolute">Engine</h1>
       </div>
       <div class="absolute z-[0] flex w-full h-full overflow-hidden background-images">
-        <video v-for="(video, index) in backgroundImages" :key="index" 
-          class="w-full h-full object-cover absolute opacity-0" 
-          autoplay muted loop playsinline>
+        <video v-for="(video, index) in backgroundImages" :key="index"
+          class="w-full h-full object-cover absolute opacity-0" autoplay muted loop playsinline>
           <source :src="video" type="video/mp4">
         </video>
       </div>
       <div class="transition-overlay absolute inset-0 z-[10] pointer-events-none">
-        <div class="absolute -top-[50vh] left-0 w-full h-[50vh] bg-gradient-to-t from-[#2054FA] via-[#2054FA]/80 to-transparent"></div>
+        <div
+          class="absolute -top-[50vh] left-0 w-full h-[50vh] bg-gradient-to-t from-[#2054FA] via-[#2054FA]/80 to-transparent">
+        </div>
         <div class="w-full h-full bg-[#2054FA]"></div>
       </div>
     </div>
@@ -89,69 +51,24 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const videoOverlay = ref(null);
-const videoPlayer = ref(null);
 const backgroundImages = ref([
   '/images/hero.mp4'
 ]);
 
 let ctx;
 
-const showVideo = () => {
-  if (!ctx) return;
-
-  ctx.add(() => {
-    gsap.killTweensOf(videoOverlay.value);
-
-    document.body.style.overflow = 'hidden';
-
-    gsap.to(videoOverlay.value, {
-      scaleY: 1,
-      duration: 0.6,
-      ease: 'power3.out',
-      onComplete: () => {
-        if (videoPlayer.value) {
-          videoPlayer.value.play();
-        }
-      }
-    });
-  });
-};
-
-const hideVideo = () => {
-  if (!ctx) return;
-
-  ctx.add(() => {
-
-    if (videoPlayer.value) {
-      videoPlayer.value.pause();
-      videoPlayer.value.currentTime = 0;
-    }
-
-    document.body.style.overflow = '';
-
-    gsap.to(videoOverlay.value, {
-      scaleY: 0,
-      duration: 0.5,
-      ease: 'power3.in'
-    });
-  });
-};
-
 const header = () => {
   const words = document.querySelectorAll(".reveal-word");
   const masks = document.querySelectorAll(".reveal-mask.animate-invisible");
-  
-  // Set initial state for words
+
   gsap.set(words, { yPercent: 100, skewX: -2 });
-  
-  // Make masks visible immediately before animation starts to avoid reflow during animation
+
   gsap.set(masks, { autoAlpha: 1 });
 
   const tl = gsap.timeline({
     defaults: { ease: "power4.out" }
   });
-  
+
   tl.to(words, {
     yPercent: 0,
     skewX: 0,
@@ -195,7 +112,7 @@ const setupBackgroundImagesAnimation = () => {
     duration: 0.8,
     force3D: true,
     onStart: () => {
-      video.play().catch(() => {});
+      video.play().catch(() => { });
     }
   });
 
@@ -235,6 +152,9 @@ const setupDesktopAnimations = (imgTimeline) => {
     }
   });
 
+  const isMobile = window.innerWidth < 768;
+  const xOffset = isMobile ? 70 : 35; 
+
   tl.fromTo(".image", { scale: 1 }, { scale: 0.25, force3D: true }, "<")
     .to(
       [".solid-bg", ".image"],
@@ -255,13 +175,13 @@ const setupDesktopAnimations = (imgTimeline) => {
       { opacity: 0, x: 0 },
       {
         opacity: 1,
-        x: (index) => `${(index - 1) * 35}vw`,
+        x: (index) => `${(index - 1) * xOffset}vw`,
         force3D: true
       }
     )
     .to("#section2", { backgroundColor: "#2054FA" })
-    .fromTo(".transition-overlay", 
-      { yPercent: 125 }, 
+    .fromTo(".transition-overlay",
+      { yPercent: 125 },
       { yPercent: 0, duration: 1, ease: "power1.inOut", force3D: true }
     );
 };
@@ -281,11 +201,9 @@ const handleResize = debounce(() => {
 onMounted(() => {
   ctx = gsap.context(() => {
     header();
-    if (window.innerWidth >= 1024) {
-      setTimeout(box, 940);
-      const imgTimeline = setupBackgroundImagesAnimation();
-      setupDesktopAnimations(imgTimeline);
-    }
+    setTimeout(box, 940);
+    const imgTimeline = setupBackgroundImagesAnimation();
+    setupDesktopAnimations(imgTimeline);
   });
 
   window.addEventListener('resize', handleResize);

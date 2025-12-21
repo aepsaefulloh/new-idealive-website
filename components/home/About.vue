@@ -1,11 +1,13 @@
 <template>
-  <div class="about-container relative z-20 md:-mt-[50vh]">
+  <div class="about-container relative z-20 -mt-[50vh]">
     <!-- Gradient Top -->
-    <div class="md:block hidden absolute -top-[50vh] left-0 w-full h-[50vh] bg-gradient-to-t from-[#2054FA] via-[#2054FA]/80 to-transparent pointer-events-none"></div>
+    <div
+      class="absolute -top-[50vh] left-0 w-full h-[50vh] bg-gradient-to-t from-[#2054FA] via-[#2054FA]/80 to-transparent pointer-events-none">
+    </div>
 
     <div class="container-xl bg-idealive">
       <div
-        class="container mx-auto h-screen flex flex-col items-center justify-center md:gap-[3vw] gap-[20.513vw] md:px-0 px-[20px]">
+        class="container mx-auto h-[70vh] md:h-screen flex flex-col items-center justify-center md:gap-[3vw] gap-[20.513vw] md:px-0 px-[20px]">
         <div class="flex flex-col justify-center gap-4 main-trigger">
           <h2 class="md:text-[4.299vw] text-[5.5vw] leading-[110%] text-center text-white">
             <span class="reveal-masks animate-invisibles">
@@ -34,7 +36,7 @@
         <UtilsClientReuse />
       </div>
     </div>
-    
+
     <!-- Bottom Overlay Wrapper Removed -->
   </div>
 </template>
@@ -60,11 +62,6 @@ const headline = () => {
   gsap.registerPlugin(ScrollTrigger);
 
   const isMobile = window.innerWidth < 768;
-
-  if (isMobile) {
-    masks.forEach((el) => el.classList.remove("animate-invisibles"));
-    return;
-  }
 
   const startPosition = isMobile ? "top 85%" : "top 80%";
 
@@ -96,15 +93,13 @@ const headline = () => {
   }, 0);
 
   // Pin About section for Project to slide over
-  if (!isMobile) {
-    ScrollTrigger.create({
-      trigger: ".about-container",
-      start: "top top",
-      end: "bottom top",
-      pin: true,
-      pinSpacing: false
-    });
-  }
+  ScrollTrigger.create({
+    trigger: ".about-container",
+    start: "top top",
+    end: "bottom top",
+    pin: true,
+    pinSpacing: false
+  });
 };
 
 onMounted(() => {
